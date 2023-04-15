@@ -25,6 +25,14 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="language" asp-action="change" asp-route-culture="en">Eng</a>
+@*                            @Html.ActionLink("pl", "change", "language", new {culture = "pl"}, null)*@
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="language" asp-action="change" asp-route-culture="pl">Pl</a>
+@*                            @Html.ActionLink("en", "change", "language", new {culture = "en"}, null)*@
+                        </li>
                     </ul>
                 </div>
             </div>

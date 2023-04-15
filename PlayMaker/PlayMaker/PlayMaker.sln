@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayMakerApp", "PlayMakerApp\PlayMakerApp.csproj", "{7CB0B636-04C6-4F85-9661-66A9229DE485}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlayMakerApp", "PlayMakerApp\PlayMakerApp.csproj", "{7CB0B636-04C6-4F85-9661-66A9229DE485}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Resources.csproj", "{EF31B2FC-A925-41B0-9868-10940B816CDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{7CB0B636-04C6-4F85-9661-66A9229DE485}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CB0B636-04C6-4F85-9661-66A9229DE485}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CB0B636-04C6-4F85-9661-66A9229DE485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF31B2FC-A925-41B0-9868-10940B816CDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF31B2FC-A925-41B0-9868-10940B816CDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF31B2FC-A925-41B0-9868-10940B816CDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF31B2FC-A925-41B0-9868-10940B816CDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
