@@ -1,0 +1,39 @@
+﻿@*@using Microsoft.AspNetCore.Identity
+    @inject SignInManager<IdentityUser> SignInManager
+    @inject UserManager<IdentityUser> UserManager*@
+@{
+    //@User.Claims.LastOrDefault().Value.ToString()
+}
+
+
+<ul class="navbar-nav">
+    @if (User.Identity.IsAuthenticated)
+    {
+        <li class="nav-item">
+            <span class="nav-link text-light" asp-controller="Account" asp-action="MyAccount">Witaj @User.Claims.FirstOrDefault().Value.ToString()!</span>
+        </li>
+        <li class="nav-item" style="margin-right:10px">
+            <a href="@Url.Action("UserAccount", "UserView", new { id = @User.Claims.LastOrDefault().Value})" >
+                <input type="submit" value="MOJE KONTO" class="btn btn-dark" />
+            </a>
+        </li>
+        <li class="nav-item">
+            <a asp-controller="Account" asp-action="Logout"><input type="submit" value="WYLOGUJ" class="btn btn-dark" /></a>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-controller="Account" asp-action="RegisterUser">@Resources.Common.Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-controller="Account" asp-action="Login">@Resources.Common.Login</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-area="" asp-controller="language" asp-action="change" asp-route-culture="en">Eng</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-area="" asp-controller="language" asp-action="change" asp-route-culture="pl">Pl</a>
+        </li>
+    }
+</ul>
