@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
   <data name="Privacy" xml:space="preserve">
     <value>Privacy law default</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Welcome on PlayMaker</value>
