@@ -1,11 +1,16 @@
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
+using PlayMakerInfrastructure;
+using PlayMakerInfrastructure.ServiceRegistration;
 using System.Globalization;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddInfrastructure(builder.Configuration); 
+
 builder.Services.AddLocalization(options => options.ResourcesPath = "C:\\C_Sources\\PlayMaker2\\PlayMaker\\PlayMaker\\Resources");
 //C:\\C_Sources\\PlayMaker2\\PlayMaker\\PlayMaker\\Resources\\
 builder.Services.AddControllersWithViews().AddDataAnnotationsLocalization(options =>
@@ -19,6 +24,11 @@ builder.Services.AddControllersWithViews().AddDataAnnotationsLocalization(option
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+var scope = app.Services.CreateScope();
+var seeder = scope.ServiceProvider.GetRequiredService<PlayMakerDbSeeder>();
+seeder.Seed();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
