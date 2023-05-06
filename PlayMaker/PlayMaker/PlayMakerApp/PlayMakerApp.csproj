@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlayMakerApplication\PlayMakerApplication.csproj" />
     <ProjectReference Include="..\PlayMakerInfrastructure\PlayMakerInfrastructure.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>

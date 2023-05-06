@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlayMakerApplication\PlayMakerApplication.csproj" />
+    <ProjectReference Include="..\PlayMakerDomain\PlayMakerDomain.csproj" />
   </ItemGroup>
 
 </Project>

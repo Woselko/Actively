@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using PlayMakerDomain.Entities;
 using PlayMakerInfrastructure.EntityConfiguration;
-using System.Reflection.Emit;
-using System.Reflection.Metadata;
 
 namespace PlayMakerInfrastructure
 {
