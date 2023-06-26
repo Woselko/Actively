@@ -8,6 +8,7 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddLocalization(options => options.ResourcesPath = "PlayMaker\\Resources");
 
 builder.Services.AddInfrastructure(builder.Configuration); 
 
@@ -19,7 +20,7 @@ builder.Services.AddControllersWithViews().AddDataAnnotationsLocalization(option
     var assembly = new AssemblyName(type.GetTypeInfo().Assembly.FullName);
     var factory = builder.Services.BuildServiceProvider().GetService<IStringLocalizerFactory>();
     var localizer = factory.Create("Common", assembly.Name);
-    options.DataAnnotationLocalizerProvider = (t, f) => localizer;  
+    options.DataAnnotationLocalizerProvider = (t, f) => localizer;
 });
 var app = builder.Build();
 
