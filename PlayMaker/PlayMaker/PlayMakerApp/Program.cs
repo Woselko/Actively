@@ -12,8 +12,6 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "PlayMaker\\
 
 builder.Services.AddInfrastructure(builder.Configuration); 
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "C:\\C_Sources\\PlayMaker2\\PlayMaker\\PlayMaker\\Resources");
-//C:\\C_Sources\\PlayMaker2\\PlayMaker\\PlayMaker\\Resources\\
 builder.Services.AddControllersWithViews().AddDataAnnotationsLocalization(options =>
 {
     var type = typeof(Resources.Common);
