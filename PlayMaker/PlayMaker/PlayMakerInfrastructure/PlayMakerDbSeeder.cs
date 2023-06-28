@@ -1,12 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using PlayMakerDomain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PlayMakerDomain.Entities;
 
 namespace PlayMakerInfrastructure
 {
@@ -22,14 +14,7 @@ namespace PlayMakerInfrastructure
         public void Seed()
         {
             if (_dbContext.Database.CanConnect())
-            {
-                if (!_dbContext.Roles.Any())
-                {
-                    var roles = CreateRoles();
-                    _dbContext.Roles.AddRange(roles);
-                    _dbContext.SaveChanges();
-                }
-
+            {              
                 if (!_dbContext.SportType.Any())
                 {
                     var types = CreateSportTypes();
@@ -39,36 +24,13 @@ namespace PlayMakerInfrastructure
 
                 if (!_dbContext.Game.Any())
                 {
-                    var games = CreaateGames();
+                    var games = CreateGames();
                     _dbContext.Game.AddRange(games);
                     _dbContext.SaveChanges();
                 }
-                if (!_dbContext.Payment.Any())
-                {
-                    var payments = CreatePayments();
-                    _dbContext.Payment.AddRange(payments);
-                    _dbContext.SaveChanges();
-                }
-            }
-        }
 
-        private List<IdentityRole> CreateRoles()
-        {
-            var roles = new List<IdentityRole>()
-            {
-                  new IdentityRole()
-                  {
-                      Name = "admin",
-                      NormalizedName = "admin"
-                  },
-                  new IdentityRole()
-                  {
-                      Name = "player",
-                      NormalizedName = "player"
-                  }
-            };
-            return roles;
-        }
+            }
+        }   
 
         private List<SportType> CreateSportTypes()
         {
@@ -79,35 +41,8 @@ namespace PlayMakerInfrastructure
                 new SportType() { Name = "volleyball" },
             };
             return types;
-        }
-
-        private List<Payment> CreatePayments()
-        {
-            var payments = new List<Payment>()
-            {
-                new Payment()
-                {
-                    GameId = 1,
-                    PlayerId = 1,
-                    Amount = 20
-                },
-                new Payment()
-                {
-                    GameId = 1,
-                    PlayerId = 2,
-                    Amount = 20
-                },
-                new Payment()
-                {
-                    GameId = 1,
-                    PlayerId = 3,
-                    Amount = 20
-                },
-            };
-
-            return payments;
-        }
-        private List<Game> CreaateGames()
+        }      
+        private List<Game> CreateGames()
         {
             var games = new List<Game>()
            {
@@ -121,8 +56,7 @@ namespace PlayMakerInfrastructure
                         {
                             FirstName = "Emil",
                             LastName = "Bulkownik",
-                            NickName = "Bulczo",
-                            Payments = new List<Payment>()
+                            NickName = "Bulczo"
                         },
                          new Player()
                          {

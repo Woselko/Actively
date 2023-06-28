@@ -24,9 +24,6 @@ namespace PlayMakerInfrastructure.EntityConfiguration
             builder.Property(x => x.NickName)
                 .IsRequired()
                 .HasMaxLength(25);
-
-            builder.Property(x => x.Id)
-                .HasColumnName("ID");
         }
     }
 }

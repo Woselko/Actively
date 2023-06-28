@@ -14,9 +14,6 @@ namespace PlayMakerDomain.Entities
         public string LastName { get; set; }
         public string NickName { get; set; }
         public virtual IEnumerable<Game> Games { get; set; }
-        public virtual IEnumerable<Payment> Payments { get; set; }
-        public ApplicationUser? User { get; set; } = null;
-        public string? UserId { get; set; } = null;
        
     }
 }
