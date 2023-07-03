@@ -16,18 +16,7 @@ namespace PlayMakerInfrastructure
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);   
-
-            builder.Entity<Game>()
-                .HasMany(x => x.Players)
-                .WithMany(x => x.Games);
-
-            builder.Entity<Player>()
-                .HasMany(x => x.Games)
-                .WithMany(x => x.Players);       
-
-            builder.Entity<SportType>()
-            .HasKey(x => x.Id);
+            base.OnModelCreating(builder);      
 
             new GameConfiguration().Configure(builder.Entity<Game>());
             new SportTypeConfiguration().Configure(builder.Entity<SportType>());

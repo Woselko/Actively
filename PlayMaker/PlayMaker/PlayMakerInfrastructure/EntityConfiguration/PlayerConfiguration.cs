@@ -24,6 +24,9 @@ namespace PlayMakerInfrastructure.EntityConfiguration
             builder.Property(x => x.NickName)
                 .IsRequired()
                 .HasMaxLength(25);
+
+            builder.HasMany(x => x.Games)
+                .WithMany(x => x.Players);
         }
     }
 }
