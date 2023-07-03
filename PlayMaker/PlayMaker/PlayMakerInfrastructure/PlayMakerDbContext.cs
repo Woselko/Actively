@@ -23,5 +23,13 @@ namespace PlayMakerInfrastructure
             new PlayerConfiguration().Configure(builder.Entity<Player>());
 
         }
+
+        //
+        //update-database
+        //string _connectionString = "Server=WOSELKO;Integrated Security = true; Initial Catalog=PlayMakerDb;Trusted_Connection=True;TrustServerCertificate=True";
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer(_connectionString);
+        //}
     }
 }
