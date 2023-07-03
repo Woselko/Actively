@@ -16,6 +16,7 @@ namespace PlayMakerInfrastructure.EntityConfiguration
             builder.Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(25);
+
             builder.HasKey(x => x.Id);
         }
     }
