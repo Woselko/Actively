@@ -1,44 +1,29 @@
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
+using PlayMakerApp.Services.ServiceRegistration;
 using PlayMakerInfrastructure;
-using PlayMakerInfrastructure.ServiceRegistration;
 using System.Globalization;
 using System.Reflection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddLocalization(options => options.ResourcesPath = "PlayMaker\\Resources");
-
-builder.Services.AddInfrastructure(builder.Configuration); 
-
-builder.Services.AddControllersWithViews().AddDataAnnotationsLocalization(options =>
-{
-    var type = typeof(Resources.Common);
-    var assembly = new AssemblyName(type.GetTypeInfo().Assembly.FullName);
-    var factory = builder.Services.BuildServiceProvider().GetService<IStringLocalizerFactory>();
-    var localizer = factory.Create("Common", assembly.Name);
-    options.DataAnnotationLocalizerProvider = (t, f) => localizer;
-});
+builder.Services.RegisterServices(builder);
 var app = builder.Build();
 
+app.Services.CreateScope().ServiceProvider.GetRequiredService<PlayMakerDbSeeder>().Seed();
+
 // Configure the HTTP request pipeline.
-
-var scope = app.Services.CreateScope();
-var seeder = scope.ServiceProvider.GetRequiredService<PlayMakerDbSeeder>();
-seeder.Seed();
-
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-var supportedCultures = new[]
-{
-    new CultureInfo("en"),
-    new CultureInfo("pl")
-};
+
+var supportedCultures = new[]{new CultureInfo("en"), new CultureInfo("pl")};
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
     DefaultRequestCulture = new RequestCulture("en"),

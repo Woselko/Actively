@@ -26,6 +26,5 @@ namespace PlayMakerApp.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
     }
 }

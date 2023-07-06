@@ -14,7 +14,7 @@ namespace PlayMakerInfrastructure
         public void Seed()
         {
             if (_dbContext.Database.CanConnect())
-            {              
+            {
                 if (!_dbContext.SportType.Any())
                 {
                     var types = CreateSportTypes();
@@ -28,9 +28,8 @@ namespace PlayMakerInfrastructure
                     _dbContext.Game.AddRange(games);
                     _dbContext.SaveChanges();
                 }
-
             }
-        }   
+        }
 
         private List<SportType> CreateSportTypes()
         {
@@ -41,14 +40,15 @@ namespace PlayMakerInfrastructure
                 new SportType() { Name = "volleyball" },
             };
             return types;
-        }      
+        }
+
         private List<Game> CreateGames()
         {
             var games = new List<Game>()
-           {
+            {
                new Game()
                {
-                 GameDate = DateTime.Now,
+                GameDate = DateTime.Now,
                  SportId = 1,
                  Players = new List<Player>()
                  {
