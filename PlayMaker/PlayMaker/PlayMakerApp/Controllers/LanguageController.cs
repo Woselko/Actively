@@ -7,7 +7,8 @@ using System.Net;
 
 namespace PlayMakerApp.Controllers
 {
-    [Route("languages")]
+    [ApiController]
+    [Route("[controller]/[action]")]
     public class LanguageController : Controller
     {
         private readonly ILogger<LanguageController> _logger;
@@ -17,6 +18,7 @@ namespace PlayMakerApp.Controllers
             _logger = logger;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [Route("change")]
         public IActionResult Change(string culture)
         {

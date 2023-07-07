@@ -5,6 +5,8 @@ using PlayMakerInfrastructure;
 using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using PlayMakerApp.Models.Authentication.Email;
+using PlayMakerApp.Services.UserServices.EmailService;
 
 namespace PlayMakerApp.Services.ServiceRegistration
 {
@@ -12,6 +14,10 @@ namespace PlayMakerApp.Services.ServiceRegistration
     {
         public static void RegisterServices(this IServiceCollection services, WebApplicationBuilder builder)
         {
+            //EmailConfig
+            var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+            builder.Services.AddSingleton(emailConfig);
+
             services.AddLocalization(options => options.ResourcesPath = "PlayMaker\\Resources");
             services.AddDbContext<PlayMakerDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("WoselkoConnectionStringDev_PlayMakerDb_v1")));
@@ -25,7 +31,12 @@ namespace PlayMakerApp.Services.ServiceRegistration
                 options.DataAnnotationLocalizerProvider = (t, f) => localizer;
             });
 
-            //if (builder.Environment.IsDevelopment()) { mvcBuilder.AddRazorRuntimeCompilation(); }
+            if (builder.Environment.IsDevelopment()) { mvcBuilder.AddRazorRuntimeCompilation(); }
+
+            services.AddScoped<PlayMakerDbSeeder>();
+            services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<PlayMakerDbContext>()
@@ -37,8 +48,6 @@ namespace PlayMakerApp.Services.ServiceRegistration
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             });
-
-            services.AddScoped<PlayMakerDbSeeder>();
         }
     }
 }
