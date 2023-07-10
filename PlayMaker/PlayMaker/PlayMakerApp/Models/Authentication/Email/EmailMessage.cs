@@ -11,7 +11,7 @@ namespace PlayMakerApp.Models.Authentication.Email
         public EmailMessage(IEnumerable<string>to, string subject, string content)
         {
             To = new List<MailboxAddress>();
-            To.AddRange(to.Select(x=> new MailboxAddress("email" ,x)));
+            To.AddRange(to.Select(x=> new MailboxAddress("PlayMaker" ,x)));
             Subject = subject;
             Content = content;
         }

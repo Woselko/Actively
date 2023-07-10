@@ -61,11 +61,29 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your account is activated now!.
+        /// </summary>
+        public static string AccountActivated {
+            get {
+                return ResourceManager.GetString("AccountActivated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Account created successfully!.
         /// </summary>
         public static string AccountCreated {
             get {
                 return ResourceManager.GetString("AccountCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verification email sent successfully!.
+        /// </summary>
+        public static string EmailVerificationSentSucces {
+            get {
+                return ResourceManager.GetString("EmailVerificationSentSucces", resourceCulture);
             }
         }
         
@@ -79,11 +97,92 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid code.
+        /// </summary>
+        public static string InvalidCode {
+            get {
+                return ResourceManager.GetString("InvalidCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string Login {
             get {
                 return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login failed. Invalid user name or password or account is not activated..
+        /// </summary>
+        public static string LoginFailed {
+            get {
+                return ResourceManager.GetString("LoginFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password has been changed successfully!.
+        /// </summary>
+        public static string PasswordChangedSuccessfully {
+            get {
+                return ResourceManager.GetString("PasswordChangedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password and confirmation password do not match!.
+        /// </summary>
+        public static string PasswordNotMatch {
+            get {
+                return ResourceManager.GetString("PasswordNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A link with the option to change the password has been sent to the e-mail address provided, open it and follow the instructions: .
+        /// </summary>
+        public static string PasswordResetRequest {
+            get {
+                return ResourceManager.GetString("PasswordResetRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PlayMaker activation link.
+        /// </summary>
+        public static string PlayMakerActivationLink {
+            get {
+                return ResourceManager.GetString("PlayMakerActivationLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To activate your account click the link: .
+        /// </summary>
+        public static string PlayMakerClickActivationLink {
+            get {
+                return ResourceManager.GetString("PlayMakerClickActivationLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PlayMaker password recovery.
+        /// </summary>
+        public static string PlayMakerPasswordRecovery {
+            get {
+                return ResourceManager.GetString("PlayMakerPasswordRecovery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To reset your password click here: .
+        /// </summary>
+        public static string PlayMakerPasswordRecoveryLink {
+            get {
+                return ResourceManager.GetString("PlayMakerPasswordRecoveryLink", resourceCulture);
             }
         }
         
@@ -120,6 +219,15 @@ namespace Resources {
         public static string Success {
             get {
                 return ResourceManager.GetString("Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User does not exist!.
+        /// </summary>
+        public static string UserDoesNotExist {
+            get {
+                return ResourceManager.GetString("UserDoesNotExist", resourceCulture);
             }
         }
         

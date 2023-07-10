@@ -25,8 +25,4 @@
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\Authentication\Login\" />
-  </ItemGroup>
-
 </Project>

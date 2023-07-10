@@ -117,14 +117,47 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccountActivated" xml:space="preserve">
+    <value>Twoje konto zostało aktywowane</value>
+  </data>
   <data name="AccountCreated" xml:space="preserve">
     <value>Pomyślnie utworzono konto!</value>
+  </data>
+  <data name="EmailVerificationSentSucces" xml:space="preserve">
+    <value>Email weryfikacyjny został wysłany!</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Błąd!</value>
   </data>
+  <data name="InvalidCode" xml:space="preserve">
+    <value>Nieprawidłowy kod</value>
+  </data>
   <data name="Login" xml:space="preserve">
     <value>Zaloguj</value>
+  </data>
+  <data name="LoginFailed" xml:space="preserve">
+    <value>Logowanie nieudane. Nieproprawny login lub hasło lub konto nie zostało aktywowane.</value>
+  </data>
+  <data name="PasswordChangedSuccessfully" xml:space="preserve">
+    <value>Hasło zostało zmienione pomyślnie!</value>
+  </data>
+  <data name="PasswordNotMatch" xml:space="preserve">
+    <value>Podane hasła się nie zgadzają!</value>
+  </data>
+  <data name="PasswordResetRequest" xml:space="preserve">
+    <value>Na podany adres email został wysłany link z możliwością zmiany hasła, otwórz go i postępuj z instrukcjami: </value>
+  </data>
+  <data name="PlayMakerActivationLink" xml:space="preserve">
+    <value>PlayMaker link aktywacyjny</value>
+  </data>
+  <data name="PlayMakerClickActivationLink" xml:space="preserve">
+    <value>Aby aktywować konto kliknij w poniższy link: </value>
+  </data>
+  <data name="PlayMakerPasswordRecovery" xml:space="preserve">
+    <value>PlayMaker odzyskiwanie hasła</value>
+  </data>
+  <data name="PlayMakerPasswordRecoveryLink" xml:space="preserve">
+    <value>Aby odzyskać swoje hasło kliknij w poniższy link: </value>
   </data>
   <data name="Privacy" xml:space="preserve">
     <value>Polityka prywatności..</value>
@@ -137,6 +170,9 @@
   </data>
   <data name="Success" xml:space="preserve">
     <value>Sukces!</value>
+  </data>
+  <data name="UserDoesNotExist" xml:space="preserve">
+    <value>Taki użytkownik nie istnieje!</value>
   </data>
   <data name="UserExist" xml:space="preserve">
     <value>Taki użytkownik już istnieje!</value>
