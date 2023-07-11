@@ -14,9 +14,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace PlayMakerApp.Controllers
+namespace PlayMakerApp.Controllers.Authentication
 {
-    [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Route("[controller]/[action]")]
     public class AuthenticationController : Controller
     {
@@ -37,13 +37,20 @@ namespace PlayMakerApp.Controllers
             _configuration = configuration;
         }
 
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody, FromForm] RegisterUser registerUser, string role)
+        public async Task<IActionResult> Register(RegisterUser registerUser, string role = "User")
         {
             var userExist = await _userManager.FindByEmailAsync(registerUser.Email);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status403Forbidden, new Response { Status = Common.Error, Message = Common.UserExist });
+                var response = new Response { Status = Common.Error, Message = Common.UserExist , Type = ResponseType.Error};
+                return RedirectToAction("Response", response);
             }
 
             var user = new IdentityUser()
@@ -55,16 +62,18 @@ namespace PlayMakerApp.Controllers
 
             if (!await _roleManager.RoleExistsAsync(role))
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new Response { Status = Common.Error, Message = Common.SomethingWentWrong });
+                return RedirectToAction("Response", new Response { Status = Common.Error, Message = Common.SomethingWentWrong, Type = ResponseType.Error });
             }
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new Response { Status = Common.Error, Message = Common.SomethingWentWrong });
+                if(result.Errors.Any(x => x.Code == "InvalidUserName"))
+                {
+                    return RedirectToAction("Response",  new Response { Status = Common.Error, Message = Common.InvalidUserName, Type = ResponseType.Error });
+                }
+                return RedirectToAction("Response", new Response { Status = Common.Error, Message = Common.SomethingWentWrong, Type = ResponseType.Error });
             }
 
             await _userManager.AddToRoleAsync(user, role);
@@ -74,8 +83,7 @@ namespace PlayMakerApp.Controllers
             var message = new EmailMessage(new string[] { user.Email! }, Common.PlayMakerActivationLink, Common.PlayMakerClickActivationLink + confirmationLink);
             await _emailService.SendEmail(message);
 
-            return StatusCode(StatusCodes.Status201Created,
-                    new Response { Status = Common.Success, Message = Common.AccountCreated + " " + Common.EmailVerificationSentSucces });
+            return RedirectToAction("Response", new Response { Status = Common.Success, Message = Common.AccountCreated + " " + Common.EmailVerificationSentSucces, Type = ResponseType.Succes });
         }
 
         [HttpGet("ConfirmEmail")]
@@ -87,11 +95,11 @@ namespace PlayMakerApp.Controllers
                 var result = await _userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
-                    return StatusCode(StatusCodes.Status200OK, new Response { Status = Common.Success, Message = Common.AccountActivated });
+                    return StatusCode(StatusCodes.Status200OK, new Response { Status = Common.Success, Message = Common.AccountActivated, Type= ResponseType.Succes });
                 }
             }
             return StatusCode(StatusCodes.Status500InternalServerError,
-                   new Response { Status = Common.Error, Message = Common.UserDoesNotExist });
+                   new Response { Status = Common.Error, Message = Common.UserDoesNotExist , Type = ResponseType.Error });
 
         }
 
@@ -110,7 +118,7 @@ namespace PlayMakerApp.Controllers
                 await _emailService.SendEmail(message);
 
                 return StatusCode(StatusCodes.Status200OK,
-                 new Response { Status = "Success", Message = $"We have sent an OTP to your Email {user.Email}" });
+                 new Response { Status = "Success", Message = $"We have sent an OTP to your Email {user.Email}" ,Type = ResponseType.Succes });
             }
             if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password) && await _userManager.IsEmailConfirmedAsync(user))
             {
@@ -123,7 +131,7 @@ namespace PlayMakerApp.Controllers
                 });
 
             }
-            return Unauthorized(new Response { Status = Common.Error, Message = Common.LoginFailed });
+            return Unauthorized(new Response { Status = Common.Error, Message = Common.LoginFailed , Type = ResponseType.Error });
         }
 
         [HttpPost]
@@ -146,7 +154,13 @@ namespace PlayMakerApp.Controllers
                 }
             }
             return StatusCode(StatusCodes.Status404NotFound,
-                new Response { Status = Common.Success, Message = Common.InvalidCode });
+                new Response { Status = Common.Success, Message = Common.InvalidCode, Type= ResponseType.Error });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Response(Response response)
+        {
+            return View(response);
         }
 
         [HttpPost]
@@ -163,11 +177,11 @@ namespace PlayMakerApp.Controllers
                 await _emailService.SendEmail(message);
 
                 return StatusCode(StatusCodes.Status201Created,
-                        new Response { Status = Common.Success, Message = Common.PasswordResetRequest + user.Email });
+                        new Response { Status = Common.Success, Message = Common.PasswordResetRequest + user.Email, Type= ResponseType.Succes });
             }
             else
                 return StatusCode(StatusCodes.Status400BadRequest,
-                    new Response { Status = Common.Error, Message = Common.UserDoesNotExist });
+                    new Response { Status = Common.Error, Message = Common.UserDoesNotExist , Type = ResponseType.Error });
         }
 
         [HttpGet("reset-password")]
@@ -198,11 +212,11 @@ namespace PlayMakerApp.Controllers
                     return BadRequest(ModelState);
                 }
                 return StatusCode(StatusCodes.Status200OK,
-                        new Response { Status = Common.Success, Message = Common.PasswordChangedSuccessfully});
+                        new Response { Status = Common.Success, Message = Common.PasswordChangedSuccessfully, Type= ResponseType.Succes });
             }
             else
                 return StatusCode(StatusCodes.Status400BadRequest,
-                    new Response { Status = Common.Error, Message = Common.UserDoesNotExist });
+                    new Response { Status = Common.Error, Message = Common.UserDoesNotExist , Type = ResponseType.Error });
         }
 
         private async Task<JwtSecurityToken> BuildJWTToken(IdentityUser user)
