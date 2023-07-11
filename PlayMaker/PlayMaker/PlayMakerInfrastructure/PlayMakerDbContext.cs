@@ -12,7 +12,11 @@ namespace PlayMakerInfrastructure
         public DbSet<Player>? Player { get; set; }
         public DbSet<SportType>? SportType { get; set; }
 
-        public PlayMakerDbContext(DbContextOptions<PlayMakerDbContext> options) : base(options){}
+        public PlayMakerDbContext() { }
+        //public PlayMakerDbContext(DbContextOptions<PlayMakerDbContext> options) : base(options){}
+        public PlayMakerDbContext(DbContextOptions options): base(options)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

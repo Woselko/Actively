@@ -132,6 +132,9 @@
   <data name="InvalidCode" xml:space="preserve">
     <value>Nieprawidłowy kod</value>
   </data>
+  <data name="InvalidUserName" xml:space="preserve">
+    <value>Nieprawidłowa nazwa użytkownika</value>
+  </data>
   <data name="Login" xml:space="preserve">
     <value>Zaloguj</value>
   </data>

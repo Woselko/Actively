@@ -13,5 +13,9 @@ namespace PlayMakerApp.Models.Authentication.Registration
 
         [Required(ErrorMessage = "Password is required")]
         public string? Password { get; set; }
+
+        [Compare("Password", ErrorMessage = "Password and confirmation password do not match")]
+        [Required(ErrorMessage = "ConfirmPassword is required")]
+        public string? ConfirmPassword { get; set; } = null!;
     }
 }
