@@ -161,8 +161,8 @@ TestCoreFeature/Reference/
 # JetBrains Rider
 .idea/
 *.sln.iml
-/PlayMaker/PlayMaker/PlayMakerApp/obj/project.assets.json
-/PlayMaker/PlayMaker/PlayMakerApp/obj/Debug/net6.0/PlayMakerApp.assets.cache
-/PlayMaker/PlayMaker/PlayMakerApp/obj/Debug/net6.0/PlayMakerApp.csproj.FileListAbsolute.txt
-/PlayMaker/PlayMaker/PlayMakerApp/obj/PlayMakerApp.csproj.nuget.dgspec.json
-/PlayMaker/PlayMaker/PlayMakerApp/obj/project.assets.json
+/Actively/Actively/ActivelyApp/obj/project.assets.json
+/Actively/Actively/ActivelyApp/obj/Debug/net6.0/ActivelyApp.assets.cache
+/Actively/Actively/ActivelyApp/obj/Debug/net6.0/ActivelyApp.csproj.FileListAbsolute.txt
+/Actively/Actively/ActivelyApp/obj/ActivelyApp.csproj.nuget.dgspec.json
+/Actively/Actively/ActivelyApp/obj/project.assets.json
