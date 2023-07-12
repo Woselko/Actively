@@ -1,9 +1,9 @@
-﻿using ActivelyApp.Services.UserServices.EmailService;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MimeKit;
-using Services.Models.Authentication.Email;
+using ActivelyApp.Controllers;
+using ActivelyApp.Models.Authentication.Email;
 
-namespace Services.UserServices.EmailService
+namespace ActivelyApp.Services.UserServices.EmailService
 {
     public class EmailService : IEmailService
     {

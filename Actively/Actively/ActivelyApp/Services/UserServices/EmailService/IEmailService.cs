@@ -1,4 +1,4 @@
-﻿using Services.Models.Authentication.Email;
+﻿using ActivelyApp.Models.Authentication.Email;
 
 namespace ActivelyApp.Services.UserServices.EmailService
 {

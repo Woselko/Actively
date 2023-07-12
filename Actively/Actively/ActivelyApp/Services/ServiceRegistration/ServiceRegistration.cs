@@ -5,13 +5,12 @@ using ActivelyInfrastructure;
 using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using ActivelyApp.Models.Authentication.Email;
 using ActivelyApp.Services.UserServices.EmailService;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
-using Services.Models.Authentication.Email;
-using Services.Models.Common;
-using Services.UserServices.EmailService;
+using ActivelyApp.Models.Common;
 
 namespace ActivelyApp.Services.ServiceRegistration
 {
@@ -21,7 +20,7 @@ namespace ActivelyApp.Services.ServiceRegistration
         {
             //Database
             services.AddDbContext<ActivelyDbContext>(options => options.UseSqlServer(
-                builder.Configuration.GetConnectionString("BulczoConnectionStringDev_ActivelyDb")));
+                builder.Configuration.GetConnectionString("WoselkoConnectionStringDev_ActivelyDb_v1")));
             services.AddScoped<ActivelyDbSeeder>();
             //Authentication
             services.AddIdentity<IdentityUser, IdentityRole>()

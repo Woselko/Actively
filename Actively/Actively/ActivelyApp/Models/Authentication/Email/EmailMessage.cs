@@ -1,6 +1,6 @@
 ﻿using MimeKit;
 
-namespace Services.Models.Authentication.Email
+namespace ActivelyApp.Models.Authentication.Email
 {
     public class EmailMessage
     {
@@ -8,10 +8,10 @@ namespace Services.Models.Authentication.Email
         public string? Subject { get; set; }
         public string? Content { get; set; }
 
-        public EmailMessage(IEnumerable<string> to, string subject, string content)
+        public EmailMessage(IEnumerable<string>to, string subject, string content)
         {
             To = new List<MailboxAddress>();
-            To.AddRange(to.Select(x => new MailboxAddress("Actively", x)));
+            To.AddRange(to.Select(x=> new MailboxAddress("Actively", x)));
             Subject = subject;
             Content = content;
         }

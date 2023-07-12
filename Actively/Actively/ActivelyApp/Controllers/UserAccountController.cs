@@ -1,9 +1,10 @@
-﻿using ActivelyApp.Services.UserServices.EmailService;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ActivelyApp.Services.UserServices.EmailService;
 using Resources;
-using Services.Models.Common;
+using ActivelyApp.Models.Common;
 
 namespace ActivelyApp.Controllers
 {

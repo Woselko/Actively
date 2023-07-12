@@ -1,4 +1,4 @@
-namespace Services.Models.Common
+namespace ActivelyApp.Models.Common
 {
     public class ErrorViewModel
     {
