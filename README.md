@@ -1,4 +1,4 @@
-<h1 align="center">Hi 👋, this is PlayMaker</h1>
+<h1 align="center">Hi 👋, this is Actively</h1>
 <h3 align="center">A project of an application that connects people of sport and physical activity</h3>
 
 <h3 align="left">Languages and Tools:</h3>
