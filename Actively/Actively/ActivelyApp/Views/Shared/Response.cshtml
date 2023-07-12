@@ -1,0 +1,23 @@
+﻿@using ActivelyApp.Models.Common;
+@model ActivelyApp.Models.Common.Response
+@{
+    ViewData["Title"] = "Response";
+}
+
+@{
+    var classtext = "";
+    switch(Model.Type)
+    {
+        case ResponseType.Error:
+            classtext = "text-danger";
+            break;
+        case ResponseType.Succes:
+            classtext = "text-success";
+            break;
+        case ResponseType.Normal:
+            classtext = "text-info";
+            break;
+    }
+}
+<h1 class=@classtext>@Html.DisplayFor(model => model.Status)</h1>
+<h2 class=@classtext>@Html.DisplayFor(model => model.Message)</h2>
