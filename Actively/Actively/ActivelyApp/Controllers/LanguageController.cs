@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using ActivelyApp.Models;
-using System.Diagnostics;
-using System.Globalization;
-using System.Net;
-using ActivelyApp.Models.Common;
 using Microsoft.Extensions.Options;
 using Resources;
+using Services.Models.Common;
 
 namespace ActivelyApp.Controllers
 {

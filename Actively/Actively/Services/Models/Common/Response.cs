@@ -1,4 +1,4 @@
-﻿namespace ActivelyApp.Models.Common
+﻿namespace Services.Models.Common
 {
     public class Response
     {

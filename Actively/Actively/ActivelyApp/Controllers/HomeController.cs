@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ActivelyApp.Models;
+using Services.Models.Common;
 using System.Diagnostics;
-using ActivelyApp.Models.Common;
 
 namespace ActivelyApp.Controllers
 {

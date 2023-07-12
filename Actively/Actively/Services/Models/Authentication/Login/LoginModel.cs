@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ActivelyApp.Models.Authentication.Login
+namespace Services.Models.Authentication.Login
 {
     public class LoginModel
     {
