@@ -11,6 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using ActivelyApp.Models.Common;
+using ActivelyApp.Services.EntityService;
+using ActivelyInfrastructure.Repositories;
 
 namespace ActivelyApp.Services.ServiceRegistration
 {
@@ -20,8 +22,11 @@ namespace ActivelyApp.Services.ServiceRegistration
         {
             //Database
             services.AddDbContext<ActivelyDbContext>(options => options.UseSqlServer(
-                builder.Configuration.GetConnectionString("WoselkoConnectionStringDev_ActivelyDb_v1")));
+                builder.Configuration.GetConnectionString("BulczoConnectionStringDev_ActivelyDb")));
             services.AddScoped<ActivelyDbSeeder>();
+            services.AddScoped<IPlayerRepository>();
+            //Business logic services
+            services.AddScoped<IPlayerService>();
             //Authentication
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ActivelyDbContext>()
