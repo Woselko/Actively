@@ -24,9 +24,9 @@ namespace ActivelyApp.Services.ServiceRegistration
             services.AddDbContext<ActivelyDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("BulczoConnectionStringDev_ActivelyDb")));
             services.AddScoped<ActivelyDbSeeder>();
-            services.AddScoped<IPlayerRepository>();
+            services.AddScoped<IPlayerRepository, PlayerRepository>();
             //Business logic services
-            services.AddScoped<IPlayerService>();
+            services.AddScoped<IPlayerService, PlayerService>();
             //Authentication
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ActivelyDbContext>()
