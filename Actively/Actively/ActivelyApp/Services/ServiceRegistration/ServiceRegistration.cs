@@ -14,6 +14,7 @@ using ActivelyApp.Models.Common;
 using ActivelyApp.Services.EntityService;
 using ActivelyInfrastructure.Repositories;
 using ActivelyApp.Mappings;
+using System.Text.Json.Serialization;
 
 namespace ActivelyApp.Services.ServiceRegistration
 {
@@ -34,6 +35,10 @@ namespace ActivelyApp.Services.ServiceRegistration
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ActivelyDbContext>()
                 .AddDefaultTokenProviders();
+            //json
+            services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
             //Required Email confirmation
             builder.Services.Configure<IdentityOptions>(
                 opts => opts.SignIn.RequireConfirmedEmail = true);
