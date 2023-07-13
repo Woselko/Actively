@@ -13,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using ActivelyApp.Models.Common;
 using ActivelyApp.Services.EntityService;
 using ActivelyInfrastructure.Repositories;
+using ActivelyApp.Mappings;
 
 namespace ActivelyApp.Services.ServiceRegistration
 {
@@ -27,6 +28,8 @@ namespace ActivelyApp.Services.ServiceRegistration
             services.AddScoped<IPlayerRepository, PlayerRepository>();
             //Business logic services
             services.AddScoped<IPlayerService, PlayerService>();
+            //mappers
+            services.AddAutoMapper(typeof(PLayerMappingProfile));
             //Authentication
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ActivelyDbContext>()
