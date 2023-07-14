@@ -1,8 +1,7 @@
-﻿using ActivelyApp.Models.Player;
+﻿using ActivelyApp.Models.Entity;
 using ActivelyApp.Services.EntityService;
 using ActivelyDomain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ActivelyApp.Controllers
@@ -39,15 +38,16 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromBody] UpdatePlayerInfo updatePlayerInfo)
+        public async Task<ActionResult> Update([FromBody] UpdatePlayerInfo updatePlayerInfo, [FromRoute]int id)
         {
-            await _playerService.Update(updatePlayerInfo);
+            await _playerService.Update(updatePlayerInfo, id);
             return Ok();
         }
 
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
+            await _playerService.Delete(id);
             return Ok();
         }
     }

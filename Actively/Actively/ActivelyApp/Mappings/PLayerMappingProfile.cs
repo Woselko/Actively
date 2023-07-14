@@ -1,12 +1,12 @@
-﻿using ActivelyApp.Models.Player;
+﻿using ActivelyApp.Models.Entity;
 using ActivelyDomain.Entities;
 using AutoMapper;
 
 namespace ActivelyApp.Mappings
 {
-    public class PLayerMappingProfile : Profile
+    public class PlayerMappingProfile : Profile
     {
-        public PLayerMappingProfile()
+        public PlayerMappingProfile()
         {
             CreateMap<CreatePlayerInfo, Player>()
                 .ForMember(x => x.FirstName, opt => opt.MapFrom(src => src.FirstName))

@@ -1,4 +1,4 @@
-﻿using ActivelyApp.Models.Player;
+﻿using ActivelyApp.Models.Entity;
 using ActivelyDomain.Entities;
 
 namespace ActivelyApp.Services.EntityService
@@ -9,6 +9,6 @@ namespace ActivelyApp.Services.EntityService
         Task Delete(int id);
         Task<IEnumerable<Player>> GetAll();
         Task<Player> GetById(int id);
-        Task Update(UpdatePlayerInfo player);
+        Task Update(UpdatePlayerInfo player, int id);
     }
 }

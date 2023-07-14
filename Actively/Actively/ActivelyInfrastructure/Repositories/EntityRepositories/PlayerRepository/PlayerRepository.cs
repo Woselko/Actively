@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ActivelyInfrastructure.Repositories
+namespace ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository
 {
     public class PlayerRepository : IPlayerRepository
     {
@@ -20,35 +20,26 @@ namespace ActivelyInfrastructure.Repositories
         public async Task Add(Player entity)
         {
             await _context.AddAsync(entity);
-            await Save();
         }
         public async Task<IEnumerable<Player>> GetAll()
         {
-           return await _context.Player
-                .Include(x => x.Games)
-                .ToListAsync();
+            return await _context.Player
+                 .Include(x => x.Games)
+                 .ToListAsync();
         }
         public async Task Update(Player entity)
         {
-            var playerToUpdate = await _context.Player
-                .Include(x => x.Games)
-                .FirstOrDefaultAsync(x => x.Id == entity.Id);
-            playerToUpdate.FirstName = entity.FirstName;
-            playerToUpdate.LastName = entity.LastName;
-            playerToUpdate.NickName = entity.NickName;
-            playerToUpdate.Games = entity.Games;
-            await Save();
+            _context.Entry(entity).State = EntityState.Modified;
         }
         public async Task<Player> GetById(int id)
         {
-           return await _context.Player
-                .Include(x => x.Games)
-                .FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Player
+                 .Include(x => x.Games)
+                 .FirstOrDefaultAsync(x => x.Id == id);
         }
         public async Task Remove(Player entity)
         {
-             _context.Remove(entity);
-             await Save();
+            _context.Remove(entity);
         }
 
         public async Task Save() => await _context.SaveChangesAsync();

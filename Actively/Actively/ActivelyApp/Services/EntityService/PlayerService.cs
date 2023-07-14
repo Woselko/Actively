@@ -1,7 +1,7 @@
 ﻿using ActivelyApp.CustomExceptions;
-using ActivelyApp.Models.Player;
+using ActivelyApp.Models.Entity;
 using ActivelyDomain.Entities;
-using ActivelyInfrastructure.Repositories;
+using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
 using AutoMapper;
 
 namespace ActivelyApp.Services.EntityService
@@ -23,7 +23,7 @@ namespace ActivelyApp.Services.EntityService
 
         public async Task<Player> GetById(int id)
         {
-            return await _playerRepository.GetById(id) ?? 
+            return await _playerRepository.GetById(id) ??
                 throw new NotFoundEntityException("Player does not exist");
         }
 
@@ -31,22 +31,36 @@ namespace ActivelyApp.Services.EntityService
         {
             var playerToDelete = await _playerRepository.GetById(id);
             if (playerToDelete != null)
+            {
                 await _playerRepository.Remove(playerToDelete);
+                await _playerRepository.Save();
+            }
+
             else
                 throw new NotFoundEntityException("Player does not exist");
 
         }
 
-        public async Task Update(UpdatePlayerInfo updatePlayerInfo)
+        public async Task Update(UpdatePlayerInfo updatePlayerInfo, int id)
         {
-            var updatedPlayer = _mapper.Map<Player>(updatePlayerInfo);
-            await _playerRepository.Update(updatedPlayer);
+            var playerToUpdate = await _playerRepository.GetById(id);
+            if (playerToUpdate != null)
+            {
+                playerToUpdate.LastName = updatePlayerInfo.LastName;
+                playerToUpdate.NickName = updatePlayerInfo.NickName;
+            }
+            else
+                throw new NotFoundEntityException("Player does not exist");
+
+            await _playerRepository.Update(playerToUpdate);
+            await _playerRepository.Save();
         }
 
         public async Task Create(CreatePlayerInfo newPlayerInfo)
         {
             var newPlayer = _mapper.Map<Player>(newPlayerInfo);
             await _playerRepository.Add(newPlayer);
+            await _playerRepository.Save();
 
         }
     }

@@ -11,10 +11,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using ActivelyApp.Models.Common;
-using ActivelyApp.Services.EntityService;
-using ActivelyInfrastructure.Repositories;
 using ActivelyApp.Mappings;
 using System.Text.Json.Serialization;
+using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
+using ActivelyApp.Services.EntityService;
+using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
 
 namespace ActivelyApp.Services.ServiceRegistration
 {
@@ -27,10 +28,13 @@ namespace ActivelyApp.Services.ServiceRegistration
                 builder.Configuration.GetConnectionString("BulczoConnectionStringDev_ActivelyDb")));
             services.AddScoped<ActivelyDbSeeder>();
             services.AddScoped<IPlayerRepository, PlayerRepository>();
+            services.AddScoped<IGameRepository, GameRepository>();
             //Business logic services
             services.AddScoped<IPlayerService, PlayerService>();
+            services.AddScoped<IGameService, GameService>();
             //mappers
-            services.AddAutoMapper(typeof(PLayerMappingProfile));
+            services.AddAutoMapper(typeof(PlayerMappingProfile));
+            services.AddAutoMapper(typeof(GameMappingProfile));
             //Authentication
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ActivelyDbContext>()

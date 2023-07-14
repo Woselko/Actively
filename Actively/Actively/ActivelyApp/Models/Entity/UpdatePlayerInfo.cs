@@ -1,4 +1,4 @@
-﻿namespace ActivelyApp.Models.Player
+﻿namespace ActivelyApp.Models.Entity
 {
     public class UpdatePlayerInfo
     {

@@ -1,6 +1,6 @@
 ﻿using ActivelyDomain.Entities;
 
-namespace ActivelyInfrastructure.Repositories
+namespace ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository
 {
     public interface IPlayerRepository : IAsyncDisposable
     {
