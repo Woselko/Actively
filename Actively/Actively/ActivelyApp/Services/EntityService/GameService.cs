@@ -46,12 +46,18 @@ namespace ActivelyApp.Services.EntityService
             {
                 throw new NotFoundEntityException("Game does not exist");
             }
+            else
+            {
+                gameToUpdate.GameDate = game.GameDate;
+                gameToUpdate.GameTime = game.GameTime;
+                await _gameRepository.Update(gameToUpdate);
+            }
             await _gameRepository.Save();
         }
 
         public async Task Create(CreateGameInfo newGame)
         {
-            var game = _mapper.Map<Game>(newGame);
+            Game game = _mapper.Map<Game>(newGame);
             await _gameRepository.Create(game);
             await _gameRepository.Save();
 

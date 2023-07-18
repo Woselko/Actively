@@ -39,7 +39,7 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromBody] UpdateGameInfo updateGameInfo, [FromRoute] int id)
+        public async Task<ActionResult> Update([FromBody] UpdateGameInfo updateGameInfo, int id)
         {
             await _gameService.Update(updateGameInfo, id);
             return Ok();

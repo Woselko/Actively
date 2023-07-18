@@ -25,7 +25,6 @@ namespace ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository
         {
             return await _context.Game
                 .Include(x => x.Players)
-                .Include(x => x.Sport)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -33,19 +32,18 @@ namespace ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository
         {
             var gameToDelete = await _context.Game
                 .Include(x => x.Players)
-                .Include(x => x.Sport)
                 .FirstOrDefaultAsync(x => x.Id == id);
             _context.Game.Remove(gameToDelete);
         }
 
-        public async Task Update(Game game)
+        public async Task Update(Game entity)
         {
-            _context.Entry(game).State = EntityState.Modified;
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
-        public async Task Create(Game game)
+        public async Task Create(Game entity)
         {
-            _context.Remove(game);
+            await _context.AddAsync(entity);
         }
 
         public async Task Save() => await _context.SaveChangesAsync();
