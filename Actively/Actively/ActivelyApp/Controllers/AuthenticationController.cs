@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ActivelyApp.Models.Common;
+using ActivelyDomain.Entities;
 
 namespace ActivelyApp.Controllers.Authentication
 {
@@ -20,15 +21,15 @@ namespace ActivelyApp.Controllers.Authentication
     [Route("[controller]/[action]")]
     public class AuthenticationController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
 
-        public AuthenticationController(UserManager<IdentityUser> userManager,
+        public AuthenticationController(UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager, IEmailService emailService,
-            SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+            SignInManager<User> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -38,25 +39,20 @@ namespace ActivelyApp.Controllers.Authentication
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterUser registerUser, string role = "User")
+        public async Task<IActionResult> Register([FromBody] RegisterUser registerUser)
         {
             var userExist = await _userManager.FindByEmailAsync(registerUser.Email);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status403Forbidden, new Response { Status = Common.Error, Message = Common.UserExist, Type = ResponseType.Error });
+                return StatusCode(StatusCodes.Status403Forbidden, new Response { IsSuccess = false, Message = Common.UserExist,  });
             }
-
-            var user = new IdentityUser()
-            {
-                Email = registerUser.Email,
-                UserName = registerUser.Username,
-                SecurityStamp = Guid.NewGuid().ToString(),
-            };
+            var role = "User";
+            var user = await CreateUser(registerUser);
 
             if (!await _roleManager.RoleExistsAsync(role))
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new Response { Status = Common.Error, Message = Common.SomethingWentWrong, Type = ResponseType.Error });
+                    new Response { IsSuccess = false, Message = Common.SomethingWentWrong,  });
             }
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
@@ -66,10 +62,10 @@ namespace ActivelyApp.Controllers.Authentication
                 if (result.Errors.Any(x => x.Code == "InvalidUserName"))
                 {
                     return StatusCode(StatusCodes.Status400BadRequest,
-                        new Response { Status = Common.Error, Message = Common.InvalidUserName, Type = ResponseType.Error });
+                        new Response { IsSuccess = false, Message = Common.InvalidUserName,  });
                 }
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new Response { Status = Common.Error, Message = Common.SomethingWentWrong, Type = ResponseType.Error });
+                    new Response { IsSuccess = false, Message = Common.SomethingWentWrong,  });
             }
 
             await _userManager.AddToRoleAsync(user, role);
@@ -80,7 +76,7 @@ namespace ActivelyApp.Controllers.Authentication
             await _emailService.SendEmail(message);
 
             return StatusCode(StatusCodes.Status201Created,
-                    new Response { Status = Common.Success, Message = Common.AccountCreated + " " + Common.EmailVerificationSentSucces, Type = ResponseType.Succes });
+                    new Response { IsSuccess = true, Message = Common.AccountCreated + " " + Common.EmailVerificationSentSucces,  });
         }
 
         [HttpGet("ConfirmEmail")]
@@ -92,11 +88,11 @@ namespace ActivelyApp.Controllers.Authentication
                 var result = await _userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
-                    return StatusCode(StatusCodes.Status200OK, new Response { Status = Common.Success, Message = Common.AccountActivated, Type = ResponseType.Succes });
+                    return StatusCode(StatusCodes.Status200OK, new Response { IsSuccess = true, Message = Common.AccountActivated,  });
                 }
             }
             return StatusCode(StatusCodes.Status500InternalServerError,
-                   new Response { Status = Common.Error, Message = Common.UserDoesNotExist, Type = ResponseType.Error });
+                   new Response { IsSuccess = false, Message = Common.UserDoesNotExist,  });
 
         }
 
@@ -115,7 +111,7 @@ namespace ActivelyApp.Controllers.Authentication
                 await _emailService.SendEmail(message);
 
                 return StatusCode(StatusCodes.Status200OK,
-                 new Response { Status = "Success", Message = $"We have sent an OTP to your Email {user.Email}", Type = ResponseType.Succes });
+                 new Response { IsSuccess = true, Message = $"We have sent an OTP to your Email {user.Email}"});
             }
             if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password) && await _userManager.IsEmailConfirmedAsync(user))
             {
@@ -128,7 +124,7 @@ namespace ActivelyApp.Controllers.Authentication
                 });
 
             }
-            return Unauthorized(new Response { Status = Common.Error, Message = Common.LoginFailed, Type = ResponseType.Error });
+            return Unauthorized(new Response { IsSuccess = false, Message = Common.LoginFailed,  });
         }
 
         [HttpPost]
@@ -151,7 +147,7 @@ namespace ActivelyApp.Controllers.Authentication
                 }
             }
             return StatusCode(StatusCodes.Status404NotFound,
-                new Response { Status = Common.Error, Message = Common.InvalidCode, Type = ResponseType.Error });
+                new Response { IsSuccess = false, Message = Common.InvalidCode,  });
         }
 
         [HttpPost]
@@ -168,11 +164,11 @@ namespace ActivelyApp.Controllers.Authentication
                 await _emailService.SendEmail(message);
 
                 return StatusCode(StatusCodes.Status201Created,
-                        new Response { Status = Common.Success, Message = Common.PasswordResetRequest + user.Email, Type = ResponseType.Succes });
+                        new Response { IsSuccess = true, Message = Common.PasswordResetRequest + user.Email,  });
             }
             else
                 return StatusCode(StatusCodes.Status400BadRequest,
-                    new Response { Status = Common.Error, Message = Common.UserDoesNotExist, Type = ResponseType.Error });
+                    new Response { IsSuccess = false, Message = Common.UserDoesNotExist,  });
         }
 
         [HttpGet("reset-password")]
@@ -203,14 +199,14 @@ namespace ActivelyApp.Controllers.Authentication
                     return BadRequest(ModelState);
                 }
                 return StatusCode(StatusCodes.Status200OK,
-                        new Response { Status = Common.Success, Message = Common.PasswordChangedSuccessfully, Type = ResponseType.Succes });
+                        new Response { IsSuccess = true, Message = Common.PasswordChangedSuccessfully,  });
             }
             else
                 return StatusCode(StatusCodes.Status400BadRequest,
-                    new Response { Status = Common.Error, Message = Common.UserDoesNotExist, Type = ResponseType.Error });
+                    new Response { IsSuccess = false, Message = Common.UserDoesNotExist,  });
         }
 
-        private async Task<JwtSecurityToken> BuildJWTToken(IdentityUser user)
+        private async Task<JwtSecurityToken> BuildJWTToken(User user)
         {
             var authClaims = new List<Claim>
             {
@@ -238,6 +234,111 @@ namespace ActivelyApp.Controllers.Authentication
                 expires: DateTime.Now.AddDays(2),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
+        }
+
+        private async Task<string> UploadFile(byte[] bytes, string fileName)
+        {
+            string uploadsFolder = Path.Combine("Images", fileName);
+            Stream stream = new MemoryStream(bytes);
+            using (var ms = new FileStream(uploadsFolder, FileMode.Create))
+            {
+                await stream.CopyToAsync(ms);
+            }
+            return uploadsFolder;
+        }
+
+        private async Task<User> CreateUser(RegisterUser registerUser)
+        {
+            var user = new User()
+            {
+                Email = registerUser.Email,
+                UserName = registerUser.Username,
+                FirstName = registerUser.FirstName,
+                LastName = registerUser.LastName,
+                Address = registerUser.Address,
+                Gender = registerUser.Gender,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            if (!string.IsNullOrWhiteSpace(registerUser.UserAvatar))
+            {
+                byte[] imgBytes = Convert.FromBase64String(registerUser.UserAvatar);
+                string fileName = $"{Guid.NewGuid()}_{registerUser.FirstName.Trim()}_{registerUser.LastName.Trim()}.jpeg";
+                string avatar = await UploadFile(imgBytes, fileName);
+                registerUser.UserAvatar = avatar;
+            }
+
+            return user;
+        }
+
+
+        //[AllowAnonymous]
+        //[HttpPost("RefreshToken")]
+        //public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshTokenRequest)
+        //{
+        //    var response = new Response();
+        //    if (refreshTokenRequest is null)
+        //    {
+        //        response.IsSuccess = false;
+        //        response.Message = "Invalid  request";
+        //        return BadRequest(response);
+        //    }
+
+        //    var principal = GetPrincipalFromExpiredToken(refreshTokenRequest.AccessToken);
+
+        //    if (principal != null)
+        //    {
+        //        var email = principal.Claims.FirstOrDefault(f => f.Type == ClaimTypes.Email);
+
+        //        var user = await _userManager.FindByEmailAsync(email?.Value);
+
+        //        if (user is null || user.RefreshToken != refreshTokenRequest.RefreshToken)
+        //        {
+        //            response.ErrorMessage = "Invalid Request";
+        //            return BadRequest(response);
+        //        }
+
+        //        string newAccessToken = GenerateAccessToken(user);
+        //        string refreshToken = GenerateRefreshToken();
+
+        //        user.RefreshToken = refreshToken;
+        //        await _userManager.UpdateAsync(user);
+
+        //        response.IsSuccess = true;
+        //        response.Content = new AuthenticationResponse
+        //        {
+        //            RefreshToken = refreshToken,
+        //            AccessToken = newAccessToken
+        //        };
+        //        return Ok(response);
+        //    }
+        //    else
+        //    {
+        //        return null;//Response.ReturnErrorResponse("Invalid Token Found");
+        //    }
+        //}
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var keyDetail = Encoding.UTF8.GetBytes(_configuration["JWT:Key"]);
+            var tokenValidationParameter = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _configuration["JWT:Issuer"],
+                ValidAudience = _configuration["JWT:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(keyDetail),
+            };
+
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameter, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+            return principal;
         }
     }
 }

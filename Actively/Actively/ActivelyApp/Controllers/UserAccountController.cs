@@ -38,7 +38,7 @@ namespace ActivelyApp.Controllers
             var userExist = await _userManager.FindByIdAsync(id);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status403Forbidden, new Response { Status = Common.Error, Message = Common.UserExist, Type = ResponseType.Error });
+                return StatusCode(StatusCodes.Status403Forbidden, new Response { IsSuccess = false, Message = Common.UserExist,  });
             }
             await _userManager.SetTwoFactorEnabledAsync(userExist, enableTwoFactorAuth);
 
