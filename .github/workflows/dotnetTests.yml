@@ -24,6 +24,7 @@ jobs:
       run: dotnet restore
       working-directory: Actively/Actively
     - name: Build
-      run: dotnet build Actively.sln --no-restore
+      run: dotnet build --no-restore
+      working-directory: Actively/Actively
     - name: Test
       run: dotnet test --no-build --verbosity normal
