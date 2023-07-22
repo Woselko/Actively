@@ -268,7 +268,7 @@ namespace ActivelyApp.Controllers.Authentication
 
         private async Task<string> UploadFile(byte[] bytes, string fileName)
         {
-            string uploadsFolder = Path.Combine("Images", fileName);
+            string uploadsFolder = Path.Combine("", fileName); // need change here to store avatar in blob
             Stream stream = new MemoryStream(bytes);
             using (var ms = new FileStream(uploadsFolder, FileMode.Create))
             {
@@ -295,7 +295,7 @@ namespace ActivelyApp.Controllers.Authentication
                 byte[] imgBytes = Convert.FromBase64String(registerUser.UserAvatar);
                 string fileName = $"{Guid.NewGuid()}_{registerUser.FirstName.Trim()}_{registerUser.LastName.Trim()}.jpeg";
                 string avatar = await UploadFile(imgBytes, fileName);
-                registerUser.UserAvatar = avatar;
+                user.UserAvatar = avatar;
             }
 
             return user;
