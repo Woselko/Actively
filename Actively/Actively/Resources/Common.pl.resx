@@ -174,6 +174,12 @@
   <data name="Success" xml:space="preserve">
     <value>Sukces!</value>
   </data>
+  <data name="TwoFactorAuthIsOff" xml:space="preserve">
+    <value>Dwustopniowa authoryzacja email jest teraz wyłączona</value>
+  </data>
+  <data name="TwoFactorAuthIsSet" xml:space="preserve">
+    <value>Dwustopniowa authoryzacja email jest teraz aktywna</value>
+  </data>
   <data name="UserDoesNotExist" xml:space="preserve">
     <value>Taki użytkownik nie istnieje!</value>
   </data>

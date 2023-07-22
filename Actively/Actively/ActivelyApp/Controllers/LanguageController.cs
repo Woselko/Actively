@@ -24,7 +24,6 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpPost]
-        [Route("changelanguageapi")]
         public IActionResult ChangeLanguageApi(string culture)
         {
             if (culture == null || !_supportedLanguages.Contains(culture))
@@ -41,7 +40,6 @@ namespace ActivelyApp.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Route("changelanguage")]
         public IActionResult ChangeLanguage(string culture)
         {
             if (culture == null || !_supportedLanguages.Contains(culture))

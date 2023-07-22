@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using ActivelyApp.Models.Authentication.Email;
 using ActivelyApp.Models.Authentication.Login;
-using ActivelyApp.Models.Authentication.PasswordReset;
+using ActivelyApp.Models.Authentication.Password;
 using ActivelyApp.Models.Authentication.Registration;
 using ActivelyApp.Services.UserServices.EmailService;
 using Resources;
@@ -14,6 +14,8 @@ using System.Security.Claims;
 using System.Text;
 using ActivelyApp.Models.Common;
 using ActivelyDomain.Entities;
+using System.Security.Cryptography;
+using ActivelyApp.Models.Authentication.Authentication;
 
 namespace ActivelyApp.Controllers.Authentication
 {
@@ -47,14 +49,13 @@ namespace ActivelyApp.Controllers.Authentication
                 return StatusCode(StatusCodes.Status403Forbidden, new Response { IsSuccess = false, Message = Common.UserExist,  });
             }
             var role = "User";
-            var user = await CreateUser(registerUser);
 
             if (!await _roleManager.RoleExistsAsync(role))
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     new Response { IsSuccess = false, Message = Common.SomethingWentWrong,  });
             }
-
+            var user = await CreateUser(registerUser);
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
             if (!result.Succeeded)
@@ -79,7 +80,7 @@ namespace ActivelyApp.Controllers.Authentication
                     new Response { IsSuccess = true, Message = Common.AccountCreated + " " + Common.EmailVerificationSentSucces,  });
         }
 
-        [HttpGet("ConfirmEmail")]
+        [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -97,7 +98,6 @@ namespace ActivelyApp.Controllers.Authentication
         }
 
         [HttpPost]
-        [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
         {
             var user = await _userManager.FindByNameAsync(loginModel.UserName);
@@ -115,20 +115,28 @@ namespace ActivelyApp.Controllers.Authentication
             }
             if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password) && await _userManager.IsEmailConfirmedAsync(user))
             {
-                var jwtToken = await BuildJWTToken(user);
+                string accessToken = await GenerateAccessToken(user);
+                var refreshToken = GenerateRefreshToken();
+                user.RefreshToken = refreshToken;
+                await _userManager.UpdateAsync(user);
 
-                return Ok(new
+                var response = new Response
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                    expiration = jwtToken.ValidTo
-                });
+                    Content = new AuthenticationResponse
+                    {
+                        RefreshToken = refreshToken,
+                        AccessToken = accessToken
+                    },
+                    IsSuccess = true,
+                    Message = Common.Success
+                };
+                return Ok(response);
 
             }
             return Unauthorized(new Response { IsSuccess = false, Message = Common.LoginFailed,  });
         }
 
         [HttpPost]
-        [Route("login-2FA")]
         public async Task<IActionResult> LoginWithOTP(string code, string username)
         {
             var user = await _userManager.FindByNameAsync(username);
@@ -137,17 +145,26 @@ namespace ActivelyApp.Controllers.Authentication
             {
                 if (user != null)
                 {
-                    var jwtToken = await BuildJWTToken(user);
+                    string accessToken = await GenerateAccessToken(user);
+                    var refreshToken = GenerateRefreshToken();
+                    user.RefreshToken = refreshToken;
+                    await _userManager.UpdateAsync(user);
 
-                    return Ok(new
+                    var response = new Response
                     {
-                        token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                        expiration = jwtToken.ValidTo
-                    });
+                        Content = new AuthenticationResponse
+                        {
+                            RefreshToken = refreshToken,
+                            AccessToken = accessToken
+                        },
+                        IsSuccess = true,
+                        Message = Common.Success
+                    };
+                    return Ok(response);
                 }
             }
             return StatusCode(StatusCodes.Status404NotFound,
-                new Response { IsSuccess = false, Message = Common.InvalidCode,  });
+                new Response { IsSuccess = false, Message = Common.InvalidCode + " " + Common.LoginFailed});
         }
 
         [HttpPost]
@@ -171,7 +188,7 @@ namespace ActivelyApp.Controllers.Authentication
                     new Response { IsSuccess = false, Message = Common.UserDoesNotExist,  });
         }
 
-        [HttpGet("reset-password")]
+        [HttpGet]
         public async Task<IActionResult> ResetPassword(string token, string email)
         {
             var passwordResetModel = new PasswordReset { Token = token, Email = email };
@@ -183,7 +200,6 @@ namespace ActivelyApp.Controllers.Authentication
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("reset-password")]
         public async Task<IActionResult> ResetPassword(PasswordReset passwordReset)
         {
             var user = await _userManager.FindByEmailAsync(passwordReset.Email);
@@ -206,24 +222,6 @@ namespace ActivelyApp.Controllers.Authentication
                     new Response { IsSuccess = false, Message = Common.UserDoesNotExist,  });
         }
 
-        private async Task<JwtSecurityToken> BuildJWTToken(User user)
-        {
-            var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
-            var userRoles = await _userManager.GetRolesAsync(user);
-            foreach (var role in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            var jwtToken = GetToken(authClaims);
-            return jwtToken;
-        }
-
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -234,6 +232,38 @@ namespace ActivelyApp.Controllers.Authentication
                 expires: DateTime.Now.AddDays(2),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
+        }
+
+        private async Task<string> GenerateAccessToken(User user)
+        {
+            var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Surname, $"{user.FirstName} { user.LastName}"),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim("UserAvatar", $"{user.UserAvatar}"),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var role in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var jwtToken = GetToken(authClaims);
+            return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+        }
+
+        private string GenerateRefreshToken()
+        {
+
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
         }
 
         private async Task<string> UploadFile(byte[] bytes, string fileName)
@@ -271,52 +301,52 @@ namespace ActivelyApp.Controllers.Authentication
             return user;
         }
 
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshTokenRequest)
+        {
+            var response = new Response();
+            if (refreshTokenRequest is null)
+            {
+                response.IsSuccess = false;
+                response.Message = "Invalid  request";
+                return BadRequest(response);
+            }
 
-        //[AllowAnonymous]
-        //[HttpPost("RefreshToken")]
-        //public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshTokenRequest)
-        //{
-        //    var response = new Response();
-        //    if (refreshTokenRequest is null)
-        //    {
-        //        response.IsSuccess = false;
-        //        response.Message = "Invalid  request";
-        //        return BadRequest(response);
-        //    }
+            var principal = GetPrincipalFromExpiredToken(refreshTokenRequest.AccessToken);
 
-        //    var principal = GetPrincipalFromExpiredToken(refreshTokenRequest.AccessToken);
+            if (principal != null)
+            {
+                var email = principal.Claims.FirstOrDefault(f => f.Type == ClaimTypes.Email);
 
-        //    if (principal != null)
-        //    {
-        //        var email = principal.Claims.FirstOrDefault(f => f.Type == ClaimTypes.Email);
+                var user = await _userManager.FindByEmailAsync(email?.Value);
 
-        //        var user = await _userManager.FindByEmailAsync(email?.Value);
+                if (user is null || user.RefreshToken != refreshTokenRequest.RefreshToken)
+                {
+                    response.Message = "Invalid Request";
+                    return BadRequest(response);
+                }
 
-        //        if (user is null || user.RefreshToken != refreshTokenRequest.RefreshToken)
-        //        {
-        //            response.ErrorMessage = "Invalid Request";
-        //            return BadRequest(response);
-        //        }
+                string newAccessToken = await GenerateAccessToken(user);
+                string refreshToken = GenerateRefreshToken();
 
-        //        string newAccessToken = GenerateAccessToken(user);
-        //        string refreshToken = GenerateRefreshToken();
+                user.RefreshToken = refreshToken;
+                await _userManager.UpdateAsync(user);
 
-        //        user.RefreshToken = refreshToken;
-        //        await _userManager.UpdateAsync(user);
+                response.IsSuccess = true;
+                response.Content = new AuthenticationResponse
+                {
+                    RefreshToken = refreshToken,
+                    AccessToken = newAccessToken
+                };
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
 
-        //        response.IsSuccess = true;
-        //        response.Content = new AuthenticationResponse
-        //        {
-        //            RefreshToken = refreshToken,
-        //            AccessToken = newAccessToken
-        //        };
-        //        return Ok(response);
-        //    }
-        //    else
-        //    {
-        //        return null;//Response.ReturnErrorResponse("Invalid Token Found");
-        //    }
-        //}
         private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

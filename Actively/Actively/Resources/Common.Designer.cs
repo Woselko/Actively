@@ -232,6 +232,24 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Two-factor email authorization is set off!.
+        /// </summary>
+        public static string TwoFactorAuthIsOff {
+            get {
+                return ResourceManager.GetString("TwoFactorAuthIsOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Two-factor email authorization is set now!.
+        /// </summary>
+        public static string TwoFactorAuthIsSet {
+            get {
+                return ResourceManager.GetString("TwoFactorAuthIsSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User does not exist!.
         /// </summary>
         public static string UserDoesNotExist {
