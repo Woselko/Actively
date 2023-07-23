@@ -119,18 +119,14 @@ namespace ActivelyInfrastructure.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -228,49 +224,49 @@ namespace ActivelyInfrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "bfee928f-84e3-4b33-bc7d-ea89c23c6c16",
+                            Id = "c4e3a9e6-544a-4db7-80a9-d8169d3561df",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "8dc6f9c8-a106-467e-a6e8-db431853dd49",
+                            Id = "ca888d36-f4fb-4402-8650-6c9a09079a79",
                             ConcurrencyStamp = "2",
                             Name = "Developer",
                             NormalizedName = "Developer"
                         },
                         new
                         {
-                            Id = "32070027-4dac-4f5b-bc38-8e10f21ed09d",
+                            Id = "ef16d7d6-a024-4486-a33b-a093a4dbf636",
                             ConcurrencyStamp = "3",
                             Name = "Moderator",
                             NormalizedName = "Moderator"
                         },
                         new
                         {
-                            Id = "10c57d0e-666e-4a6f-a8d1-57f088cd81af",
+                            Id = "bd188919-d376-4698-aee0-ea5643d07ed6",
                             ConcurrencyStamp = "4",
                             Name = "PremiumUser",
                             NormalizedName = "PremiumUser"
                         },
                         new
                         {
-                            Id = "8f53b579-103f-481c-81d3-4bdce7cee5dc",
+                            Id = "3cdf2f72-efeb-4250-8ed8-4c5a3029f210",
                             ConcurrencyStamp = "5",
                             Name = "GameOwner",
                             NormalizedName = "GameOwner"
                         },
                         new
                         {
-                            Id = "72a99633-1562-49e0-bd65-eb8fbebbc5e6",
+                            Id = "2eefbb56-73ca-4ef6-a9c7-4a897e784cac",
                             ConcurrencyStamp = "6",
                             Name = "VerifiedUser",
                             NormalizedName = "VerifiedUser"
                         },
                         new
                         {
-                            Id = "e15f2e55-9f23-4f7e-aac8-64122aa1cdcf",
+                            Id = "8c11250c-fdfd-4ec3-8dc1-0a86912a859c",
                             ConcurrencyStamp = "7",
                             Name = "User",
                             NormalizedName = "User"

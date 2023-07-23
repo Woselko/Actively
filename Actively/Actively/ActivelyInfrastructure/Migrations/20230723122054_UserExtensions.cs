@@ -52,24 +52,21 @@ namespace ActivelyInfrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "FirstName",
                 table: "AspNetUsers",
-                type: "nvarchar(50)",
-                maxLength: 50,
+                type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
 
-            migrationBuilder.AddColumn<string>(
+            migrationBuilder.AddColumn<int>(
                 name: "Gender",
                 table: "AspNetUsers",
-                type: "nvarchar(25)",
-                maxLength: 25,
+                type: "int",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: 0);
 
             migrationBuilder.AddColumn<string>(
                 name: "LastName",
                 table: "AspNetUsers",
-                type: "nvarchar(50)",
-                maxLength: 50,
+                type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
 
@@ -90,13 +87,13 @@ namespace ActivelyInfrastructure.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "10c57d0e-666e-4a6f-a8d1-57f088cd81af", "4", "PremiumUser", "PremiumUser" },
-                    { "32070027-4dac-4f5b-bc38-8e10f21ed09d", "3", "Moderator", "Moderator" },
-                    { "72a99633-1562-49e0-bd65-eb8fbebbc5e6", "6", "VerifiedUser", "VerifiedUser" },
-                    { "8dc6f9c8-a106-467e-a6e8-db431853dd49", "2", "Developer", "Developer" },
-                    { "8f53b579-103f-481c-81d3-4bdce7cee5dc", "5", "GameOwner", "GameOwner" },
-                    { "bfee928f-84e3-4b33-bc7d-ea89c23c6c16", "1", "Admin", "Admin" },
-                    { "e15f2e55-9f23-4f7e-aac8-64122aa1cdcf", "7", "User", "User" }
+                    { "2eefbb56-73ca-4ef6-a9c7-4a897e784cac", "6", "VerifiedUser", "VerifiedUser" },
+                    { "3cdf2f72-efeb-4250-8ed8-4c5a3029f210", "5", "GameOwner", "GameOwner" },
+                    { "8c11250c-fdfd-4ec3-8dc1-0a86912a859c", "7", "User", "User" },
+                    { "bd188919-d376-4698-aee0-ea5643d07ed6", "4", "PremiumUser", "PremiumUser" },
+                    { "c4e3a9e6-544a-4db7-80a9-d8169d3561df", "1", "Admin", "Admin" },
+                    { "ca888d36-f4fb-4402-8650-6c9a09079a79", "2", "Developer", "Developer" },
+                    { "ef16d7d6-a024-4486-a33b-a093a4dbf636", "3", "Moderator", "Moderator" }
                 });
         }
 
@@ -105,37 +102,37 @@ namespace ActivelyInfrastructure.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "10c57d0e-666e-4a6f-a8d1-57f088cd81af");
+                keyValue: "2eefbb56-73ca-4ef6-a9c7-4a897e784cac");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "32070027-4dac-4f5b-bc38-8e10f21ed09d");
+                keyValue: "3cdf2f72-efeb-4250-8ed8-4c5a3029f210");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "72a99633-1562-49e0-bd65-eb8fbebbc5e6");
+                keyValue: "8c11250c-fdfd-4ec3-8dc1-0a86912a859c");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "8dc6f9c8-a106-467e-a6e8-db431853dd49");
+                keyValue: "bd188919-d376-4698-aee0-ea5643d07ed6");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "8f53b579-103f-481c-81d3-4bdce7cee5dc");
+                keyValue: "c4e3a9e6-544a-4db7-80a9-d8169d3561df");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "bfee928f-84e3-4b33-bc7d-ea89c23c6c16");
+                keyValue: "ca888d36-f4fb-4402-8650-6c9a09079a79");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "e15f2e55-9f23-4f7e-aac8-64122aa1cdcf");
+                keyValue: "ef16d7d6-a024-4486-a33b-a093a4dbf636");
 
             migrationBuilder.DropColumn(
                 name: "Address",

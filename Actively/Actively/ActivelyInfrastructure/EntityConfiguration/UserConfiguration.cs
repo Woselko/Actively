@@ -21,8 +21,7 @@ namespace ActivelyInfrastructure.EntityConfiguration
                 .HasMaxLength(50);
 
             builder.Property(x => x.Gender)
-                .IsRequired()
-                .HasMaxLength(25);
+                .IsRequired();
 
             builder.HasKey(x => x.Id);
         }

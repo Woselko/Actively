@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ActivelyDomain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace ActivelyApp.Models.Authentication.Registration
 {
@@ -25,7 +26,7 @@ namespace ActivelyApp.Models.Authentication.Registration
         public string? LastName { get; set; }
 
         [Required(ErrorMessage = "Gender is required")]
-        public string? Gender { get; set; }
+        public Gender Gender { get; set; }
 
         public string? Address { get; set; }
     }
