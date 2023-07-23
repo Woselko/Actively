@@ -6,10 +6,7 @@ using ActivelyApp.Services.UserServices.EmailService;
 using Resources;
 using ActivelyApp.Models.Common;
 using ActivelyDomain.Entities;
-using ActivelyApp.Models.Admin;
-using System.Data;
 using ActivelyApp.Models.Authentication.Password;
-using ActivelyApp.Models.Authentication.Registration;
 
 namespace ActivelyApp.Controllers
 {

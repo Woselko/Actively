@@ -4,10 +4,10 @@ namespace ActivelyApp.Models.Authentication.Password
 {
     public class ChangePassword
     {
-        [Required]
-        public string? OldPassword;
+        [Required(ErrorMessage = "Old password is required")]
+        public string? OldPassword { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
+        [Required(ErrorMessage = "New password is required")]
         public string? NewPassword { get; set; }
 
         [Compare("NewPassword", ErrorMessage = "NewPassword and confirmation password do not match")]
