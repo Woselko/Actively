@@ -36,13 +36,13 @@ namespace ActivelyApp.Controllers
         {
             var id = User.Claims.First().Value;
             var userExist = await _userManager.FindByIdAsync(id);
-            if (userExist != null)
+            if (userExist == null)
             {
-                return StatusCode(StatusCodes.Status403Forbidden, new Response { Status = Common.Error, Message = Common.UserExist, Type = ResponseType.Error });
+                return StatusCode(StatusCodes.Status403Forbidden, new Response { Status = Common.Error, Message = Common.UserDoesNotExist, Type = ResponseType.Error });
             }
             await _userManager.SetTwoFactorEnabledAsync(userExist, enableTwoFactorAuth);
 
-            return Ok();
+            return  StatusCode(StatusCodes.Status200OK, new Response { Status = Common.Success, Message = Common.Success, Type = ResponseType.Error });
         }
     }
 }
