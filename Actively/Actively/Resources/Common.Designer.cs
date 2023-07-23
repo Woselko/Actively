@@ -115,6 +115,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Avatar has been set successfully!.
+        /// </summary>
+        public static string AvatarChanged {
+            get {
+                return ResourceManager.GetString("AvatarChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Verification email sent successfully!.
         /// </summary>
         public static string EmailVerificationSentSucces {

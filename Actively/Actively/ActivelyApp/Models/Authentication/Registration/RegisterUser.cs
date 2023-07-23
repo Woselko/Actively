@@ -27,7 +27,6 @@ namespace ActivelyApp.Models.Authentication.Registration
         [Required(ErrorMessage = "Gender is required")]
         public string? Gender { get; set; }
 
-        public string? UserAvatar { get; set; }
         public string? Address { get; set; }
     }
 }

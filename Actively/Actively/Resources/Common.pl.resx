@@ -135,6 +135,9 @@
   <data name="ActivelyPasswordRecoveryLink" xml:space="preserve">
     <value>Aby odzyskać swoje hasło kliknij w poniższy link: </value>
   </data>
+  <data name="AvatarChanged" xml:space="preserve">
+    <value>Avatar ustawiono pomyślnie!</value>
+  </data>
   <data name="EmailVerificationSentSucces" xml:space="preserve">
     <value>Email weryfikacyjny został wysłany!</value>
   </data>

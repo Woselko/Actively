@@ -266,17 +266,6 @@ namespace ActivelyApp.Controllers.Authentication
             }
         }
 
-        private async Task<string> UploadFile(byte[] bytes, string fileName)
-        {
-            string uploadsFolder = Path.Combine("", fileName); // need change here to store avatar in blob
-            Stream stream = new MemoryStream(bytes);
-            using (var ms = new FileStream(uploadsFolder, FileMode.Create))
-            {
-                await stream.CopyToAsync(ms);
-            }
-            return uploadsFolder;
-        }
-
         private async Task<User> CreateUser(RegisterUser registerUser)
         {
             var user = new User()
@@ -289,15 +278,6 @@ namespace ActivelyApp.Controllers.Authentication
                 Gender = registerUser.Gender,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
-
-            if (!string.IsNullOrWhiteSpace(registerUser.UserAvatar))
-            {
-                byte[] imgBytes = Convert.FromBase64String(registerUser.UserAvatar);
-                string fileName = $"{Guid.NewGuid()}_{registerUser.FirstName.Trim()}_{registerUser.LastName.Trim()}.jpeg";
-                string avatar = await UploadFile(imgBytes, fileName);
-                user.UserAvatar = avatar;
-            }
-
             return user;
         }
 

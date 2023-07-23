@@ -135,6 +135,9 @@
   <data name="ActivelyPasswordRecoveryLink" xml:space="preserve">
     <value>To reset your password click here: </value>
   </data>
+  <data name="AvatarChanged" xml:space="preserve">
+    <value>Avatar has been set successfully!</value>
+  </data>
   <data name="EmailVerificationSentSucces" xml:space="preserve">
     <value>Verification email sent successfully!</value>
   </data>
