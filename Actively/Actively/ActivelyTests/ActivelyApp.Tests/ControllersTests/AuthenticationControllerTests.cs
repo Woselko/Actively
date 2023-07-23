@@ -1,14 +1,8 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-//using Microsoft.SqlServer.Management.Smo;
-using Newtonsoft.Json.Linq;
-using System.Text;
 using Xunit;
 using ActivelyApp.Controllers.Authentication;
 using ActivelyApp.Services.UserServices.EmailService;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Identity;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
