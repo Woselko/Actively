@@ -1,5 +1,5 @@
 ﻿using ActivelyApp.CustomExceptions;
-using ActivelyApp.Models.Entity;
+using ActivelyApp.Models.EntityDto;
 using ActivelyDomain.Entities;
 using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
 using AutoMapper;

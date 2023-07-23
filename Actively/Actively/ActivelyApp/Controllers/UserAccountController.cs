@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ActivelyApp.Services.UserServices.EmailService;
 using Resources;
-using ActivelyApp.Models.Common;
+using ActivelyApp.Models.CommonDto;
 
 namespace ActivelyApp.Controllers
 {

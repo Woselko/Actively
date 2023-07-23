@@ -1,4 +1,5 @@
 ﻿using ActivelyDomain.Entities;
+using System;
 
 namespace ActivelyInfrastructure
 {
@@ -30,7 +31,7 @@ namespace ActivelyInfrastructure
             {
                new Game()
                {
-                GameDate = DateTime.Now,
+                 GameTime = DateTime.Now,
                  Sport = SportType.Football,
                  Players = new List<Player>()
                  {
@@ -57,7 +58,7 @@ namespace ActivelyInfrastructure
 
                new Game()
                {
-                 GameDate = DateTime.Now,
+                 GameTime = DateTime.Now,
                  Sport = SportType.Football,
                  Players = new List<Player>()
                  {

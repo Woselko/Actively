@@ -1,4 +1,4 @@
-﻿using ActivelyApp.Models.Entity;
+﻿using ActivelyApp.Models.EntityDto;
 using ActivelyDomain.Entities;
 
 namespace ActivelyApp.Services.EntityService

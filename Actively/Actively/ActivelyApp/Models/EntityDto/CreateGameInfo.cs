@@ -1,7 +1,7 @@
 ﻿using ActivelyDomain.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ActivelyApp.Models.Entity
+namespace ActivelyApp.Models.EntityDto
 {
     public class CreateGameInfo
     {

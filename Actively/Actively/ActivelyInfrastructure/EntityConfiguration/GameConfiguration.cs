@@ -8,9 +8,6 @@ namespace ActivelyInfrastructure.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<Game> builder)
         {
-            builder.Property(x => x.GameDate)
-                .HasColumnType("date");
-
             builder.Property(x => x.CreationDate)
                 .HasColumnType("date");
 

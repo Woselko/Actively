@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ActivelyApp.Models.AuthenticationDto.Email;
+using ActivelyApp.Models.AuthenticationDto.Login;
+using ActivelyApp.Models.AuthenticationDto.PasswordReset;
+using ActivelyApp.Models.AuthenticationDto.Registration;
+using ActivelyApp.Models.CommonDto;
+using ActivelyApp.Services.UserServices.EmailService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using ActivelyApp.Models.Authentication.Email;
-using ActivelyApp.Models.Authentication.Login;
-using ActivelyApp.Models.Authentication.PasswordReset;
-using ActivelyApp.Models.Authentication.Registration;
-using ActivelyApp.Services.UserServices.EmailService;
 using Resources;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ActivelyApp.Models.Common;
 
 namespace ActivelyApp.Controllers.Authentication
 {

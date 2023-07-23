@@ -1,5 +1,5 @@
 ﻿using ActivelyApp.CustomExceptions;
-using ActivelyApp.Models.Entity;
+using ActivelyApp.Models.EntityDto;
 using ActivelyDomain.Entities;
 using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
 using AutoMapper;
@@ -48,7 +48,6 @@ namespace ActivelyApp.Services.EntityService
             }
             else
             {
-                gameToUpdate.GameDate = game.GameDate;
                 gameToUpdate.GameTime = game.GameTime;
                 await _gameRepository.Update(gameToUpdate);
             }
@@ -60,7 +59,6 @@ namespace ActivelyApp.Services.EntityService
             Game game = _mapper.Map<Game>(newGame);
             await _gameRepository.Create(game);
             await _gameRepository.Save();
-
         }
     }
 }

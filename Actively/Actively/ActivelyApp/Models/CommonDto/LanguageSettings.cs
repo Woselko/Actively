@@ -1,4 +1,4 @@
-﻿namespace ActivelyApp.Models.Common
+﻿namespace ActivelyApp.Models.CommonDto
 {
     public class LanguageSettings
     {

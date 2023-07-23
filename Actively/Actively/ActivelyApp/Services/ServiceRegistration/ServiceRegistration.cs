@@ -5,17 +5,17 @@ using ActivelyInfrastructure;
 using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using ActivelyApp.Models.Authentication.Email;
 using ActivelyApp.Services.UserServices.EmailService;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
-using ActivelyApp.Models.Common;
 using ActivelyApp.Mappings;
 using System.Text.Json.Serialization;
 using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
 using ActivelyApp.Services.EntityService;
 using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
+using ActivelyApp.Models.AuthenticationDto.Email;
+using ActivelyApp.Models.CommonDto;
 
 namespace ActivelyApp.Services.ServiceRegistration
 {
@@ -33,8 +33,9 @@ namespace ActivelyApp.Services.ServiceRegistration
             services.AddScoped<IPlayerService, PlayerService>();
             services.AddScoped<IGameService, GameService>();
             //mappers
-            services.AddAutoMapper(typeof(PlayerMappingProfile));
-            services.AddAutoMapper(typeof(GameMappingProfile));
+            ////services.AddAutoMapper(typeof(PlayerMappingProfile));
+            ////services.AddAutoMapper(typeof(GameMappingProfile));
+            services.AddAutoMapper(typeof(Program));
             //Authentication
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ActivelyDbContext>()

@@ -1,4 +1,5 @@
-﻿using ActivelyApp.Models.Entity;
+﻿using ActivelyApp.CustomExceptions;
+using ActivelyApp.Models.EntityDto;
 using ActivelyApp.Services.EntityService;
 using ActivelyDomain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -17,38 +18,114 @@ namespace ActivelyApp.Controllers
         {
             _playerService = playerService;
         }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Player>>> GetAll()
         {
-            var players = await _playerService.GetAll();
+            IEnumerable<Player> players = new List<Player>();
+
+            try
+            {
+                players = await _playerService.GetAll();
+                if (players == null)
+                {
+                    return NotFound();
+                }
+            }
+            catch (NotFoundEntityException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
             return Ok(players);
         }
+
         [HttpGet]
         public async Task<ActionResult> GetById(int id)
         {
-            var player = await _playerService.GetById(id);
+            Player player;
+            try
+            {
+                player = await _playerService.GetById(id);
+                if (player == null)
+                {
+                    return NotFound();
+                }
+            }
+            catch (NotFoundEntityException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
             return Ok(player);
         }
+
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreatePlayerInfo newPlayer)
-        {
+        {          
+            if (newPlayer == null)
+            {
+                return BadRequest("Something went wrong");
+            }
+            try
+            {
+                await _playerService.Create(newPlayer);
+            }
+            catch (NotFoundEntityException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
 
-            await _playerService.Create(newPlayer);
-            return Ok();
+            return StatusCode(201);
         }
 
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] UpdatePlayerInfo updatePlayerInfo, int id)
-        {
-            await _playerService.Update(updatePlayerInfo, id);
-            return Ok();
+        {        
+            try
+            {
+                await _playerService.Update(updatePlayerInfo, id);
+            }
+            catch (NotFoundEntityException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok("Successfully Updated");
         }
 
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
-        {
-            await _playerService.Delete(id);
-            return Ok();
+        {            
+            try
+            {
+                await _playerService.Delete(id);
+            }
+            catch (NotFoundEntityException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok("Successfully Deleted");
         }
     }
 }

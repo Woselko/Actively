@@ -1,4 +1,4 @@
-﻿namespace ActivelyApp.Models.Entity
+﻿namespace ActivelyApp.Models.EntityDto
 {
     public class CreatePlayerInfo
     {
