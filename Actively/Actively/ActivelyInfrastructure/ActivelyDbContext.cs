@@ -6,7 +6,7 @@ using ActivelyInfrastructure.EntityConfiguration;
 
 namespace ActivelyInfrastructure
 {
-    public class ActivelyDbContext : IdentityDbContext<IdentityUser>
+    public class ActivelyDbContext : IdentityDbContext<User>
     {
         public DbSet<Game>? Game { get; set; }
         public DbSet<Player>? Player { get; set; }
@@ -30,7 +30,7 @@ namespace ActivelyInfrastructure
 
         //add-migration IdentityInit
         //update-database
-        //string _connectionString = "Server=WOSELKO;Integrated Security = true; Initial Catalog=ActivelyDb;Trusted_Connection=True;TrustServerCertificate=True";
+        //string _connectionString = "Server=WOSELKO;IntegratedSecurity=true;Initial Catalog=ActivelyDb;Trusted_Connection=True;TrustServerCertificate=True";
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
         //    optionsBuilder.UseSqlServer(_connectionString);

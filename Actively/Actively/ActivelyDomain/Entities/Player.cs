@@ -7,6 +7,5 @@
         public string? LastName { get; set; }
         public string? NickName { get; set; }
         public virtual IEnumerable<Game>? Games { get; set; }
-       
     }
 }

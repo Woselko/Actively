@@ -2,15 +2,8 @@
 {
     public class Response
     {
-        public string? Status { get; set; }
+        public bool IsSuccess { get; set; }
         public string? Message { get; set; }
-        public ResponseType? Type { get; set; }
-    }
-
-    public enum ResponseType
-    {
-        Normal = 0,
-        Error = 1,
-        Succes = 2,
+        public object? Content { get; set; }
     }
 }

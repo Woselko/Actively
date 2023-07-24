@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ActivelyApp.Models.Authentication.PasswordReset
+namespace ActivelyApp.Models.Authentication.Password
 {
     public class PasswordReset
     {

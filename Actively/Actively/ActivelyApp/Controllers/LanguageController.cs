@@ -24,24 +24,22 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpPost]
-        [Route("changelanguageapi")]
         public IActionResult ChangeLanguageApi(string culture)
         {
             if (culture == null || !_supportedLanguages.Contains(culture))
             {
                 return StatusCode(StatusCodes.Status404NotFound,
-                    new Response { Status = Common.Error, Message = Common.SomethingWentWrong, Type = ResponseType.Error });
+                    new Response { IsSuccess = false, Message = Common.SomethingWentWrong,  });
             }
             Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName,
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
                 new CookieOptions { Expires = DateTimeOffset.UtcNow.AddMonths(6) });
 
             return StatusCode(StatusCodes.Status200OK,
-                    new Response { Status = Common.Success, Message = Common.Success, Type = ResponseType.Succes });
+                    new Response { IsSuccess = true, Message = Common.Success,  });
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Route("changelanguage")]
         public IActionResult ChangeLanguage(string culture)
         {
             if (culture == null || !_supportedLanguages.Contains(culture))

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using ActivelyApp.Models.Authentication.Email;
 using ActivelyApp.Models.Authentication.Login;
-using ActivelyApp.Models.Authentication.PasswordReset;
+using ActivelyApp.Models.Authentication.Password;
 using ActivelyApp.Models.Authentication.Registration;
 using ActivelyApp.Services.UserServices.EmailService;
 using Resources;
@@ -13,6 +13,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ActivelyApp.Models.Common;
+using ActivelyDomain.Entities;
+using System.Security.Cryptography;
+using ActivelyApp.Models.Authentication.Authentication;
 
 namespace ActivelyApp.Controllers.Authentication
 {
@@ -20,15 +23,15 @@ namespace ActivelyApp.Controllers.Authentication
     [Route("[controller]/[action]")]
     public class AuthenticationController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
 
-        public AuthenticationController(UserManager<IdentityUser> userManager,
+        public AuthenticationController(UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager, IEmailService emailService,
-            SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+            SignInManager<User> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -38,27 +41,21 @@ namespace ActivelyApp.Controllers.Authentication
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterUser registerUser, string role = "User")
+        public async Task<IActionResult> Register([FromBody] RegisterUser registerUser)
         {
             var userExist = await _userManager.FindByEmailAsync(registerUser.Email);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status403Forbidden, new Response { Status = Common.Error, Message = Common.UserExist, Type = ResponseType.Error });
+                return StatusCode(StatusCodes.Status403Forbidden, new Response { IsSuccess = false, Message = Common.UserExist,  });
             }
-
-            var user = new IdentityUser()
-            {
-                Email = registerUser.Email,
-                UserName = registerUser.Username,
-                SecurityStamp = Guid.NewGuid().ToString(),
-            };
+            var role = "User";
 
             if (!await _roleManager.RoleExistsAsync(role))
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new Response { Status = Common.Error, Message = Common.SomethingWentWrong, Type = ResponseType.Error });
+                    new Response { IsSuccess = false, Message = Common.SomethingWentWrong,  });
             }
-
+            var user = await CreateUser(registerUser);
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
             if (!result.Succeeded)
@@ -66,10 +63,10 @@ namespace ActivelyApp.Controllers.Authentication
                 if (result.Errors.Any(x => x.Code == "InvalidUserName"))
                 {
                     return StatusCode(StatusCodes.Status400BadRequest,
-                        new Response { Status = Common.Error, Message = Common.InvalidUserName, Type = ResponseType.Error });
+                        new Response { IsSuccess = false, Message = Common.InvalidUserName,  });
                 }
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new Response { Status = Common.Error, Message = Common.SomethingWentWrong, Type = ResponseType.Error });
+                    new Response { IsSuccess = false, Message = Common.SomethingWentWrong,  });
             }
 
             await _userManager.AddToRoleAsync(user, role);
@@ -80,10 +77,10 @@ namespace ActivelyApp.Controllers.Authentication
             await _emailService.SendEmail(message);
 
             return StatusCode(StatusCodes.Status201Created,
-                    new Response { Status = Common.Success, Message = Common.AccountCreated + " " + Common.EmailVerificationSentSucces, Type = ResponseType.Succes });
+                    new Response { IsSuccess = true, Message = Common.AccountCreated + " " + Common.EmailVerificationSentSucces,  });
         }
 
-        [HttpGet("ConfirmEmail")]
+        [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -92,16 +89,15 @@ namespace ActivelyApp.Controllers.Authentication
                 var result = await _userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
-                    return StatusCode(StatusCodes.Status200OK, new Response { Status = Common.Success, Message = Common.AccountActivated, Type = ResponseType.Succes });
+                    return StatusCode(StatusCodes.Status200OK, new Response { IsSuccess = true, Message = Common.AccountActivated,  });
                 }
             }
             return StatusCode(StatusCodes.Status500InternalServerError,
-                   new Response { Status = Common.Error, Message = Common.UserDoesNotExist, Type = ResponseType.Error });
+                   new Response { IsSuccess = false, Message = Common.UserDoesNotExist,  });
 
         }
 
         [HttpPost]
-        [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
         {
             var user = await _userManager.FindByNameAsync(loginModel.UserName);
@@ -115,24 +111,32 @@ namespace ActivelyApp.Controllers.Authentication
                 await _emailService.SendEmail(message);
 
                 return StatusCode(StatusCodes.Status200OK,
-                 new Response { Status = "Success", Message = $"We have sent an OTP to your Email {user.Email}", Type = ResponseType.Succes });
+                 new Response { IsSuccess = true, Message = $"We have sent an OTP to your Email {user.Email}"});
             }
             if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password) && await _userManager.IsEmailConfirmedAsync(user))
             {
-                var jwtToken = await BuildJWTToken(user);
+                string accessToken = await GenerateAccessToken(user);
+                var refreshToken = GenerateRefreshToken();
+                user.RefreshToken = refreshToken;
+                await _userManager.UpdateAsync(user);
 
-                return Ok(new
+                var response = new Response
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                    expiration = jwtToken.ValidTo
-                });
+                    Content = new AuthenticationResponse
+                    {
+                        RefreshToken = refreshToken,
+                        AccessToken = accessToken
+                    },
+                    IsSuccess = true,
+                    Message = Common.Success
+                };
+                return Ok(response);
 
             }
-            return Unauthorized(new Response { Status = Common.Error, Message = Common.LoginFailed, Type = ResponseType.Error });
+            return Unauthorized(new Response { IsSuccess = false, Message = Common.LoginFailed,  });
         }
 
         [HttpPost]
-        [Route("login-2FA")]
         public async Task<IActionResult> LoginWithOTP(string code, string username)
         {
             var user = await _userManager.FindByNameAsync(username);
@@ -141,17 +145,26 @@ namespace ActivelyApp.Controllers.Authentication
             {
                 if (user != null)
                 {
-                    var jwtToken = await BuildJWTToken(user);
+                    string accessToken = await GenerateAccessToken(user);
+                    var refreshToken = GenerateRefreshToken();
+                    user.RefreshToken = refreshToken;
+                    await _userManager.UpdateAsync(user);
 
-                    return Ok(new
+                    var response = new Response
                     {
-                        token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                        expiration = jwtToken.ValidTo
-                    });
+                        Content = new AuthenticationResponse
+                        {
+                            RefreshToken = refreshToken,
+                            AccessToken = accessToken
+                        },
+                        IsSuccess = true,
+                        Message = Common.Success
+                    };
+                    return Ok(response);
                 }
             }
             return StatusCode(StatusCodes.Status404NotFound,
-                new Response { Status = Common.Error, Message = Common.InvalidCode, Type = ResponseType.Error });
+                new Response { IsSuccess = false, Message = Common.InvalidCode + " " + Common.LoginFailed});
         }
 
         [HttpPost]
@@ -168,14 +181,14 @@ namespace ActivelyApp.Controllers.Authentication
                 await _emailService.SendEmail(message);
 
                 return StatusCode(StatusCodes.Status201Created,
-                        new Response { Status = Common.Success, Message = Common.PasswordResetRequest + user.Email, Type = ResponseType.Succes });
+                        new Response { IsSuccess = true, Message = Common.PasswordResetRequest + user.Email,  });
             }
             else
                 return StatusCode(StatusCodes.Status400BadRequest,
-                    new Response { Status = Common.Error, Message = Common.UserDoesNotExist, Type = ResponseType.Error });
+                    new Response { IsSuccess = false, Message = Common.UserDoesNotExist,  });
         }
 
-        [HttpGet("reset-password")]
+        [HttpGet]
         public async Task<IActionResult> ResetPassword(string token, string email)
         {
             var passwordResetModel = new PasswordReset { Token = token, Email = email };
@@ -187,7 +200,6 @@ namespace ActivelyApp.Controllers.Authentication
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("reset-password")]
         public async Task<IActionResult> ResetPassword(PasswordReset passwordReset)
         {
             var user = await _userManager.FindByEmailAsync(passwordReset.Email);
@@ -203,29 +215,11 @@ namespace ActivelyApp.Controllers.Authentication
                     return BadRequest(ModelState);
                 }
                 return StatusCode(StatusCodes.Status200OK,
-                        new Response { Status = Common.Success, Message = Common.PasswordChangedSuccessfully, Type = ResponseType.Succes });
+                        new Response { IsSuccess = true, Message = Common.PasswordChangedSuccessfully,  });
             }
             else
                 return StatusCode(StatusCodes.Status400BadRequest,
-                    new Response { Status = Common.Error, Message = Common.UserDoesNotExist, Type = ResponseType.Error });
-        }
-
-        private async Task<JwtSecurityToken> BuildJWTToken(IdentityUser user)
-        {
-            var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
-            var userRoles = await _userManager.GetRolesAsync(user);
-            foreach (var role in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            var jwtToken = GetToken(authClaims);
-            return jwtToken;
+                    new Response { IsSuccess = false, Message = Common.UserDoesNotExist,  });
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
@@ -238,6 +232,123 @@ namespace ActivelyApp.Controllers.Authentication
                 expires: DateTime.Now.AddDays(2),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
+        }
+
+        private async Task<string> GenerateAccessToken(User user)
+        {
+            var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Surname, $"{user.FirstName} { user.LastName}"),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim("UserAvatar", $"{user.UserAvatar}"),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var role in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var jwtToken = GetToken(authClaims);
+            return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+        }
+
+        private string GenerateRefreshToken()
+        {
+
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+
+        private async Task<User> CreateUser(RegisterUser registerUser)
+        {
+            var user = new User()
+            {
+                Email = registerUser.Email,
+                UserName = registerUser.Username,
+                FirstName = registerUser.FirstName,
+                LastName = registerUser.LastName,
+                Address = registerUser.Address,
+                Gender = registerUser.Gender,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+            return user;
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshTokenRequest)
+        {
+            var response = new Response();
+            if (refreshTokenRequest is null)
+            {
+                response.IsSuccess = false;
+                response.Message = "Invalid  request";
+                return BadRequest(response);
+            }
+
+            var principal = GetPrincipalFromExpiredToken(refreshTokenRequest.AccessToken);
+
+            if (principal != null)
+            {
+                var email = principal.Claims.FirstOrDefault(f => f.Type == ClaimTypes.Email);
+
+                var user = await _userManager.FindByEmailAsync(email?.Value);
+
+                if (user is null || user.RefreshToken != refreshTokenRequest.RefreshToken)
+                {
+                    response.Message = "Invalid Request";
+                    return BadRequest(response);
+                }
+
+                string newAccessToken = await GenerateAccessToken(user);
+                string refreshToken = GenerateRefreshToken();
+
+                user.RefreshToken = refreshToken;
+                await _userManager.UpdateAsync(user);
+
+                response.IsSuccess = true;
+                response.Content = new AuthenticationResponse
+                {
+                    RefreshToken = refreshToken,
+                    AccessToken = newAccessToken
+                };
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
+
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var keyDetail = Encoding.UTF8.GetBytes(_configuration["JWT:Key"]);
+            var tokenValidationParameter = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _configuration["JWT:Issuer"],
+                ValidAudience = _configuration["JWT:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(keyDetail),
+            };
+
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameter, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+            return principal;
         }
     }
 }
