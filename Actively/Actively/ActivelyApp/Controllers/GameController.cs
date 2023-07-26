@@ -4,6 +4,7 @@ using ActivelyApp.Services.EntityService;
 using ActivelyDomain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Resources;
 
 namespace ActivelyApp.Controllers
 {
@@ -19,9 +20,9 @@ namespace ActivelyApp.Controllers
             _gameService = gameService;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Game>>> GetAll()
+        public async Task<ActionResult<IEnumerable<GameDto>>> GetAll()
         {
-            IEnumerable<Game> games = new List<Game>();
+            IEnumerable<GameDto> games = new List<GameDto>();
 
             try
             {
@@ -47,7 +48,7 @@ namespace ActivelyApp.Controllers
         [HttpGet]
         public async Task<ActionResult> GetById(int id)
         {
-            Game game;
+            GameDto game;
             try
             {
                 game = await _gameService.GetById(id);
@@ -74,7 +75,7 @@ namespace ActivelyApp.Controllers
         {
             if (newGame == null)
             {
-                return BadRequest("Something went wrong");
+                return BadRequest(Common.SomethingWentWrong);
             }
             try
             {
@@ -95,6 +96,8 @@ namespace ActivelyApp.Controllers
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] UpdateGameInfo updateGameInfo, int id)
         {
+            if (updateGameInfo == null)
+                return BadRequest(Common.SomethingWentWrong);
             try
             {
                 await _gameService.Update(updateGameInfo, id);               
@@ -107,7 +110,7 @@ namespace ActivelyApp.Controllers
             {
                 return BadRequest(e.Message);
             }
-            return Ok("Successfully Updated");
+            return Ok(Common.SuccessfullyUpdated);
         }
 
         [HttpDelete]
@@ -126,7 +129,7 @@ namespace ActivelyApp.Controllers
                 return BadRequest(e.Message);
             }
 
-            return Ok("Successfully Deleted");
+            return Ok(Common.SuccessfullyDeleted);
         }
 
     }

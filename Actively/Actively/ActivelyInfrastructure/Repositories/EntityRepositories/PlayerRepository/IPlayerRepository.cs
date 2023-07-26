@@ -4,10 +4,10 @@ namespace ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepositor
 {
     public interface IPlayerRepository : IAsyncDisposable
     {
-        Task Add(Player entity);
+        Task Create(Player entity);
         Task<IEnumerable<Player>> GetAll();
         Task<Player> GetById(int id);
-        Task Remove(Player entity);
+        Task Delete(Player entity);
         Task Save();
         Task Update(Player entity);
     }

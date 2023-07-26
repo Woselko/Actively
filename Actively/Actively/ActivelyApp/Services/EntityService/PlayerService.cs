@@ -3,6 +3,7 @@ using ActivelyApp.Models.EntityDto;
 using ActivelyDomain.Entities;
 using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
 using AutoMapper;
+using Resources;
 
 namespace ActivelyApp.Services.EntityService
 {
@@ -16,15 +17,19 @@ namespace ActivelyApp.Services.EntityService
             _playerRepository = playerRepository;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<Player>> GetAll()
-        {
-            return await _playerRepository.GetAll();
+        public async Task<IEnumerable<PlayerDto>> GetAll()
+        {        
+            var players = await _playerRepository.GetAll() ?? new List<Player>();
+            var playersDto = _mapper.Map<IEnumerable<PlayerDto>>(players);
+            return playersDto;
         }
 
-        public async Task<Player> GetById(int id)
+        public async Task<PlayerDto> GetById(int id)
         {
-            return await _playerRepository.GetById(id) ??
-                throw new NotFoundEntityException("Player does not exist");
+            var player = await _playerRepository.GetById(id) ??
+                throw new NotFoundEntityException(Common.PlayerNotExistsError);
+            var playerDto = _mapper.Map<PlayerDto>(player);
+            return playerDto;
         }
 
         public async Task Delete(int id)
@@ -32,12 +37,12 @@ namespace ActivelyApp.Services.EntityService
             var playerToDelete = await _playerRepository.GetById(id);
             if (playerToDelete != null)
             {
-                await _playerRepository.Remove(playerToDelete);
+                await _playerRepository.Delete(playerToDelete);
                 await _playerRepository.Save();
             }
 
             else
-                throw new NotFoundEntityException("Player does not exist");
+                throw new NotFoundEntityException(Common.PlayerNotExistsError);
 
         }
 
@@ -50,7 +55,7 @@ namespace ActivelyApp.Services.EntityService
                 playerToUpdate.NickName = updatePlayerInfo.NickName;
             }
             else
-                throw new NotFoundEntityException("Player does not exist");
+                throw new NotFoundEntityException(Common.PlayerNotExistsError);
 
             await _playerRepository.Update(playerToUpdate);
             await _playerRepository.Save();
@@ -59,7 +64,7 @@ namespace ActivelyApp.Services.EntityService
         public async Task Create(CreatePlayerInfo newPlayerInfo)
         {
             var newPlayer = _mapper.Map<Player>(newPlayerInfo);
-            await _playerRepository.Add(newPlayer);
+            await _playerRepository.Create(newPlayer);
             await _playerRepository.Save();
 
         }

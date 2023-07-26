@@ -3,6 +3,7 @@ using ActivelyApp.Models.EntityDto;
 using ActivelyDomain.Entities;
 using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
 using AutoMapper;
+using Resources;
 
 namespace ActivelyApp.Services.EntityService
 {
@@ -17,15 +18,20 @@ namespace ActivelyApp.Services.EntityService
             _gameRepository = gameRepository;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<Game>> GetAll()
+        public async Task<IEnumerable<GameDto>> GetAll()
         {
-            return await _gameRepository.GetAll();
+            var games = await _gameRepository.GetAll() ?? new List<Game>();
+            var gamesDto = _mapper.Map<IEnumerable<GameDto>>(games);
+            return gamesDto;
+            
         }
 
-        public async Task<Game> GetById(int id)
+        public async Task<GameDto> GetById(int id)
         {
-            return await _gameRepository.GetById(id) ??
-                throw new NotFoundEntityException("Game does not exist");
+            var game = await _gameRepository.GetById(id) ??
+                throw new NotFoundEntityException(Common.GameNotExistsError);
+            var gameDto = _mapper.Map<GameDto>(game);
+            return gameDto;
         }
 
         public async Task Delete(int id)
@@ -33,7 +39,7 @@ namespace ActivelyApp.Services.EntityService
             var gameToDelete = await _gameRepository.GetById(id);
             if (gameToDelete == null)
             {
-                throw new NotFoundEntityException("Game does not exist");
+                throw new NotFoundEntityException(Common.GameNotExistsError);
             }      
             await _gameRepository.Delete(id);
             await _gameRepository.Save();
@@ -44,7 +50,7 @@ namespace ActivelyApp.Services.EntityService
             var gameToUpdate = await _gameRepository.GetById(id);
             if (gameToUpdate == null)
             {
-                throw new NotFoundEntityException("Game does not exist");
+                throw new NotFoundEntityException(Common.GameNotExistsError);
             }
             else
             {
@@ -52,6 +58,7 @@ namespace ActivelyApp.Services.EntityService
                 await _gameRepository.Update(gameToUpdate);
             }
             await _gameRepository.Save();
+
         }
 
         public async Task Create(CreateGameInfo newGame)
@@ -59,6 +66,7 @@ namespace ActivelyApp.Services.EntityService
             Game game = _mapper.Map<Game>(newGame);
             await _gameRepository.Create(game);
             await _gameRepository.Save();
+
         }
     }
 }

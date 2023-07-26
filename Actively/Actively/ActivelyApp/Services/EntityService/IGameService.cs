@@ -7,8 +7,8 @@ namespace ActivelyApp.Services.EntityService
     {
         Task Create(CreateGameInfo game);
         Task Delete(int id);
-        Task<IEnumerable<Game>> GetAll();
-        Task<Game> GetById(int id);
+        Task<IEnumerable<GameDto>> GetAll();
+        Task<GameDto> GetById(int id);
         Task Update(UpdateGameInfo game, int id);
     }
 }

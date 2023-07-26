@@ -1,9 +1,9 @@
 ﻿using ActivelyApp.CustomExceptions;
 using ActivelyApp.Models.EntityDto;
 using ActivelyApp.Services.EntityService;
-using ActivelyDomain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Resources;
 
 namespace ActivelyApp.Controllers
 {
@@ -20,16 +20,16 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Player>>> GetAll()
+        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetAll()
         {
-            IEnumerable<Player> players = new List<Player>();
+            IEnumerable<PlayerDto> players = new List<PlayerDto>();
 
             try
             {
                 players = await _playerService.GetAll();
                 if (players == null)
                 {
-                    return NotFound();
+                    return BadRequest(Common.SomethingWentWrong);
                 }
             }
             catch (NotFoundEntityException e)
@@ -45,9 +45,9 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetById(int id)
+        public async Task<ActionResult<PlayerDto>> GetById(int id)
         {
-            Player player;
+            PlayerDto player;
             try
             {
                 player = await _playerService.GetById(id);
@@ -73,7 +73,7 @@ namespace ActivelyApp.Controllers
         {          
             if (newPlayer == null)
             {
-                return BadRequest("Something went wrong");
+                return BadRequest(Common.SomethingWentWrong);
             }
             try
             {
@@ -94,19 +94,21 @@ namespace ActivelyApp.Controllers
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] UpdatePlayerInfo updatePlayerInfo, int id)
         {        
+            if (updatePlayerInfo == null)
+                return BadRequest(Common.SomethingWentWrong);
             try
             {
                 await _playerService.Update(updatePlayerInfo, id);
             }
-            catch (NotFoundEntityException e)
+            catch (NotFoundEntityException)
             {
-                return NotFound(e.Message);
+                return NotFound(Common.PlayerNotExistsError);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e.Message);
+                return BadRequest(Common.SomethingWentWrong);
             }
-            return Ok("Successfully Updated");
+            return Ok(Common.SuccessfullyUpdated);
         }
 
         [HttpDelete]
@@ -125,7 +127,7 @@ namespace ActivelyApp.Controllers
                 return BadRequest(e.Message);
             }
 
-            return Ok("Successfully Deleted");
+            return Ok(Common.SuccessfullyDeleted);
         }
     }
 }

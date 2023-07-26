@@ -141,6 +141,9 @@
   <data name="Error" xml:space="preserve">
     <value>Błąd!</value>
   </data>
+  <data name="GameNotExistsError" xml:space="preserve">
+    <value>Gra nie istnieje</value>
+  </data>
   <data name="InvalidCode" xml:space="preserve">
     <value>Nieprawidłowy kod</value>
   </data>
@@ -162,6 +165,9 @@
   <data name="PasswordResetRequest" xml:space="preserve">
     <value>Na podany adres email został wysłany link z możliwością zmiany hasła, otwórz go i postępuj z instrukcjami: </value>
   </data>
+  <data name="PlayerNotExistsError" xml:space="preserve">
+    <value>Gracz nie istnieje</value>
+  </data>
   <data name="Privacy" xml:space="preserve">
     <value>Polityka prywatności..</value>
   </data>
@@ -173,6 +179,12 @@
   </data>
   <data name="Success" xml:space="preserve">
     <value>Sukces!</value>
+  </data>
+  <data name="SuccessfullyDeleted" xml:space="preserve">
+    <value>Pomyślnie usunięto</value>
+  </data>
+  <data name="SuccessfullyUpdated" xml:space="preserve">
+    <value>Pomyślnie zaktualizowano</value>
   </data>
   <data name="UserDoesNotExist" xml:space="preserve">
     <value>Taki użytkownik nie istnieje!</value>

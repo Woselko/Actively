@@ -1,19 +1,13 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.SqlServer.Management.Smo;
-using Newtonsoft.Json.Linq;
-using System.Text;
-using Xunit;
 using ActivelyApp.Controllers.Authentication;
+using ActivelyApp.Models.AuthenticationDto.Login;
+using ActivelyApp.Models.AuthenticationDto.Registration;
 using ActivelyApp.Services.UserServices.EmailService;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Identity;
-using Moq;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using ActivelyApp.Models.Authentication.Registration;
-using ActivelyApp.Models.Authentication.Login;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Moq;
+using Xunit;
 
 namespace ActivelyApp.Tests.ControllersTests
 {

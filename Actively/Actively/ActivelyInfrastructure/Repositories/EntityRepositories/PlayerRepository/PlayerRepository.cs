@@ -17,7 +17,7 @@ namespace ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepositor
             _context = context;
         }
 
-        public async Task Add(Player entity)
+        public async Task Create(Player entity)
         {
             await _context.AddAsync(entity);
         }
@@ -37,7 +37,7 @@ namespace ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepositor
                  .Include(x => x.Games)
                  .FirstOrDefaultAsync(x => x.Id == id);
         }
-        public async Task Remove(Player entity)
+        public async Task Delete(Player entity)
         {
             _context.Remove(entity);
         }

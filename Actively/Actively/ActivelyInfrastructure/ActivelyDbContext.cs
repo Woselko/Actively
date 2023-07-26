@@ -13,8 +13,9 @@ namespace ActivelyInfrastructure
 
         public ActivelyDbContext() { }
         //public ActivelyDbContext(DbContextOptions<ActivelyDbContext> options) : base(options){}
-        public ActivelyDbContext(DbContextOptions options): base(options)
+        public ActivelyDbContext(DbContextOptions<ActivelyDbContext> options): base(options)
         {
+
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

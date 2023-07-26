@@ -3,7 +3,7 @@
 namespace ActivelyApp.CustomExceptions
 {
     [Serializable]
-    internal class NotFoundEntityException : Exception
+    public class NotFoundEntityException : Exception
     {
         public NotFoundEntityException()
         {
