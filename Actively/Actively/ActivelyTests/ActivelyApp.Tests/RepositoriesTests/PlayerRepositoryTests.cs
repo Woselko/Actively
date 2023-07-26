@@ -101,7 +101,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
 
 
         [Fact]
-        public async Task Update_ShouldUpdateCourseInDatabase()
+        public async Task Update_ShouldUpdatePlayerInDatabase()
         {
             // Arrange
             await _dbContext.AddAsync(_player);
