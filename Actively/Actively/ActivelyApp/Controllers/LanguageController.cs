@@ -23,10 +23,21 @@ namespace ActivelyApp.Controllers
             _supportedLanguages = languageSettings.Value.SupportedLanguages;
         }
 
-        [HttpPost]
-        public IActionResult ChangeLanguageApi(string culture)
+        [HttpGet]
+        public IActionResult GetSupportedCultures()
         {
-            if (culture == null || !_supportedLanguages.Contains(culture))
+            if(_supportedLanguages == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound,
+                        new Response { IsSuccess = false, Message = Common.SomethingWentWrong, });
+            }
+            return StatusCode(StatusCodes.Status200OK, _supportedLanguages);
+        }
+
+        [HttpPost]
+        public IActionResult ChangeLanguageApi([FromBody]string culture)
+        {
+			if (culture == null || !_supportedLanguages.Contains(culture))
             {
                 return StatusCode(StatusCodes.Status404NotFound,
                     new Response { IsSuccess = false, Message = Common.SomethingWentWrong,  });

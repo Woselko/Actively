@@ -21,7 +21,7 @@ namespace ActivelyApp.Services.ServiceRegistration
         {
             //Database
             services.AddDbContext<ActivelyDbContext>(options => options.UseSqlServer(
-                builder.Configuration.GetConnectionString("WoselkoConnectionStringDev_ActivelyDb")));
+                builder.Configuration.GetConnectionString("WoselkoConnectionStringDev_ActivelyDb_v1")));
             services.AddScoped<ActivelyDbSeeder>();
             //Authentication
             services.AddIdentity<User, IdentityRole>()
