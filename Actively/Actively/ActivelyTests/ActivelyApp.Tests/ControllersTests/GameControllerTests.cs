@@ -219,8 +219,8 @@ namespace ActivelyApp.Tests.ControllersTests
             var result = await _controller.Create(_newGame);
 
             // Assert
-            var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Equal(Common.GameNotExistsError, notFoundObjectResult.Value);
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(Common.SomethingWentWrong, badRequestObjectResult.Value);
         }
 
         [Fact]

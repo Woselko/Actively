@@ -22,7 +22,7 @@ namespace ActivelyApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PlayerDto>>> GetAll()
         {
-            IEnumerable<PlayerDto> players = new List<PlayerDto>();
+            IEnumerable<PlayerDto> players = null;
 
             try
             {
@@ -31,10 +31,6 @@ namespace ActivelyApp.Controllers
                 {
                     return BadRequest(Common.SomethingWentWrong);
                 }
-            }
-            catch (NotFoundEntityException e)
-            {
-                return NotFound(e.Message);
             }
             catch (Exception e)
             {
@@ -47,21 +43,22 @@ namespace ActivelyApp.Controllers
         [HttpGet]
         public async Task<ActionResult<PlayerDto>> GetById(int id)
         {
-            PlayerDto player;
+            PlayerDto player = null;
             try
             {
                 player = await _playerService.GetById(id);
                 if (player == null)
                 {
-                    return NotFound();
+                    return NotFound(Common.GameNotExistsError);
                 }
             }
-            catch (NotFoundEntityException e)
+            catch (NotFoundEntityException)
             {
-                return NotFound(e.Message);
+                //log
             }
             catch (Exception e)
             {
+                //log
                 return BadRequest(e.Message);
             }
 
@@ -78,10 +75,6 @@ namespace ActivelyApp.Controllers
             try
             {
                 await _playerService.Create(newPlayer);
-            }
-            catch (NotFoundEntityException e)
-            {
-                return NotFound(e.Message);
             }
             catch (Exception e)
             {
@@ -118,9 +111,9 @@ namespace ActivelyApp.Controllers
             {
                 await _playerService.Delete(id);
             }
-            catch (NotFoundEntityException e)
+            catch (NotFoundEntityException)
             {
-                return NotFound(e.Message);
+                return NotFound(Common.PlayerNotExistsError);
             }
             catch (Exception e)
             {

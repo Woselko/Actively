@@ -3,6 +3,7 @@ using ActivelyApp.Models.EntityDto;
 using ActivelyDomain.Entities;
 using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
 using AutoMapper;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Resources;
 
 namespace ActivelyApp.Services.EntityService
@@ -20,53 +21,103 @@ namespace ActivelyApp.Services.EntityService
         }
         public async Task<IEnumerable<GameDto>> GetAll()
         {
-            var games = await _gameRepository.GetAll() ?? new List<Game>();
+            IEnumerable<Game> games = null;
+            try
+            {
+                games = await _gameRepository.GetAll() ?? new List<Game>();
+            }
+            catch (Exception)
+            {
+                //log
+            }
             var gamesDto = _mapper.Map<IEnumerable<GameDto>>(games);
-            return gamesDto;
-            
+            return gamesDto;           
         }
 
-        public async Task<GameDto> GetById(int id)
+        public async Task<GameDto?> GetById(int id)
         {
-            var game = await _gameRepository.GetById(id) ??
-                throw new NotFoundEntityException(Common.GameNotExistsError);
+            Game game = null;
+            try
+            {
+                game = await _gameRepository.GetById(id);
+            }
+            catch (Exception)
+            {
+                //log
+            }
+            if (game == null)
+                return null;
             var gameDto = _mapper.Map<GameDto>(game);
             return gameDto;
         }
 
         public async Task Delete(int id)
         {
-            var gameToDelete = await _gameRepository.GetById(id);
-            if (gameToDelete == null)
+            Game gameToDelete = null;
+            try
             {
-                throw new NotFoundEntityException(Common.GameNotExistsError);
-            }      
-            await _gameRepository.Delete(id);
-            await _gameRepository.Save();
+                gameToDelete = await _gameRepository.GetById(id);
+                if (gameToDelete == null)
+                {
+                    throw new NotFoundEntityException(Common.GameNotExistsError);
+                }
+                await _gameRepository.Delete(id);
+                await _gameRepository.Save();
+            }
+            catch (NotFoundEntityException)
+            {
+                //log
+            }
+            catch (Exception)
+            {
+                //log
+            }
+           
         }
 
         public async Task Update(UpdateGameInfo game, int id)
         {
-            var gameToUpdate = await _gameRepository.GetById(id);
-            if (gameToUpdate == null)
+            Game gameToUpdate = null;
+            try
             {
-                throw new NotFoundEntityException(Common.GameNotExistsError);
+                gameToUpdate = await _gameRepository.GetById(id);
+                if (gameToUpdate == null)
+                {
+                    throw new NotFoundEntityException(Common.GameNotExistsError);
+                }
+                else
+                {
+                    gameToUpdate.GameTime = game.GameTime;
+                    await _gameRepository.Update(gameToUpdate);
+                }
+                await _gameRepository.Save();
             }
-            else
+            catch (Exception)
             {
-                gameToUpdate.GameTime = game.GameTime;
-                await _gameRepository.Update(gameToUpdate);
+                //log
             }
-            await _gameRepository.Save();
+          
+            
 
         }
 
         public async Task Create(CreateGameInfo newGame)
         {
-            Game game = _mapper.Map<Game>(newGame);
-            await _gameRepository.Create(game);
-            await _gameRepository.Save();
+            try
+            {
+                if (newGame != null)
+                {
+                    Game game = _mapper.Map<Game>(newGame);
+                    await _gameRepository.Create(game);
+                    await _gameRepository.Save();
 
+                }
+            }
+            catch (Exception)
+            {
+                //log
+            }
+         
         }
     }
 }

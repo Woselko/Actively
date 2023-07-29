@@ -18,55 +18,108 @@ namespace ActivelyApp.Services.EntityService
             _mapper = mapper;
         }
         public async Task<IEnumerable<PlayerDto>> GetAll()
-        {        
-            var players = await _playerRepository.GetAll() ?? new List<Player>();
+        {
+            IEnumerable<Player> players = null;
+            try
+            {
+                players = await _playerRepository.GetAll() ?? new List<Player>();
+            }
+            catch (Exception)
+            {
+                //log
+            }
+
             var playersDto = _mapper.Map<IEnumerable<PlayerDto>>(players);
             return playersDto;
         }
 
         public async Task<PlayerDto> GetById(int id)
         {
-            var player = await _playerRepository.GetById(id) ??
-                throw new NotFoundEntityException(Common.PlayerNotExistsError);
+            Player player = null;
+            try
+            {
+                player = await _playerRepository.GetById(id);
+            }
+            catch (Exception)
+            {
+               // log
+            }
+
+            if (player == null)
+            {
+                return null;
+            }
             var playerDto = _mapper.Map<PlayerDto>(player);
             return playerDto;
         }
 
         public async Task Delete(int id)
         {
-            var playerToDelete = await _playerRepository.GetById(id);
-            if (playerToDelete != null)
+            Player playerToDelete = null;
+            try
             {
-                await _playerRepository.Delete(playerToDelete);
-                await _playerRepository.Save();
-            }
+                playerToDelete = await _playerRepository.GetById(id);
+                if (playerToDelete != null)
+                {
+                    await _playerRepository.Delete(playerToDelete);
+                    await _playerRepository.Save();
+                }
 
-            else
-                throw new NotFoundEntityException(Common.PlayerNotExistsError);
+                else
+                    throw new NotFoundEntityException(Common.PlayerNotExistsError);
+            }
+            catch (NotFoundEntityException)
+            {
+                //log
+
+            }
+            catch (Exception)
+            {
+                // log
+            }
+            
 
         }
 
         public async Task Update(UpdatePlayerInfo updatePlayerInfo, int id)
         {
-            var playerToUpdate = await _playerRepository.GetById(id);
-            if (playerToUpdate != null)
+            Player playerToUpdate = null;
+            try
             {
-                playerToUpdate.LastName = updatePlayerInfo.LastName;
-                playerToUpdate.NickName = updatePlayerInfo.NickName;
+                playerToUpdate = await _playerRepository.GetById(id);
+                if (playerToUpdate != null)
+                {
+                    playerToUpdate.LastName = updatePlayerInfo.LastName;
+                    playerToUpdate.NickName = updatePlayerInfo.NickName;
+                    await _playerRepository.Update(playerToUpdate);
+                    await _playerRepository.Save();
+                }
+                else
+                    throw new NotFoundEntityException(Common.PlayerNotExistsError);
             }
-            else
-                throw new NotFoundEntityException(Common.PlayerNotExistsError);
-
-            await _playerRepository.Update(playerToUpdate);
-            await _playerRepository.Save();
+            catch (NotFoundEntityException)
+            {
+                //log
+               
+            }
+            catch(Exception) 
+            {
+                //log
+            }
         }
 
         public async Task Create(CreatePlayerInfo newPlayerInfo)
         {
-            var newPlayer = _mapper.Map<Player>(newPlayerInfo);
-            await _playerRepository.Create(newPlayer);
-            await _playerRepository.Save();
-
+            try
+            {
+                var newPlayer = _mapper.Map<Player>(newPlayerInfo);
+                await _playerRepository.Create(newPlayer);
+                await _playerRepository.Save();
+            }
+            catch (Exception)
+            {
+                //log
+            }           
         }
     }
 }

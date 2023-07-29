@@ -33,9 +33,9 @@ namespace ActivelyApp.Controllers
                 }
 
             }
-            catch (NotFoundEntityException e)
+            catch (NotFoundEntityException)
             {
-                return NotFound(e.Message);
+                return NotFound(Common.GameNotExistsError);
             }
             catch (Exception e)
             {
@@ -54,13 +54,13 @@ namespace ActivelyApp.Controllers
                 game = await _gameService.GetById(id);
                 if (game == null)
                 {
-                    return NotFound();
+                    return NotFound(Common.GameNotExistsError);
                 }
 
             }
-            catch (NotFoundEntityException e)
+            catch (NotFoundEntityException)
             {
-                return NotFound(e.Message);
+                return NotFound(Common.GameNotExistsError);
             }
             catch (Exception e)
             {
@@ -81,13 +81,10 @@ namespace ActivelyApp.Controllers
             {
                 await _gameService.Create(newGame);
             }
-            catch (NotFoundEntityException e)
-            {
-                return NotFound(e.Message);
-            }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                //log
+                return BadRequest(Common.SomethingWentWrong);
             }
 
             return StatusCode(201);
@@ -102,9 +99,9 @@ namespace ActivelyApp.Controllers
             {
                 await _gameService.Update(updateGameInfo, id);               
             }
-            catch (NotFoundEntityException e)
+            catch (NotFoundEntityException)
             {
-                return NotFound(e.Message);
+                return NotFound(Common.GameNotExistsError);
             }
             catch (Exception e)
             {
@@ -120,9 +117,9 @@ namespace ActivelyApp.Controllers
             {
                 await _gameService.Delete(id);
             }
-            catch(NotFoundEntityException e)
+            catch(NotFoundEntityException)
             {
-                return NotFound(e.Message);
+                return NotFound(Common.GameNotExistsError);
             }
             catch (Exception e)
             {
