@@ -54,7 +54,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetAll_ShouldReturnOkObjectResultWithCorrectType()
+        public async Task GetAll_ValidData_ShouldReturnOkObjectResultWithCorrectType()
         {
             //Arrange
             _mockGameService.Setup(service => service.GetAll())
@@ -72,7 +72,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetAll_ShouldReturnCorrectNumberOfGames()
+        public async Task GetAll_ValidData_ShouldReturnCorrectNumberOfGames()
         {
             //Arrange
             _mockGameService.Setup(service => service.GetAll())
@@ -91,7 +91,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetById_ShouldReturnOkObjectResultWithGameById()
+        public async Task GetById_ValidId_ShouldReturnOkObjectResultWithGameById()
         {
             //Arrange
             _mockGameService.Setup(service => service.GetById(_game.Id))
@@ -110,7 +110,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetById_ShouldReturnAppropiateGame()
+        public async Task GetById_ValidId_ShouldReturnAppropiateGame()
         {
             //Arrange
             _mockGameService.Setup(service => service.GetById(_game.Id))
@@ -134,7 +134,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetById_ShouldReturnNotFound_WhenInvalidIdIsProvided()
+        public async Task GetById_InvalidId_ShouldReturnNotFound()
         {
             // Arrange
             var invalidGameId = 69;
@@ -143,14 +143,14 @@ namespace ActivelyApp.Tests.ControllersTests
             var actionResult = await _controller.GetById(invalidGameId);
 
             // Assert
-            Assert.IsType<NotFoundResult>(actionResult);
+            Assert.IsType<NotFoundObjectResult>(actionResult);
         }
 
         [Theory]
         [InlineData(10, true)] // Valid ID
         [InlineData(69, false)] // Invalid ID - Not Found Entity
         [InlineData(-1, false)] // Invalid ID - Bad Request
-        public async Task Delete_WithValidOrInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
+        public async Task Delete_WithValidAndInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
         {
             // Arrange
             if (isValid)
@@ -224,7 +224,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task Create_WithNullData_ReturnsBadRequestResult()
+        public async Task Create_NullData_ReturnsBadRequestResult()
         {
             // Arrange
             CreateGameInfo newGameInfo = null;
@@ -239,7 +239,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task Update_WithNullData_ReturnsBadRequestResult()
+        public async Task Update_NullData_ReturnsBadRequestResult()
         {
             int validGameId = 10;
             // Arrange
@@ -257,7 +257,7 @@ namespace ActivelyApp.Tests.ControllersTests
         [InlineData(10, true)] // Valid ID
         [InlineData(69, false)] // Invalid ID - Not Found Entity
         [InlineData(-1, false)] // Invalid ID - Bad Request
-        public async Task Update_WithValidOrInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
+        public async Task Update_ValidOrInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
         {
 
             // Arrange

@@ -112,9 +112,12 @@ namespace ActivelyApp.Services.EntityService
         {
             try
             {
-                var newPlayer = _mapper.Map<Player>(newPlayerInfo);
-                await _playerRepository.Create(newPlayer);
-                await _playerRepository.Save();
+                if (newPlayerInfo != null)
+                {
+                    var newPlayer = _mapper.Map<Player>(newPlayerInfo);
+                    await _playerRepository.Create(newPlayer);
+                    await _playerRepository.Save();
+                }               
             }
             catch (Exception)
             {

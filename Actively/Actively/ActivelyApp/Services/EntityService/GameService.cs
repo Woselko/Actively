@@ -61,7 +61,7 @@ namespace ActivelyApp.Services.EntityService
                 {
                     throw new NotFoundEntityException(Common.GameNotExistsError);
                 }
-                await _gameRepository.Delete(id);
+                await _gameRepository.Delete(gameToDelete);
                 await _gameRepository.Save();
             }
             catch (NotFoundEntityException)

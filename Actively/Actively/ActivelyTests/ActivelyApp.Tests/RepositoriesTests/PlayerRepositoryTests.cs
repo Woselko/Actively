@@ -2,12 +2,6 @@
 using ActivelyInfrastructure;
 using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Core.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace ActivelyApp.Tests.RepositoriesTests
@@ -52,7 +46,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task Add_ShouldAddPlayerToDatabase()
+        public async Task Add_ValidPlayer_ShouldAddPlayerToDatabase()
         {
 
             // Act
@@ -66,7 +60,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task Remove_WhenCalled_ShouldRemoveEntityFromContext()
+        public async Task Remove_ValidPlayer_ShouldRemoveEntityFromContext()
         {
             // Arrange
             await _repository.Create(_player);
@@ -84,7 +78,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task GetAll_ShouldReturnMatchingPlayers()
+        public async Task GetAll_ValidGames_ShouldReturnMatchingPlayers()
         {
             //Arrange
             await _dbContext.AddAsync(_players[0]);
@@ -101,7 +95,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
 
 
         [Fact]
-        public async Task Update_ShouldUpdatePlayerInDatabase()
+        public async Task Update_ValidPlayer_ShouldUpdatePlayerInDatabase()
         {
             // Arrange
             await _dbContext.AddAsync(_player);
@@ -120,7 +114,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task GetById_ShouldGetPlayerWithProvidedId()
+        public async Task GetById_ValidPlayer_ShouldGetPlayerWithProvidedId()
         {
             //Arrange
             await _dbContext.AddAsync(_player);
@@ -135,7 +129,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task GetById_WhenCalledWithNonExistingId_ShouldReturnNull()
+        public async Task GetById_NonExistingPlayer_ShouldReturnNull()
         {
             // Arrange
             int invalidId = 9999;

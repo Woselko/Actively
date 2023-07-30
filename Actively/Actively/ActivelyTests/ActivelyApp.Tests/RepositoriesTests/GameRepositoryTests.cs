@@ -49,7 +49,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
             }
 
             [Fact]
-            public async Task Add_ShouldAddGameToDbContext()
+            public async Task Add_ValidGame_ShouldAddGameToDbContext()
             {
 
                 // Act
@@ -63,7 +63,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
             }
 
             [Fact]
-            public async Task Remove_WhenCalled_ShouldRemoveGameFromDbContext()
+            public async Task Remove_ValidGame_ShouldRemoveGameFromDbContext()
             {
                 // Arrange
                 await _repository.Create(_game);
@@ -71,7 +71,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
 
 
                 // Act
-                await _repository.Delete(_game.Id);
+                await _repository.Delete(_game);
                 await _repository.Save();
 
                 // Assert
@@ -81,7 +81,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
             }
 
             [Fact]
-            public async Task GetAll_ShouldReturnMatchingGamesFromDbContext()
+            public async Task GetAll_ValidGames_ShouldReturnMatchingGamesFromDbContext()
             {
                 //Arrange
                 await _dbContext.AddAsync(_games[0]);
@@ -98,7 +98,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
 
 
             [Fact]
-            public async Task Update_ShouldUpdateGameInDbContext()
+            public async Task Update_ValidGame_ShouldUpdateGameInDbContext()
             {
                 // Arrange
                 await _dbContext.AddAsync(_game);
@@ -117,7 +117,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
             }
 
             [Fact]
-            public async Task GetById_ShouldGetGameWithProvidedIdFromDbContext()
+            public async Task GetById_ExistingGame_ShouldGetGameWithProvidedIdFromDbContext()
             {
                 //Arrange
                 await _dbContext.AddAsync(_game);
@@ -132,7 +132,7 @@ namespace ActivelyApp.Tests.RepositoriesTests
             }
 
             [Fact]
-            public async Task GetById_WhenCalledWithNonExistingId_ShouldReturnNull()
+            public async Task GetById_NonExistingGame_ShouldReturnNull()
             {
                 // Arrange
                 int invalidId = 9999;

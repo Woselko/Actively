@@ -43,7 +43,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetAll_ShouldReturnOkObjectResultWithCorrectType()
+        public async Task GetAll_ValidData_ShouldReturnOkObjectResultWithCorrectType()
         {
             //Arrange
             _mockPlayerService.Setup(service => service.GetAll())
@@ -61,7 +61,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetAll_ShouldReturnCorrectNumberOfPlayers()
+        public async Task GetAll_ValidData_ShouldReturnCorrectNumberOfPlayers()
         {
             //Arrange
             _mockPlayerService.Setup(service => service.GetAll())
@@ -80,7 +80,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetById_ShouldReturnOkObjectResultWithPlayerById()
+        public async Task GetById_ValidId_ShouldReturnOkObjectResultWithPlayerById()
         {
             //Arrange
             _mockPlayerService.Setup(service => service.GetById(_player.Id))
@@ -99,7 +99,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetById_ShouldReturnAppropiatePlayer()
+        public async Task GetById_ValidId_ShouldReturnAppropiatePlayer()
         {
             //Arrange
             _mockPlayerService.Setup(service => service.GetById(_player.Id))
@@ -118,7 +118,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetById_ShouldReturnNotFound_WhenInvalidIdIsProvided()
+        public async Task GetById_InvalidId_ShouldReturnNotFound()
         {
             // Arrange
             var invalidPlayerId = 69;
@@ -127,14 +127,14 @@ namespace ActivelyApp.Tests.ControllersTests
             var actionResult = await _controller.GetById(invalidPlayerId);
 
             // Assert
-            Assert.IsType<NotFoundResult>(actionResult.Result);
+            Assert.IsType<NotFoundObjectResult>(actionResult.Result);
         }
 
         [Theory]
         [InlineData(10, true)] // Valid ID
         [InlineData(69, false)] // Invalid ID - Not Found Entity
         [InlineData(-1, false)] // Invalid ID - Bad Request
-        public async Task Delete_WithValidOrInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
+        public async Task Delete_ValidAndInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
         {
             // Arrange
             if (isValid)
@@ -178,7 +178,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task Create_WithValidData_ReturnsCreatedResult()
+        public async Task Create_ValidData_ReturnsCreatedResult()
         {
             //Arrange
             _mockPlayerService.Setup(service => service.Create(_newPlayer)).Verifiable();
@@ -203,12 +203,12 @@ namespace ActivelyApp.Tests.ControllersTests
             var result = await _controller.Create(_newPlayer);
 
             // Assert
-            var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Equal(Common.PlayerNotExistsError, notFoundObjectResult.Value);
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(Common.PlayerNotExistsError, badRequestObjectResult.Value);
         }
 
         [Fact]
-        public async Task Create_WithNullData_ReturnsBadRequestResult()
+        public async Task Create_NullData_ReturnsBadRequestResult()
         {
             // Arrange
             CreatePlayerInfo newPlayerInfo = null;
@@ -223,7 +223,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task Update_WithNullData_ReturnsBadRequestResult()
+        public async Task Update_NullData_ReturnsBadRequestResult()
         {
             int validPlayerId = 10;
             // Arrange
@@ -241,7 +241,7 @@ namespace ActivelyApp.Tests.ControllersTests
         [InlineData(10, true)] // Valid ID
         [InlineData(69, false)] // Invalid ID - Not Found Entity
         [InlineData(-1, false)] // Invalid ID - Bad Request
-        public async Task Update_WithValidOrInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
+        public async Task Update_ValidOrInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
         {
 
             // Arrange

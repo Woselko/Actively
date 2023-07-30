@@ -28,12 +28,9 @@ namespace ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task Delete(int id)
-        {
-            var gameToDelete = await _context.Game
-                .Include(x => x.Players)
-                .FirstOrDefaultAsync(x => x.Id == id);
-            _context.Game.Remove(gameToDelete);
+        public async Task Delete(Game game)
+        { 
+            _context.Game.Remove(game);
         }
 
         public async Task Update(Game entity)
