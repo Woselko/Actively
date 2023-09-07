@@ -145,7 +145,7 @@ namespace ActivelyApp.Tests.ServicesTests
         public async Task Update_ExistingPlayer_UpdatesPlayerTime()
         {
             // Arrange
-            var playerToUpdate = new UpdatePlayerInfo()
+            var playerToUpdate = new UpdatePlayerInfoDto()
             {
                NickName = "newNickName"
             };
@@ -168,7 +168,7 @@ namespace ActivelyApp.Tests.ServicesTests
         public async Task Update_NonExistingPlayer_ThrowsNotFoundEntityException()
         {
             // Arrange
-            var playerToUpdate = new UpdatePlayerInfo()
+            var playerToUpdate = new UpdatePlayerInfoDto()
             {
                 NickName = "newNickName"
             };
@@ -189,7 +189,7 @@ namespace ActivelyApp.Tests.ServicesTests
         public async Task Create_NullPlayerInfo_DoesNotCreateOrSavePlayer()
         {
             // Arrange
-            CreatePlayerInfo newPlayerInfo = null;
+            CreatePlayerInfoDto newPlayerInfo = null;
 
             // Act
             await _playerService.Create(newPlayerInfo);
@@ -203,7 +203,7 @@ namespace ActivelyApp.Tests.ServicesTests
         public async Task Create_ValidPlayerInfo_CreatesAndSavesPlayer()
         {
             // Arrange
-            CreatePlayerInfo newPlayerInfo = new CreatePlayerInfo()
+            CreatePlayerInfoDto newPlayerInfo = new CreatePlayerInfoDto()
             {
                 NickName = "TestNewNickName",
                 LastName = "TestNewLastName",

@@ -2,7 +2,7 @@
 
 namespace ActivelyApp.Models.EntityDto
 {
-    public class UpdateGameInfo
+    public class UpdateGameInfoDto
     {
         public DateTime? GameTime { get; set; } = DateTime.Today;
     }

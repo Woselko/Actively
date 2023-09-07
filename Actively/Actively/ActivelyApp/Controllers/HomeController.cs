@@ -1,4 +1,4 @@
-﻿using ActivelyApp.Models.CommonDto;
+﻿using ActivelyApp.Models.Common;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

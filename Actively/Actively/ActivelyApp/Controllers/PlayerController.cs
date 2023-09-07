@@ -66,7 +66,7 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CreatePlayerInfo newPlayer)
+        public async Task<ActionResult> Create([FromBody] CreatePlayerInfoDto newPlayer)
         {          
             if (newPlayer == null)
             {
@@ -84,8 +84,8 @@ namespace ActivelyApp.Controllers
             return StatusCode(201);
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Update([FromBody] UpdatePlayerInfo updatePlayerInfo, int id)
+        [HttpPatch]
+        public async Task<ActionResult> Update([FromBody] UpdatePlayerInfoDto updatePlayerInfo, int id)
         {        
             if (updatePlayerInfo == null)
                 return BadRequest(Common.SomethingWentWrong);

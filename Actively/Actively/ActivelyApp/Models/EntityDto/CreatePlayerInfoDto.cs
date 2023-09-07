@@ -1,6 +1,6 @@
 ﻿namespace ActivelyApp.Models.EntityDto
 {
-    public class CreatePlayerInfo
+    public class CreatePlayerInfoDto
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

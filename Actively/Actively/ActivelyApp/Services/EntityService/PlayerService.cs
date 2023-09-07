@@ -49,6 +49,7 @@ namespace ActivelyApp.Services.EntityService
             {
                 return null;
             }
+
             var playerDto = _mapper.Map<PlayerDto>(player);
             return playerDto;
         }
@@ -64,24 +65,19 @@ namespace ActivelyApp.Services.EntityService
                     await _playerRepository.Delete(playerToDelete);
                     await _playerRepository.Save();
                 }
-
                 else
                     throw new NotFoundEntityException(Common.PlayerNotExistsError);
             }
             catch (NotFoundEntityException)
             {
                 //log
-
             }
             catch (Exception)
             {
                 // log
             }
-            
-
         }
-
-        public async Task Update(UpdatePlayerInfo updatePlayerInfo, int id)
+        public async Task Update(UpdatePlayerInfoDto updatePlayerInfo, int id)
         {
             Player playerToUpdate = null;
             try
@@ -107,8 +103,7 @@ namespace ActivelyApp.Services.EntityService
                 //log
             }
         }
-
-        public async Task Create(CreatePlayerInfo newPlayerInfo)
+        public async Task Create(CreatePlayerInfoDto newPlayerInfo)
         {
             try
             {

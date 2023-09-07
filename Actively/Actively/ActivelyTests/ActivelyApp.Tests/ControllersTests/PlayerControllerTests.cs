@@ -16,8 +16,8 @@ namespace ActivelyApp.Tests.ControllersTests
         private  Mock<IPlayerService> _mockPlayerService;
         private PlayerController _controller;
         private Player _player;
-        private CreatePlayerInfo _newPlayer;
-        private UpdatePlayerInfo _updatedPlayer;
+        private CreatePlayerInfoDto _newPlayer;
+        private UpdatePlayerInfoDto _updatedPlayer;
 
 
         public PlayerControllerTests()
@@ -38,8 +38,8 @@ namespace ActivelyApp.Tests.ControllersTests
                 NickName = "TestNick"
             };
 
-            _newPlayer = new CreatePlayerInfo { FirstName = "firstName", LastName = "lastName", NickName = "nick" };
-            _updatedPlayer = new UpdatePlayerInfo { LastName = "lastName", NickName = "nick" };
+            _newPlayer = new CreatePlayerInfoDto { FirstName = "firstName", LastName = "lastName", NickName = "nick" };
+            _updatedPlayer = new UpdatePlayerInfoDto { LastName = "lastName", NickName = "nick" };
         }
 
         [Fact]
@@ -211,7 +211,7 @@ namespace ActivelyApp.Tests.ControllersTests
         public async Task Create_NullData_ReturnsBadRequestResult()
         {
             // Arrange
-            CreatePlayerInfo newPlayerInfo = null;
+            CreatePlayerInfoDto newPlayerInfo = null;
             _mockPlayerService.Setup(service => service.Create(_newPlayer)).Verifiable();
 
             // Act
@@ -227,7 +227,7 @@ namespace ActivelyApp.Tests.ControllersTests
         {
             int validPlayerId = 10;
             // Arrange
-            UpdatePlayerInfo updatePlayerInfo = null;
+            UpdatePlayerInfoDto updatePlayerInfo = null;
 
             // Act
             var result = await _controller.Update(updatePlayerInfo, validPlayerId);

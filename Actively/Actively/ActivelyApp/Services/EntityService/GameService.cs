@@ -72,10 +72,9 @@ namespace ActivelyApp.Services.EntityService
             {
                 //log
             }
-           
         }
 
-        public async Task Update(UpdateGameInfo game, int id)
+        public async Task Update(UpdateGameInfoDto game, int id)
         {
             Game gameToUpdate = null;
             try
@@ -95,13 +94,10 @@ namespace ActivelyApp.Services.EntityService
             catch (Exception)
             {
                 //log
-            }
-          
-            
-
+            }       
         }
 
-        public async Task Create(CreateGameInfo newGame)
+        public async Task Create(CreateGameInfoDto newGame)
         {
             try
             {
@@ -110,14 +106,12 @@ namespace ActivelyApp.Services.EntityService
                     Game game = _mapper.Map<Game>(newGame);
                     await _gameRepository.Create(game);
                     await _gameRepository.Save();
-
                 }
             }
             catch (Exception)
             {
                 //log
-            }
-         
+            }       
         }
     }
 }

@@ -146,7 +146,7 @@ namespace ActivelyApp.Tests.ServicesTests
         public async Task Update_ExistingGame_UpdatesGameTime()
         {
             // Arrange
-            var gameToUpdate = new UpdateGameInfo() {
+            var gameToUpdate = new UpdateGameInfoDto() {
 
                 GameTime = DateTime.Now.AddDays(25)       
             };
@@ -169,7 +169,7 @@ namespace ActivelyApp.Tests.ServicesTests
         public async Task Update_NonExistingGame_ThrowsNotFoundEntityException()
         {
             // Arrange
-            var gameToUpdate = new UpdateGameInfo()
+            var gameToUpdate = new UpdateGameInfoDto()
             {
                 GameTime = DateTime.Now.AddDays(25)
             };
@@ -190,7 +190,7 @@ namespace ActivelyApp.Tests.ServicesTests
         public async Task Create_NullGameInfo_DoesNotCreateOrSaveGame()
         {
             // Arrange
-            CreateGameInfo newGameInfo = null;
+            CreateGameInfoDto newGameInfo = null;
 
             // Act
             await _gameService.Create(newGameInfo);
@@ -204,7 +204,7 @@ namespace ActivelyApp.Tests.ServicesTests
         public async Task Create_ValidGameInfo_CreatesAndSavesGame()
         {
             // Arrange
-            CreateGameInfo newGameInfo = new CreateGameInfo()
+            CreateGameInfoDto newGameInfo = new CreateGameInfoDto()
             {
                 Sport = SportType.HandBall
             };

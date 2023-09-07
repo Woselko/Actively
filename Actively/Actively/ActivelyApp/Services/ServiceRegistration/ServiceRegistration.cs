@@ -15,7 +15,7 @@ using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
 using ActivelyApp.Services.EntityService;
 using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
 using ActivelyApp.Models.AuthenticationDto.Email;
-using ActivelyApp.Models.CommonDto;
+using ActivelyApp.Models.Common;
 
 namespace ActivelyApp.Services.ServiceRegistration
 {
@@ -32,9 +32,7 @@ namespace ActivelyApp.Services.ServiceRegistration
             //Business logic services
             services.AddScoped<IPlayerService, PlayerService>();
             services.AddScoped<IGameService, GameService>();
-            //mappers
-            ////services.AddAutoMapper(typeof(PlayerMappingProfile));
-            ////services.AddAutoMapper(typeof(GameMappingProfile));
+            //mapper
             services.AddAutoMapper(typeof(Program));
             //Authentication
             services.AddIdentity<IdentityUser, IdentityRole>()

@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Net;
 using Microsoft.Extensions.Options;
 using Resources;
-using ActivelyApp.Models.CommonDto;
+using ActivelyApp.Models.Common;
 
 namespace ActivelyApp.Controllers
 {

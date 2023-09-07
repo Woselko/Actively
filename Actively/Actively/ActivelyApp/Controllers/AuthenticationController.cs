@@ -2,7 +2,7 @@
 using ActivelyApp.Models.AuthenticationDto.Login;
 using ActivelyApp.Models.AuthenticationDto.PasswordReset;
 using ActivelyApp.Models.AuthenticationDto.Registration;
-using ActivelyApp.Models.CommonDto;
+using ActivelyApp.Models.Common;
 using ActivelyApp.Services.UserServices.EmailService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

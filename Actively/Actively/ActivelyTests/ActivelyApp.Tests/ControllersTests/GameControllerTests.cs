@@ -20,8 +20,8 @@ namespace ActivelyApp.Tests.ControllersTests
         private Mock<IGameService> _mockGameService;
         private GameController _controller;
         private Game _game;
-        private CreateGameInfo _newGame;
-        private UpdateGameInfo _updatedGame;
+        private CreateGameInfoDto _newGame;
+        private UpdateGameInfoDto _updatedGame;
 
 
         public GameControllerTests()
@@ -49,8 +49,8 @@ namespace ActivelyApp.Tests.ControllersTests
                 
             };
 
-            _newGame = new CreateGameInfo {  };
-            _updatedGame = new UpdateGameInfo { };
+            _newGame = new CreateGameInfoDto {  };
+            _updatedGame = new UpdateGameInfoDto { };
         }
 
         [Fact]
@@ -227,7 +227,7 @@ namespace ActivelyApp.Tests.ControllersTests
         public async Task Create_NullData_ReturnsBadRequestResult()
         {
             // Arrange
-            CreateGameInfo newGameInfo = null;
+            CreateGameInfoDto newGameInfo = null;
             _mockGameService.Setup(service => service.Create(_newGame)).Verifiable();
 
             // Act
@@ -243,7 +243,7 @@ namespace ActivelyApp.Tests.ControllersTests
         {
             int validGameId = 10;
             // Arrange
-            UpdateGameInfo updateGameInfo = null;
+            UpdateGameInfoDto updateGameInfo = null;
 
             // Act
             var result = await _controller.Update(updateGameInfo, validGameId);
