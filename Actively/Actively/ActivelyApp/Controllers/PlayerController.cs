@@ -1,9 +1,12 @@
 ﻿using ActivelyApp.CustomExceptions;
+using ActivelyApp.Models.Common;
 using ActivelyApp.Models.EntityDto;
 using ActivelyApp.Services.EntityService;
+using ActivelyDomain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
+using System.Numerics;
 
 namespace ActivelyApp.Controllers
 {
@@ -29,15 +32,18 @@ namespace ActivelyApp.Controllers
                 players = await _playerService.GetAll();
                 if (players == null)
                 {
-                    return BadRequest(Common.SomethingWentWrong);
+                    return StatusCode(StatusCodes.Status404NotFound, new Response
+                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExistsError });
                 }
             }
             catch (Exception e)
-            {
-                return BadRequest(e.Message);
+            {           
+                return StatusCode(StatusCodes.Status400BadRequest, new Response 
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
             }
 
-            return Ok(players);
+            return StatusCode(StatusCodes.Status200OK, new Response
+            { Type = ResponseType.Succes, Status = Common.Success, ReturnObject = players });           
         }
 
         [HttpGet]
@@ -49,20 +55,18 @@ namespace ActivelyApp.Controllers
                 player = await _playerService.GetById(id);
                 if (player == null)
                 {
-                    return NotFound(Common.GameNotExistsError);
+                    return StatusCode(StatusCodes.Status404NotFound, new Response
+                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExistsError });
                 }
-            }
-            catch (NotFoundEntityException)
-            {
-                //log
             }
             catch (Exception e)
             {
-                //log
-                return BadRequest(e.Message);
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
             }
-
-            return Ok(player);
+             
+            return StatusCode(StatusCodes.Status200OK, new Response
+            { Type = ResponseType.Succes, Status = Common.Success, ReturnObject = player });
         }
 
         [HttpPost]
@@ -70,38 +74,46 @@ namespace ActivelyApp.Controllers
         {          
             if (newPlayer == null)
             {
-                return BadRequest(Common.SomethingWentWrong);
+                return StatusCode(StatusCodes.Status404NotFound, new Response
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.SomethingWentWrong });
             }
             try
             {
                 await _playerService.Create(newPlayer);
-            }
+            }            
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
             }
+            
 
-            return StatusCode(201);
+            return StatusCode(StatusCodes.Status201Created, new Response 
+            { Type = ResponseType.Succes, Status = Common.Success, ReturnObject = newPlayer });
         }
 
         [HttpPatch]
         public async Task<ActionResult> Update([FromBody] UpdatePlayerInfoDto updatePlayerInfo, int id)
         {        
             if (updatePlayerInfo == null)
-                return BadRequest(Common.SomethingWentWrong);
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.SomethingWentWrong });
             try
             {
                 await _playerService.Update(updatePlayerInfo, id);
             }
             catch (NotFoundEntityException)
             {
-                return NotFound(Common.PlayerNotExistsError);
+                return StatusCode(StatusCodes.Status404NotFound, new Response
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExistsError });
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return BadRequest(Common.SomethingWentWrong);
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                { Type = ResponseType.Error, Status = Common.SomethingWentWrong, Message = e.Message });
             }
-            return Ok(Common.SuccessfullyUpdated);
+            return StatusCode(StatusCodes.Status200OK, new Response
+            { Type = ResponseType.Succes, Status = Common.Success, Message = Common.SuccessfullyUpdated });
         }
 
         [HttpDelete]
@@ -113,14 +125,17 @@ namespace ActivelyApp.Controllers
             }
             catch (NotFoundEntityException)
             {
-                return NotFound(Common.PlayerNotExistsError);
+                return StatusCode(StatusCodes.Status404NotFound, new Response
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExistsError });
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return StatusCode(StatusCodes.Status400BadRequest, new Response 
+                { Type = ResponseType.Error, Message = e.Message, Status = Common.SomethingWentWrong });
             }
 
-            return Ok(Common.SuccessfullyDeleted);
+            return StatusCode(StatusCodes.Status200OK, new Response
+            { Type = ResponseType.Succes, Status = Common.Success, Message = Common.SuccessfullyDeleted });
         }
     }
 }

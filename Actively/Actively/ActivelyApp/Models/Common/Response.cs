@@ -2,6 +2,7 @@
 {
     public class Response
     {
+        public object? ReturnObject { get; set; }
         public string? Status { get; set; }
         public string? Message { get; set; }
         public ResponseType? Type { get; set; }
