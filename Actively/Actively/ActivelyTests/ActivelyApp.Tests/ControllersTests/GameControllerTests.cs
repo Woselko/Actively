@@ -1,10 +1,14 @@
 ﻿using ActivelyApp.Controllers;
 using ActivelyApp.CustomExceptions;
+using ActivelyApp.Models.Common;
 using ActivelyApp.Models.EntityDto;
 using ActivelyApp.Services.EntityService;
 using ActivelyDomain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
 using Moq;
+using NuGet.Common;
 using Resources;
 using System;
 using System.Collections.Generic;
@@ -12,6 +16,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace ActivelyApp.Tests.ControllersTests
 {
@@ -27,13 +33,7 @@ namespace ActivelyApp.Tests.ControllersTests
         public GameControllerTests()
         {
             _mockGameService = new Mock<IGameService>();
-            _controller = new GameController(_mockGameService.Object);
-            _mockGameService.Setup(service => service.GetAll())
-                 .ReturnsAsync(new List<GameDto>()
-                 {
-                    new GameDto(),
-                    new GameDto()
-                 });
+            _controller = new GameController(_mockGameService.Object);   
 
             _game = new Game()
             {
@@ -54,7 +54,7 @@ namespace ActivelyApp.Tests.ControllersTests
         }
 
         [Fact]
-        public async Task GetAll_ValidData_ShouldReturnOkObjectResultWithCorrectType()
+        public async Task GetAll_ReturnsObjectResultSuccessfulWithData()
         {
             //Arrange
             _mockGameService.Setup(service => service.GetAll())
@@ -64,86 +64,108 @@ namespace ActivelyApp.Tests.ControllersTests
                     new GameDto()
                  });
             // Act
-            var actionResult = await _controller.GetAll();
+            var result = await _controller.GetAll() as ObjectResult;
+
 
             // Assert
-            Assert.IsType<OkObjectResult>(actionResult.Result);
-            Assert.IsAssignableFrom<IEnumerable<GameDto>>((actionResult.Result as OkObjectResult)?.Value);
+            var response = Assert.IsType<Response>(result.Value);
+            Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
+            Assert.Equal(ResponseType.Success, response.Type);
+            Assert.Equal(Common.Success, response.Status);
         }
+        
 
         [Fact]
-        public async Task GetAll_ValidData_ShouldReturnCorrectNumberOfGames()
+        public async Task GetAll_ReturnsNotFoundResultWhenNoData()
         {
             //Arrange
+             List<GameDto> games = null;
             _mockGameService.Setup(service => service.GetAll())
-                 .ReturnsAsync(new List<GameDto>()
-                 {
-                    new GameDto(),
-                    new GameDto()
-                 });
+                 .ReturnsAsync(games);
             // Act
-            var actionResult = await _controller.GetAll();
-            var games = (actionResult.Result as OkObjectResult)?.Value as List<GameDto>;
+            var result = await _controller.GetAll() as ObjectResult;
 
             // Assert
-            Assert.NotNull(games);
-            Assert.Equal(2, games.Count);
+            var response = Assert.IsType<Response>(result.Value);
+            Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
+            Assert.Equal(ResponseType.Error, response.Type);
+            Assert.Equal(Common.Error, response.Status);
         }
 
         [Fact]
-        public async Task GetById_ValidId_ShouldReturnOkObjectResultWithGameById()
+        public async Task GetAll_ReturnsBadRequestResultOnError()
+        {
+            // Arrange
+            string errorMessage = "test error message";
+            _mockGameService.Setup(service => service.GetAll())
+                 .ThrowsAsync(new Exception("test error message"));
+
+            // Act
+
+            var result = await _controller.GetAll() as ObjectResult;
+
+            // Assert
+            var response = Assert.IsType<Response>(result.Value);
+            Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
+            Assert.Equal(ResponseType.Error, response.Type);
+            Assert.Equal(errorMessage, response.Message);
+            Assert.Equal(Common.Error, response.Status);
+            Assert.Null(response.ReturnObject);
+        }
+
+        [Fact]
+        public async Task GetById_ValidId_ReturnsOkResultWithData()
         {
             //Arrange
+            
             _mockGameService.Setup(service => service.GetById(_game.Id))
-                 .ReturnsAsync(
-                new GameDto()
-                {
-                    
-                });
+                 .ReturnsAsync(new GameDto() {CreationDate = _game.CreationDate, Sport = _game.Sport });
             // Act
-            var actionResult = await _controller.GetById(10);
-            var game = (actionResult as OkObjectResult)?.Value as GameDto;
+            var result = await _controller.GetById(10) as ObjectResult;
 
             // Assert
-            Assert.IsType<OkObjectResult>(actionResult);
-            Assert.IsType<GameDto>(game);
+            var response = Assert.IsType<Response>(result.Value);
+            Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
+            Assert.Equal(ResponseType.Success, response.Type);
+            Assert.Equal(Common.Success, response.Status);
+            Assert.NotNull(response.ReturnObject);
         }
 
         [Fact]
-        public async Task GetById_ValidId_ShouldReturnAppropiateGame()
-        {
-            //Arrange
-            _mockGameService.Setup(service => service.GetById(_game.Id))
-                 .ReturnsAsync(
-                new GameDto()
-                {
-                    GameTime = _game.GameTime,
-                    CreationDate = _game.CreationDate,
-                    Sport = _game.Sport
-
-                });
-            // Act
-            var actionResult = await _controller.GetById(10);
-            var game = (actionResult as OkObjectResult)?.Value as GameDto;
-
-            // Assert
-            Assert.NotNull(game);
-            Assert.Equal(_game.GameTime, game.GameTime);
-            Assert.Equal(_game.CreationDate, game.CreationDate);
-            Assert.Equal(_game.Sport, game.Sport);
-        }
-
-        [Fact]
-        public async Task GetById_InvalidId_ShouldReturnNotFound()
+        public async Task GetById_InvalidId_ShouldReturnNotFoundWithNoData()
         {
             // Arrange
             var invalidGameId = 69;
 
             // Act
-            var actionResult = await _controller.GetById(invalidGameId);
+            var result = await _controller.GetById(invalidGameId) as ObjectResult;
 
             // Assert
-            Assert.IsType<NotFoundObjectResult>(actionResult);
+            var response = Assert.IsType<Response>(result.Value);
+            Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
+            Assert.Equal(ResponseType.Error, response.Type);
+            Assert.Equal(Common.Error, response.Status);
+        }
+
+        [Fact]
+        public async Task GetById_ReturnsBadRequestResultOnErrorWithNoData()
+        {
+            // Arrange
+            string errorMessage = "test error message";
+            _mockGameService.Setup(service => service.GetAll())
+                 .ThrowsAsync(new Exception("test error message"));
+
+            // Act
+
+            var result = await _controller.GetAll() as ObjectResult;
+
+            // Assert
+            var response = Assert.IsType<Response>(result.Value);
+            Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
+            Assert.Equal(ResponseType.Error, response.Type);
+            Assert.Equal(errorMessage, response.Message);
+            Assert.Equal(Common.Error, response.Status);
+            Assert.Null(response.ReturnObject);
         }
 
         [Theory]
@@ -161,81 +183,109 @@ namespace ActivelyApp.Tests.ControllersTests
             {
                 if (id == 69)
                 {
-                    _mockGameService.Setup(service => service.Delete(id)).Throws(new NotFoundEntityException(Common.GameNotExistsError));
+                    _mockGameService.Setup(service => service.Delete(id)).ThrowsAsync(new NotFoundEntityException(Common.GameNotExistsError));
                 }
                 else
                 {
-                    _mockGameService.Setup(service => service.Delete(id)).Throws(new Exception(Common.SomethingWentWrong));
+                    _mockGameService.Setup(service => service.Delete(id)).ThrowsAsync(new Exception(Common.SomethingWentWrong));
                 }
             }
 
             // Act
-            var result = await _controller.Delete(id);
+            var result = await _controller.Delete(id) as ObjectResult;
 
             // Assert
             if (isValid)
             {
-                Assert.IsType<OkObjectResult>(result);
+                var response = Assert.IsType<Response>(result.Value);
+                Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
+                Assert.Equal(ResponseType.Success, response.Type);
+                Assert.Equal(Common.SuccessfullyDeleted, response.Message);
+                Assert.Equal(Common.Success, response.Status);
+                Assert.Null(response.ReturnObject);
                 _mockGameService.Verify(service => service.Delete(10), Times.Once);
             }
             else
             {
                 if (id == 69)
                 {
-                    var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result);
-                    Assert.Equal(Common.GameNotExistsError, notFoundObjectResult.Value);
+                    var response = Assert.IsType<Response>(result.Value);
+                    Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
+                    Assert.Equal(ResponseType.Error, response.Type);
+                    Assert.Equal(Common.GameNotExistsError, response.Message);
+                    Assert.Equal(Common.Error, response.Status);
+                    Assert.Null(response.ReturnObject);
                 }
                 else
                 {
-                    var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
-                    Assert.Equal(Common.SomethingWentWrong, badRequestObjectResult.Value);
+                    var response = Assert.IsType<Response>(result.Value);
+                    Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
+                    Assert.Equal(ResponseType.Error, response.Type);
+                    Assert.Equal(Common.SomethingWentWrong, response.Message);
+                    Assert.Equal(Common.Error, response.Status);
+                    Assert.Null(response.ReturnObject);
+
                 }
             }
         }
 
         [Fact]
-        public async Task Create_WithValidData_ReturnsCreatedResult()
+        public async Task Create_WithValidData_ReturnsObjectResultWithSuccessWithNoData()
         {
             //Arrange
             _mockGameService.Setup(service => service.Create(_newGame)).Verifiable();
 
             // Act
-            var result = await _controller.Create(_newGame);
+            var result = await _controller.Create(_newGame) as ObjectResult;
 
             // Assert
-            Assert.IsType<StatusCodeResult>(result);
-            Assert.Equal(201, (result as StatusCodeResult)?.StatusCode);
-            _mockGameService.Verify(service => service.Create(_newGame), Times.Once); // Ensure that the Create method on the service is called with the newGameInfo
+            var response = Assert.IsType<Response>(result.Value);
+            Assert.Equal(StatusCodes.Status201Created, result.StatusCode);
+            Assert.Equal(ResponseType.Success, response.Type);
+            Assert.Equal(Common.Success, response.Message);
+            Assert.Equal(Common.Success, response.Status);
+            Assert.Null(response.ReturnObject);
+            _mockGameService.Verify(service => service.Create(_newGame), Times.Once); 
         }
 
         [Fact]
-        public async Task Create_WithNotFoundEntityException_ReturnsNotFoundResult()
+        public async Task Create_ValidData_ReturnsBadRequestResultOnErrorWithNoData()
         {
             // Arrange
-
-            _mockGameService.Setup(service => service.Create(_newGame)).Throws(new NotFoundEntityException(Common.GameNotExistsError));
+            _mockGameService.Setup(service => service.Create(_newGame))
+                .ThrowsAsync(new Exception(Common.SomethingWentWrong)).Verifiable();
 
             // Act
-            var result = await _controller.Create(_newGame);
+            var result = await _controller.Create(_newGame) as ObjectResult;
 
             // Assert
-            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(Common.SomethingWentWrong, badRequestObjectResult.Value);
+            var response = Assert.IsType<Response>(result.Value);
+            Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
+            Assert.Equal(ResponseType.Error, response.Type);
+            Assert.Equal(Common.SomethingWentWrong, response.Message);
+            Assert.Equal(Common.Error, response.Status);
+            Assert.Null(response.ReturnObject);
+            _mockGameService.Verify(service => service.Create(_newGame), Times.Once);
         }
 
         [Fact]
-        public async Task Create_NullData_ReturnsBadRequestResult()
+        public async Task Create_NullData_ReturnsBadRequestResultWithNoData()
         {
             // Arrange
-            CreateGameInfoDto newGameInfo = null;
-            _mockGameService.Setup(service => service.Create(_newGame)).Verifiable();
+            CreateGameInfoDto newNullGameInfo = null;
+            _mockGameService.Setup(service => service.Create(newNullGameInfo)).Verifiable();
 
             // Act
-            var result = await _controller.Create(newGameInfo);
+            var result = await _controller.Create(newNullGameInfo) as ObjectResult;
 
             // Assert
-            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(Common.SomethingWentWrong, badRequestObjectResult.Value);
+            var response = Assert.IsType<Response>(result.Value);
+            Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
+            Assert.Equal(ResponseType.Error, response.Type);
+            Assert.Equal(Common.SomethingWentWrong, response.Message);
+            Assert.Equal(Common.Error, response.Status);
+            Assert.Null(response.ReturnObject);
+            _mockGameService.Verify(service => service.Create(newNullGameInfo), Times.Never);
         }
 
         [Fact]
@@ -244,13 +294,19 @@ namespace ActivelyApp.Tests.ControllersTests
             int validGameId = 10;
             // Arrange
             UpdateGameInfoDto updateGameInfo = null;
+            _mockGameService.Setup(service => service.Update(updateGameInfo, validGameId)).Verifiable();
 
             // Act
-            var result = await _controller.Update(updateGameInfo, validGameId);
+            var result = await _controller.Update(updateGameInfo, validGameId) as ObjectResult;
 
             // Assert
-            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(Common.SomethingWentWrong, badRequestObjectResult.Value);
+            var response = Assert.IsType<Response>(result.Value);
+            Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
+            Assert.Equal(ResponseType.Error, response.Type);
+            Assert.Equal(Common.SomethingWentWrong, response.Message);
+            Assert.Equal(Common.Error, response.Status);
+            Assert.Null(response.ReturnObject);
+            _mockGameService.Verify(service => service.Update(updateGameInfo, validGameId), Times.Never);
         }
 
         [Theory]
@@ -278,26 +334,40 @@ namespace ActivelyApp.Tests.ControllersTests
             }
 
             // Act
-            var result = await _controller.Update(_updatedGame, id);
+            var result = await _controller.Update(_updatedGame, id) as ObjectResult;
 
             // Assert
             if (isValid)
             {
-                var okObjectResult = Assert.IsType<OkObjectResult>(result);
-                Assert.Equal(Common.SuccessfullyUpdated, okObjectResult.Value);
+                var response = Assert.IsType<Response>(result.Value);
+                Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
+                Assert.Equal(ResponseType.Success, response.Type);
+                Assert.Equal(Common.SuccessfullyUpdated, response.Message);
+                Assert.Equal(Common.Success, response.Status);
+                Assert.Null(response.ReturnObject);
                 _mockGameService.Verify(service => service.Update(_updatedGame, id), Times.Once);
             }
             else
             {
                 if (id == 69)
                 {
-                    var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result);
-                    Assert.Equal(Common.GameNotExistsError, notFoundObjectResult.Value);
+                    var response = Assert.IsType<Response>(result.Value);
+                    Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
+                    Assert.Equal(ResponseType.Error, response.Type);
+                    Assert.Equal(Common.GameNotExistsError, response.Message);
+                    Assert.Equal(Common.Error, response.Status);
+                    Assert.Null(response.ReturnObject);
+                    _mockGameService.Verify(service => service.Update(_updatedGame, id), Times.Once);
                 }
                 else
                 {
-                    var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
-                    Assert.Equal(Common.SomethingWentWrong, badRequestObjectResult.Value);
+                    var response = Assert.IsType<Response>(result.Value);
+                    Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
+                    Assert.Equal(ResponseType.Error, response.Type);
+                    Assert.Equal(Common.SomethingWentWrong, response.Message);
+                    Assert.Equal(Common.Error, response.Status);
+                    Assert.Null(response.ReturnObject);
+                    _mockGameService.Verify(service => service.Update(_updatedGame, id), Times.Once);
                 }
             }
         }

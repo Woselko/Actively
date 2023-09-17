@@ -37,7 +37,7 @@ namespace ActivelyApp.Controllers
                 new CookieOptions { Expires = DateTimeOffset.UtcNow.AddMonths(6) });
 
             return StatusCode(StatusCodes.Status200OK,
-                    new Response { Status = Common.Success, Message = Common.Success, Type = ResponseType.Succes });
+                    new Response { Status = Common.Success, Message = Common.Success, Type = ResponseType.Success });
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]

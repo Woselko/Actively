@@ -80,7 +80,7 @@ namespace ActivelyApp.Controllers.Authentication
             await _emailService.SendEmail(message);
 
             return StatusCode(StatusCodes.Status201Created,
-                    new Response { Status = Common.Success, Message = Common.AccountCreated + " " + Common.EmailVerificationSentSucces, Type = ResponseType.Succes });
+                    new Response { Status = Common.Success, Message = Common.AccountCreated + " " + Common.EmailVerificationSentSucces, Type = ResponseType.Success });
         }
 
         [HttpGet("ConfirmEmail")]
@@ -92,7 +92,7 @@ namespace ActivelyApp.Controllers.Authentication
                 var result = await _userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
-                    return StatusCode(StatusCodes.Status200OK, new Response { Status = Common.Success, Message = Common.AccountActivated, Type = ResponseType.Succes });
+                    return StatusCode(StatusCodes.Status200OK, new Response { Status = Common.Success, Message = Common.AccountActivated, Type = ResponseType.Success });
                 }
             }
             return StatusCode(StatusCodes.Status500InternalServerError,
@@ -115,7 +115,7 @@ namespace ActivelyApp.Controllers.Authentication
                 await _emailService.SendEmail(message);
 
                 return StatusCode(StatusCodes.Status200OK,
-                 new Response { Status = "Success", Message = $"We have sent an OTP to your Email {user.Email}", Type = ResponseType.Succes });
+                 new Response { Status = "Success", Message = $"We have sent an OTP to your Email {user.Email}", Type = ResponseType.Success });
             }
             if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password) && await _userManager.IsEmailConfirmedAsync(user))
             {
@@ -168,7 +168,7 @@ namespace ActivelyApp.Controllers.Authentication
                 await _emailService.SendEmail(message);
 
                 return StatusCode(StatusCodes.Status201Created,
-                        new Response { Status = Common.Success, Message = Common.PasswordResetRequest + user.Email, Type = ResponseType.Succes });
+                        new Response { Status = Common.Success, Message = Common.PasswordResetRequest + user.Email, Type = ResponseType.Success });
             }
             else
                 return StatusCode(StatusCodes.Status400BadRequest,
@@ -203,7 +203,7 @@ namespace ActivelyApp.Controllers.Authentication
                     return BadRequest(ModelState);
                 }
                 return StatusCode(StatusCodes.Status200OK,
-                        new Response { Status = Common.Success, Message = Common.PasswordChangedSuccessfully, Type = ResponseType.Succes });
+                        new Response { Status = Common.Success, Message = Common.PasswordChangedSuccessfully, Type = ResponseType.Success });
             }
             else
                 return StatusCode(StatusCodes.Status400BadRequest,

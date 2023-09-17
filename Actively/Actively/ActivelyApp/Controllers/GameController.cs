@@ -23,7 +23,7 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GameDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             IEnumerable<GameDto> games = new List<GameDto>();
 
@@ -35,6 +35,9 @@ namespace ActivelyApp.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new Response
                     { Type = ResponseType.Error, Status = Common.Error, Message = Common.GameNotExistsError });
                 }
+
+                return StatusCode(StatusCodes.Status200OK, new Response
+                { Type = ResponseType.Success, Status = Common.Success, ReturnObject = games });
             }
             catch (Exception e)
             {
@@ -42,12 +45,11 @@ namespace ActivelyApp.Controllers
                 { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
             }
 
-            return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Succes, Status = Common.Success, ReturnObject = games });
+            
         }
          
         [HttpGet]
-        public async Task<ActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             GameDto game;
             try
@@ -68,15 +70,15 @@ namespace ActivelyApp.Controllers
 
 
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Succes, Status = Common.Success, ReturnObject = game });
+            { Type = ResponseType.Success, Status = Common.Success, ReturnObject = game });
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CreateGameInfoDto newGame)
+        public async Task<IActionResult> Create([FromBody] CreateGameInfoDto newGame)
         {
             if (newGame == null)
             {
-                return StatusCode(StatusCodes.Status404NotFound, new Response
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
                 { Type = ResponseType.Error, Status = Common.Error, Message = Common.SomethingWentWrong });
             }
             try
@@ -86,15 +88,15 @@ namespace ActivelyApp.Controllers
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.SomethingWentWrong, Message = e.Message });
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
             }
 
             return StatusCode(StatusCodes.Status201Created, new Response
-            { Type = ResponseType.Succes, Status = Common.Success, ReturnObject = newGame });
+            { Type = ResponseType.Success, Status = Common.Success, Message = Common.Success });
         }
 
         [HttpPatch]
-        public async Task<ActionResult> Update([FromBody] UpdateGameInfoDto updateGameInfo, int id)
+        public async Task<IActionResult> Update([FromBody] UpdateGameInfoDto updateGameInfo, int id)
         {
             if (updateGameInfo == null)
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
@@ -111,14 +113,14 @@ namespace ActivelyApp.Controllers
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.SomethingWentWrong, Message = e.Message });
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
             }
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Succes, Status = Common.Success, Message = Common.SuccessfullyUpdated });
+            { Type = ResponseType.Success, Status = Common.Success, Message = Common.SuccessfullyUpdated });
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -127,16 +129,16 @@ namespace ActivelyApp.Controllers
             catch(NotFoundEntityException)
             {
                 return StatusCode(StatusCodes.Status404NotFound, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExistsError });
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.GameNotExistsError });
             }
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Message = e.Message, Status = Common.SomethingWentWrong });
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
             }
 
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Succes, Status = Common.Success, Message = Common.SuccessfullyDeleted });
+            { Type = ResponseType.Success, Status = Common.Success, Message = Common.SuccessfullyDeleted });
         }
 
     }

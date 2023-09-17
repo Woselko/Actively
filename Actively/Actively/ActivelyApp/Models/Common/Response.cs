@@ -12,6 +12,6 @@
     {
         Normal = 0,
         Error = 1,
-        Succes = 2,
+        Success = 2,
     }
 }

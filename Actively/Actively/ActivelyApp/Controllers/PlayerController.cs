@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace ActivelyApp.Controllers
 {
@@ -23,7 +24,7 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             IEnumerable<PlayerDto> players = null;
 
@@ -43,11 +44,11 @@ namespace ActivelyApp.Controllers
             }
 
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Succes, Status = Common.Success, ReturnObject = players });           
+            { Type = ResponseType.Success, Status = Common.Success, ReturnObject = players });           
         }
 
         [HttpGet]
-        public async Task<ActionResult<PlayerDto>> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             PlayerDto player = null;
             try
@@ -66,15 +67,15 @@ namespace ActivelyApp.Controllers
             }
              
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Succes, Status = Common.Success, ReturnObject = player });
+            { Type = ResponseType.Success, Status = Common.Success, ReturnObject = player });
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CreatePlayerInfoDto newPlayer)
+        public async Task<IActionResult> Create([FromBody] CreatePlayerInfoDto newPlayer)
         {          
             if (newPlayer == null)
             {
-                return StatusCode(StatusCodes.Status404NotFound, new Response
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
                 { Type = ResponseType.Error, Status = Common.Error, Message = Common.SomethingWentWrong });
             }
             try
@@ -89,11 +90,11 @@ namespace ActivelyApp.Controllers
             
 
             return StatusCode(StatusCodes.Status201Created, new Response 
-            { Type = ResponseType.Succes, Status = Common.Success, ReturnObject = newPlayer });
+            { Type = ResponseType.Success, Status = Common.Success, Message = Common.Success });
         }
 
         [HttpPatch]
-        public async Task<ActionResult> Update([FromBody] UpdatePlayerInfoDto updatePlayerInfo, int id)
+        public async Task<IActionResult> Update([FromBody] UpdatePlayerInfoDto updatePlayerInfo, int id)
         {        
             if (updatePlayerInfo == null)
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
@@ -110,14 +111,14 @@ namespace ActivelyApp.Controllers
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.SomethingWentWrong, Message = e.Message });
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
             }
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Succes, Status = Common.Success, Message = Common.SuccessfullyUpdated });
+            { Type = ResponseType.Success, Status = Common.Success, Message = Common.SuccessfullyUpdated });
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {            
             try
             {
@@ -131,11 +132,11 @@ namespace ActivelyApp.Controllers
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response 
-                { Type = ResponseType.Error, Message = e.Message, Status = Common.SomethingWentWrong });
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
             }
 
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Succes, Status = Common.Success, Message = Common.SuccessfullyDeleted });
+            { Type = ResponseType.Success, Status = Common.Success, Message = Common.SuccessfullyDeleted });
         }
     }
 }

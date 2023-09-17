@@ -28,7 +28,7 @@ namespace ActivelyApp.Services.EntityService
             }
             catch (Exception)
             {
-                //log
+                throw;
             }
             var gamesDto = _mapper.Map<IEnumerable<GameDto>>(games);
             return gamesDto;           
