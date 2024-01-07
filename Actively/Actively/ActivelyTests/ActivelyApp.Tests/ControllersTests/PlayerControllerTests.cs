@@ -1,15 +1,14 @@
 ﻿using ActivelyApp.Controllers;
+using ActivelyApp.CustomExceptions;
+using ActivelyApp.Models.Common;
 using ActivelyApp.Models.EntityDto;
 using ActivelyApp.Services.EntityService;
 using ActivelyDomain.Entities;
-using ActivelyApp.CustomExceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Resources;
 using Xunit;
-using System.Numerics;
-using ActivelyApp.Models.Common;
-using Microsoft.AspNetCore.Http;
 
 namespace ActivelyApp.Tests.ControllersTests
 {

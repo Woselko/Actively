@@ -6,18 +6,9 @@ using ActivelyApp.Services.EntityService;
 using ActivelyDomain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Framework;
 using Moq;
-using NuGet.Common;
 using Resources;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace ActivelyApp.Tests.ControllersTests
 {

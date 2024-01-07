@@ -135,6 +135,9 @@
   <data name="ActivelyPasswordRecoveryLink" xml:space="preserve">
     <value>To reset your password click here: </value>
   </data>
+  <data name="AvatarChanged" xml:space="preserve">
+    <value>Avatar has been set successfully!</value>
+  </data>
   <data name="EmailVerificationSentSucces" xml:space="preserve">
     <value>Verification email sent successfully!</value>
   </data>
@@ -185,6 +188,12 @@
   </data>
   <data name="SuccessfullyUpdated" xml:space="preserve">
     <value>Successfully Updated</value>
+  </data>
+  <data name="TwoFactorAuthIsOff" xml:space="preserve">
+    <value>Two-factor email authorization is set off!</value>
+  </data>
+  <data name="TwoFactorAuthIsSet" xml:space="preserve">
+    <value>Two-factor email authorization is set now!</value>
   </data>
   <data name="UserDoesNotExist" xml:space="preserve">
     <value>User does not exist!</value>

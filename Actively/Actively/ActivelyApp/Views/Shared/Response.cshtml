@@ -6,18 +6,17 @@
 
 @{
     var classtext = "";
-    switch(Model.Type)
+    var result = "";
+    if (Model.IsSuccess)
     {
-        case ResponseType.Error:
-            classtext = "text-danger";
-            break;
-        case ResponseType.Success:
-            classtext = "text-success";
-            break;
-        case ResponseType.Normal:
-            classtext = "text-info";
-            break;
+        classtext = "text-success";
+        result = Resources.Common.Success;
+    }
+    else
+    {
+        result = Resources.Common.Error;
+        classtext = "text-danger";
     }
 }
-<h1 class=@classtext>@Html.DisplayFor(model => model.Status)</h1>
+<h1 class=@classtext>@result</h1>
 <h2 class=@classtext>@Html.DisplayFor(model => model.Message)</h2>

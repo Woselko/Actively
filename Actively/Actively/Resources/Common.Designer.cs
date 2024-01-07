@@ -115,6 +115,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Avatar has been set successfully!.
+        /// </summary>
+        public static string AvatarChanged {
+            get {
+                return ResourceManager.GetString("AvatarChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Verification email sent successfully!.
         /// </summary>
         public static string EmailVerificationSentSucces {
@@ -264,6 +273,24 @@ namespace Resources {
         public static string SuccessfullyUpdated {
             get {
                 return ResourceManager.GetString("SuccessfullyUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Two-factor email authorization is set off!.
+        /// </summary>
+        public static string TwoFactorAuthIsOff {
+            get {
+                return ResourceManager.GetString("TwoFactorAuthIsOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Two-factor email authorization is set now!.
+        /// </summary>
+        public static string TwoFactorAuthIsSet {
+            get {
+                return ResourceManager.GetString("TwoFactorAuthIsSet", resourceCulture);
             }
         }
         

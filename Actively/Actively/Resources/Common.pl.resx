@@ -135,6 +135,9 @@
   <data name="ActivelyPasswordRecoveryLink" xml:space="preserve">
     <value>Aby odzyskać swoje hasło kliknij w poniższy link: </value>
   </data>
+  <data name="AvatarChanged" xml:space="preserve">
+    <value>Avatar ustawiono pomyślnie!</value>
+  </data>
   <data name="EmailVerificationSentSucces" xml:space="preserve">
     <value>Email weryfikacyjny został wysłany!</value>
   </data>
@@ -185,6 +188,12 @@
   </data>
   <data name="SuccessfullyUpdated" xml:space="preserve">
     <value>Pomyślnie zaktualizowano</value>
+  </data>
+  <data name="TwoFactorAuthIsOff" xml:space="preserve">
+    <value>Dwustopniowa authoryzacja email jest teraz wyłączona</value>
+  </data>
+  <data name="TwoFactorAuthIsSet" xml:space="preserve">
+    <value>Dwustopniowa authoryzacja email jest teraz aktywna</value>
   </data>
   <data name="UserDoesNotExist" xml:space="preserve">
     <value>Taki użytkownik nie istnieje!</value>

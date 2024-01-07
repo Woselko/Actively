@@ -16,6 +16,7 @@ using ActivelyApp.Services.EntityService;
 using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
 using ActivelyApp.Models.AuthenticationDto.Email;
 using ActivelyApp.Models.Common;
+using ActivelyDomain.Entities;
 
 namespace ActivelyApp.Services.ServiceRegistration
 {
@@ -35,7 +36,7 @@ namespace ActivelyApp.Services.ServiceRegistration
             //mapper
             services.AddAutoMapper(typeof(Program));
             //Authentication
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ActivelyDbContext>()
                 .AddDefaultTokenProviders();
             //json
