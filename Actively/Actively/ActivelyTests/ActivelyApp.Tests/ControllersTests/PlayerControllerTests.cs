@@ -99,7 +99,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(errorMessage, response.Message);
             Assert.Equal(Common.Error, response.Status);
-            Assert.Null(response.ReturnObject);
+            Assert.Null(response.Content);
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
             Assert.Equal(ResponseType.Success, response.Type);
             Assert.Equal(Common.Success, response.Status);
-            Assert.NotNull(response.ReturnObject);
+            Assert.NotNull(response.Content);
         }
 
         [Fact]
@@ -162,7 +162,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(errorMessage, response.Message);
             Assert.Equal(Common.Error, response.Status);
-            Assert.Null(response.ReturnObject);
+            Assert.Null(response.Content);
         }
 
         [Theory]
@@ -199,7 +199,7 @@ namespace ActivelyApp.Tests.ControllersTests
                 Assert.Equal(ResponseType.Success, response.Type);
                 Assert.Equal(Common.SuccessfullyDeleted, response.Message);
                 Assert.Equal(Common.Success, response.Status);
-                Assert.Null(response.ReturnObject);
+                Assert.Null(response.Content);
                 _mockPlayerService.Verify(service => service.Delete(10), Times.Once);
             }
             else
@@ -211,7 +211,7 @@ namespace ActivelyApp.Tests.ControllersTests
                     Assert.Equal(ResponseType.Error, response.Type);
                     Assert.Equal(Common.PlayerNotExistsError, response.Message);
                     Assert.Equal(Common.Error, response.Status);
-                    Assert.Null(response.ReturnObject);
+                    Assert.Null(response.Content);
                 }
                 else
                 {
@@ -220,7 +220,7 @@ namespace ActivelyApp.Tests.ControllersTests
                     Assert.Equal(ResponseType.Error, response.Type);
                     Assert.Equal(Common.SomethingWentWrong, response.Message);
                     Assert.Equal(Common.Error, response.Status);
-                    Assert.Null(response.ReturnObject);
+                    Assert.Null(response.Content);
 
                 }
             }
@@ -241,7 +241,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(ResponseType.Success, response.Type);
             Assert.Equal(Common.Success, response.Message);
             Assert.Equal(Common.Success, response.Status);
-            Assert.Null(response.ReturnObject);
+            Assert.Null(response.Content);
             _mockPlayerService.Verify(service => service.Create(_newPlayer), Times.Once);
         }
 
@@ -261,7 +261,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(Common.SomethingWentWrong, response.Message);
             Assert.Equal(Common.Error, response.Status);
-            Assert.Null(response.ReturnObject);
+            Assert.Null(response.Content);
             _mockPlayerService.Verify(service => service.Create(_newPlayer), Times.Once);
         }
 
@@ -281,7 +281,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(Common.SomethingWentWrong, response.Message);
             Assert.Equal(Common.Error, response.Status);
-            Assert.Null(response.ReturnObject);
+            Assert.Null(response.Content);
             _mockPlayerService.Verify(service => service.Create(_newPlayer), Times.Never);
         }
 
@@ -301,7 +301,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(Common.SomethingWentWrong, response.Message);
             Assert.Equal(Common.Error, response.Status);
-            Assert.Null(response.ReturnObject);
+            Assert.Null(response.Content);
             _mockPlayerService.Verify(service => service.Update(updatePlayerInfo, validPlayerId), Times.Never);
         }
 
@@ -340,7 +340,7 @@ namespace ActivelyApp.Tests.ControllersTests
                 Assert.Equal(ResponseType.Success, response.Type);
                 Assert.Equal(Common.SuccessfullyUpdated, response.Message);
                 Assert.Equal(Common.Success, response.Status);
-                Assert.Null(response.ReturnObject);
+                Assert.Null(response.Content);
                 _mockPlayerService.Verify(service => service.Update(_updatedPlayer, id), Times.Once);
             }
             else
@@ -352,7 +352,7 @@ namespace ActivelyApp.Tests.ControllersTests
                     Assert.Equal(ResponseType.Error, response.Type);
                     Assert.Equal(Common.PlayerNotExistsError, response.Message);
                     Assert.Equal(Common.Error, response.Status);
-                    Assert.Null(response.ReturnObject);
+                    Assert.Null(response.Content);
                     _mockPlayerService.Verify(service => service.Update(_updatedPlayer, id), Times.Once);
                 }
                 else
@@ -362,7 +362,7 @@ namespace ActivelyApp.Tests.ControllersTests
                     Assert.Equal(ResponseType.Error, response.Type);
                     Assert.Equal(Common.SomethingWentWrong, response.Message);
                     Assert.Equal(Common.Error, response.Status);
-                    Assert.Null(response.ReturnObject);
+                    Assert.Null(response.Content);
                     _mockPlayerService.Verify(service => service.Update(_updatedPlayer, id), Times.Once);
                 }
             }

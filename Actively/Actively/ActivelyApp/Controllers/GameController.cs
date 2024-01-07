@@ -37,7 +37,7 @@ namespace ActivelyApp.Controllers
                 }
 
                 return StatusCode(StatusCodes.Status200OK, new Response
-                { Type = ResponseType.Success, Status = Common.Success, ReturnObject = games });
+                { Type = ResponseType.Success, Status = Common.Success, Content = games });
             }
             catch (Exception e)
             {
@@ -70,7 +70,7 @@ namespace ActivelyApp.Controllers
 
 
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Success, Status = Common.Success, ReturnObject = game });
+            { Type = ResponseType.Success, Status = Common.Success, Content = game });
         }
 
         [HttpPost]

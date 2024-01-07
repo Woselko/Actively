@@ -44,7 +44,7 @@ namespace ActivelyApp.Controllers
             }
 
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Success, Status = Common.Success, ReturnObject = players });           
+            { Type = ResponseType.Success, Status = Common.Success, Content = players });           
         }
 
         [HttpGet]
@@ -67,7 +67,7 @@ namespace ActivelyApp.Controllers
             }
              
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Success, Status = Common.Success, ReturnObject = player });
+            { Type = ResponseType.Success, Status = Common.Success, Content = player });
         }
 
         [HttpPost]
