@@ -33,16 +33,16 @@ namespace ActivelyApp.Controllers
                 if (games == null)
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new Response
-                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.GameNotExistsError });
+                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.GameNotExistsError, IsSuccess = false });
                 }
 
                 return StatusCode(StatusCodes.Status200OK, new Response
-                { Type = ResponseType.Success, Status = Common.Success, Content = games });
+                { Type = ResponseType.Success, Status = Common.Success, Content = games, IsSuccess = true});
             }
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message, IsSuccess = false });
             }
 
             
@@ -58,19 +58,19 @@ namespace ActivelyApp.Controllers
                 if (game == null)
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new Response
-                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.GameNotExistsError });
+                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.GameNotExistsError, IsSuccess = false });
                 }
 
             }
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message, IsSuccess = false });
             }
 
 
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Success, Status = Common.Success, Content = game });
+            { Type = ResponseType.Success, Status = Common.Success, Content = game, IsSuccess = true});
         }
 
         [HttpPost]
@@ -79,7 +79,7 @@ namespace ActivelyApp.Controllers
             if (newGame == null)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.SomethingWentWrong });
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.SomethingWentWrong, IsSuccess = false });
             }
             try
             {
@@ -88,11 +88,11 @@ namespace ActivelyApp.Controllers
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message, IsSuccess = false });
             }
 
             return StatusCode(StatusCodes.Status201Created, new Response
-            { Type = ResponseType.Success, Status = Common.Success, Message = Common.Success });
+            { Type = ResponseType.Success, Status = Common.Success, Message = Common.Success, IsSuccess = true});
         }
 
         [HttpPatch]
@@ -100,7 +100,7 @@ namespace ActivelyApp.Controllers
         {
             if (updateGameInfo == null)
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.SomethingWentWrong });
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.SomethingWentWrong, IsSuccess = false });
             try
             {
                 await _gameService.Update(updateGameInfo, id);               
@@ -108,7 +108,7 @@ namespace ActivelyApp.Controllers
             catch (NotFoundEntityException)
             {
                 return StatusCode(StatusCodes.Status404NotFound, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.GameNotExistsError });
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.GameNotExistsError, IsSuccess = false });
             }
             catch (Exception e)
             {
@@ -116,7 +116,7 @@ namespace ActivelyApp.Controllers
                 { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
             }
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Success, Status = Common.Success, Message = Common.SuccessfullyUpdated });
+            { Type = ResponseType.Success, Status = Common.Success, Message = Common.SuccessfullyUpdated, IsSuccess = true });
         }
 
         [HttpDelete]
@@ -129,16 +129,16 @@ namespace ActivelyApp.Controllers
             catch(NotFoundEntityException)
             {
                 return StatusCode(StatusCodes.Status404NotFound, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.GameNotExistsError });
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.GameNotExistsError, IsSuccess = false });
             }
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
+                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message, IsSuccess = false });
             }
 
             return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Success, Status = Common.Success, Message = Common.SuccessfullyDeleted });
+            { Type = ResponseType.Success, Status = Common.Success, Message = Common.SuccessfullyDeleted, IsSuccess = true });
         }
 
     }

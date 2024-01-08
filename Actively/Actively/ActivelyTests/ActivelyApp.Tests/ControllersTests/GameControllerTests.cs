@@ -7,6 +7,7 @@ using ActivelyDomain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Org.BouncyCastle.Crypto.Engines;
 using Resources;
 using Xunit;
 
@@ -62,6 +63,7 @@ namespace ActivelyApp.Tests.ControllersTests
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
             Assert.Equal(ResponseType.Success, response.Type);
+            Assert.True(response.IsSuccess == true);
             Assert.Equal(Common.Success, response.Status);
         }
         
@@ -80,6 +82,7 @@ namespace ActivelyApp.Tests.ControllersTests
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
             Assert.Equal(ResponseType.Error, response.Type);
+            Assert.True(response.IsSuccess == false);
             Assert.Equal(Common.Error, response.Status);
         }
 
@@ -101,6 +104,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(errorMessage, response.Message);
             Assert.Equal(Common.Error, response.Status);
+            Assert.True(response.IsSuccess == false);
             Assert.Null(response.Content);
         }
 
@@ -118,6 +122,7 @@ namespace ActivelyApp.Tests.ControllersTests
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
             Assert.Equal(ResponseType.Success, response.Type);
+            Assert.True(response.IsSuccess == true);
             Assert.Equal(Common.Success, response.Status);
             Assert.NotNull(response.Content);
         }
@@ -135,6 +140,7 @@ namespace ActivelyApp.Tests.ControllersTests
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
             Assert.Equal(ResponseType.Error, response.Type);
+            Assert.True(response.IsSuccess == false);
             Assert.Equal(Common.Error, response.Status);
         }
 
@@ -155,6 +161,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(errorMessage, response.Message);
+            Assert.True(response.IsSuccess == false);
             Assert.Equal(Common.Error, response.Status);
             Assert.Null(response.Content);
         }
@@ -193,6 +200,7 @@ namespace ActivelyApp.Tests.ControllersTests
                 Assert.Equal(ResponseType.Success, response.Type);
                 Assert.Equal(Common.SuccessfullyDeleted, response.Message);
                 Assert.Equal(Common.Success, response.Status);
+                Assert.True(response.IsSuccess == true);
                 Assert.Null(response.Content);
                 _mockGameService.Verify(service => service.Delete(10), Times.Once);
             }
@@ -205,6 +213,7 @@ namespace ActivelyApp.Tests.ControllersTests
                     Assert.Equal(ResponseType.Error, response.Type);
                     Assert.Equal(Common.GameNotExistsError, response.Message);
                     Assert.Equal(Common.Error, response.Status);
+                    Assert.True(response.IsSuccess == false);
                     Assert.Null(response.Content);
                 }
                 else
@@ -214,6 +223,7 @@ namespace ActivelyApp.Tests.ControllersTests
                     Assert.Equal(ResponseType.Error, response.Type);
                     Assert.Equal(Common.SomethingWentWrong, response.Message);
                     Assert.Equal(Common.Error, response.Status);
+                    Assert.True(response.IsSuccess == false);
                     Assert.Null(response.Content);
 
                 }
@@ -235,6 +245,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(ResponseType.Success, response.Type);
             Assert.Equal(Common.Success, response.Message);
             Assert.Equal(Common.Success, response.Status);
+            Assert.True(response.IsSuccess == true);
             Assert.Null(response.Content);
             _mockGameService.Verify(service => service.Create(_newGame), Times.Once); 
         }
@@ -255,6 +266,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(Common.SomethingWentWrong, response.Message);
             Assert.Equal(Common.Error, response.Status);
+            Assert.True(response.IsSuccess == false);
             Assert.Null(response.Content);
             _mockGameService.Verify(service => service.Create(_newGame), Times.Once);
         }
@@ -276,6 +288,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(Common.SomethingWentWrong, response.Message);
             Assert.Equal(Common.Error, response.Status);
             Assert.Null(response.Content);
+            Assert.True(response.IsSuccess == false);
             _mockGameService.Verify(service => service.Create(newNullGameInfo), Times.Never);
         }
 
@@ -296,6 +309,7 @@ namespace ActivelyApp.Tests.ControllersTests
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(Common.SomethingWentWrong, response.Message);
             Assert.Equal(Common.Error, response.Status);
+            Assert.True(response.IsSuccess == false);
             Assert.Null(response.Content);
             _mockGameService.Verify(service => service.Update(updateGameInfo, validGameId), Times.Never);
         }
@@ -336,6 +350,7 @@ namespace ActivelyApp.Tests.ControllersTests
                 Assert.Equal(Common.SuccessfullyUpdated, response.Message);
                 Assert.Equal(Common.Success, response.Status);
                 Assert.Null(response.Content);
+                Assert.True(response.IsSuccess == true);
                 _mockGameService.Verify(service => service.Update(_updatedGame, id), Times.Once);
             }
             else
@@ -348,6 +363,7 @@ namespace ActivelyApp.Tests.ControllersTests
                     Assert.Equal(Common.GameNotExistsError, response.Message);
                     Assert.Equal(Common.Error, response.Status);
                     Assert.Null(response.Content);
+                    Assert.True(response.IsSuccess == false);
                     _mockGameService.Verify(service => service.Update(_updatedGame, id), Times.Once);
                 }
                 else
@@ -357,6 +373,7 @@ namespace ActivelyApp.Tests.ControllersTests
                     Assert.Equal(ResponseType.Error, response.Type);
                     Assert.Equal(Common.SomethingWentWrong, response.Message);
                     Assert.Equal(Common.Error, response.Status);
+                    Assert.True(response.IsSuccess == false);
                     Assert.Null(response.Content);
                     _mockGameService.Verify(service => service.Update(_updatedGame, id), Times.Once);
                 }
