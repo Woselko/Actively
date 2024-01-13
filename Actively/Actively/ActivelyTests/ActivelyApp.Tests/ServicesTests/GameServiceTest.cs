@@ -23,9 +23,8 @@ namespace ActivelyApp.Tests.ServicesTests
         {
             var mapperConfiguration = new MapperConfiguration(
                cfg => cfg.AddProfile<GameMappingProfile>());
-            _mapper = new Mapper(mapperConfiguration);
             _gameRepository = new Mock<IGameRepository>();
-            _gameService = new GameService(_gameRepository.Object, _mapper);
+            _gameService = new GameService(_gameRepository.Object);
             _games = new List<Game>()
             {
                 new Game{

@@ -144,7 +144,10 @@
   <data name="Error" xml:space="preserve">
     <value>Error!</value>
   </data>
-  <data name="GameNotExistsError" xml:space="preserve">
+  <data name="SuccessfullyCreated" xml:space="preserve">
+    <value>Successfully created</value>
+  </data>
+  <data name="GameNotExists" xml:space="preserve">
     <value>Game does not exist</value>
   </data>
   <data name="InvalidCode" xml:space="preserve">
@@ -168,7 +171,7 @@
   <data name="PasswordResetRequest" xml:space="preserve">
     <value>A link with the option to change the password has been sent to the e-mail address provided, open it and follow the instructions: </value>
   </data>
-  <data name="PlayerNotExistsError" xml:space="preserve">
+  <data name="PlayerNotExists" xml:space="preserve">
     <value>Player does not exist</value>
   </data>
   <data name="Privacy" xml:space="preserve">

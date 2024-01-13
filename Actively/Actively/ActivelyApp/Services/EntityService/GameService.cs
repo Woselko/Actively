@@ -1,9 +1,6 @@
-﻿using ActivelyApp.CustomExceptions;
-using ActivelyApp.Models.EntityDto;
+﻿using ActivelyApp.Models.ServiceModels;
 using ActivelyDomain.Entities;
 using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
-using AutoMapper;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Resources;
 
 namespace ActivelyApp.Services.EntityService
@@ -12,106 +9,113 @@ namespace ActivelyApp.Services.EntityService
     public class GameService : IGameService
     {
         private readonly IGameRepository _gameRepository;
-        private readonly IMapper _mapper;
 
-        public GameService(IGameRepository gameRepository, IMapper mapper)
+        public GameService(IGameRepository gameRepository)
         {
             _gameRepository = gameRepository;
-            _mapper = mapper;
         }
-        public async Task<IEnumerable<GameDto>> GetAll()
+        public async Task<ServiceResult<IEnumerable<Game>>> GetAllGames()
         {
-            IEnumerable<Game> games = null;
             try
             {
-                games = await _gameRepository.GetAll() ?? new List<Game>();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            var gamesDto = _mapper.Map<IEnumerable<GameDto>>(games);
-            return gamesDto;           
-        }
+                var games = await _gameRepository.GetAll() ?? Enumerable.Empty<Game>();
 
-        public async Task<GameDto?> GetById(int id)
-        {
-            Game game = null;
-            try
-            {
-                game = await _gameRepository.GetById(id);
-            }
-            catch (Exception)
-            {
-                //log
-            }
-            if (game == null)
-                return null;
-            var gameDto = _mapper.Map<GameDto>(game);
-            return gameDto;
-        }
-
-        public async Task Delete(int id)
-        {
-            Game gameToDelete = null;
-            try
-            {
-                gameToDelete = await _gameRepository.GetById(id);
-                if (gameToDelete == null)
+                if (!games.Any())
                 {
-                    throw new NotFoundEntityException(Common.GameNotExistsError);
+                    return ServiceResult<IEnumerable<Game>>.Success(Common.GameNotExists, games);
                 }
-                await _gameRepository.Delete(gameToDelete);
-                await _gameRepository.Save();
-            }
-            catch (NotFoundEntityException)
-            {
-                //log
+
+                return ServiceResult<IEnumerable<Game>>.Success(Common.Success, games);
             }
             catch (Exception)
             {
                 //log
+                return ServiceResult<IEnumerable<Game>>.Failure(Common.SomethingWentWrong);
             }
+
         }
 
-        public async Task Update(UpdateGameInfoDto game, int id)
+        public async Task<ServiceResult<Game>> GetGameById(int id)
         {
-            Game gameToUpdate = null;
             try
             {
-                gameToUpdate = await _gameRepository.GetById(id);
-                if (gameToUpdate == null)
+                var game = await _gameRepository.GetById(id);
+                if (game == null)
+                    return ServiceResult<Game>.Failure(Common.GameNotExists);
+                return ServiceResult<Game>.Success(Common.Success, game);
+            }
+            catch (Exception)
+            {
+                //log
+                return ServiceResult<Game>.Failure(Common.SomethingWentWrong);
+            }
+            
+        }
+
+        public async Task<ServiceResult<Game>> DeleteGame(int id)
+        {
+            try
+            {
+                var gameToDelete = await _gameRepository.GetById(id);
+                if (gameToDelete is not null)
                 {
-                    throw new NotFoundEntityException(Common.GameNotExistsError);
+                    await _gameRepository.Delete(gameToDelete);
+                    await _gameRepository.Save();
+                    return ServiceResult<Game>.Success(Common.SuccessfullyDeleted);
                 }
                 else
                 {
-                    gameToUpdate.GameTime = game.GameTime;
-                    await _gameRepository.Update(gameToUpdate);
+                    return ServiceResult<Game>.Failure(Common.GameNotExists);
                 }
-                await _gameRepository.Save();
+
             }
+
             catch (Exception)
             {
                 //log
-            }       
+                return ServiceResult<Game>.Failure(Common.SomethingWentWrong);
+            }
         }
-
-        public async Task Create(CreateGameInfoDto newGame)
+        public async Task<ServiceResult<Game>> UpdateGame(Game game, int id)
         {
             try
             {
-                if (newGame != null)
+                var gameToUpdate = await _gameRepository.GetById(id);
+                if (gameToUpdate is not null)
                 {
-                    Game game = _mapper.Map<Game>(newGame);
-                    await _gameRepository.Create(game);
+                    gameToUpdate.GameTime = game.GameTime;
+                    await _gameRepository.Update(gameToUpdate);
                     await _gameRepository.Save();
+                    return ServiceResult<Game>.Success(Common.SuccessfullyUpdated);
                 }
+                else
+                {
+                    return ServiceResult<Game>.Failure(Common.GameNotExists);
+                }
+
             }
             catch (Exception)
             {
                 //log
-            }       
+                return ServiceResult<Game>.Failure(Common.SomethingWentWrong);
+            }
+        }
+
+        public async Task<ServiceResult<Game>> CreateGame(Game newGame)
+        {
+            try
+            {
+                    await _gameRepository.Create(newGame);
+                    await _gameRepository.Save();
+                return ServiceResult<Game>.Success(Common.SuccessfullyCreated);
+            }
+            catch (Exception)
+            {
+                //log
+                return ServiceResult<Game>.Failure(Common.SomethingWentWrong);
+            }
         }
     }
 }
+
+

@@ -34,7 +34,7 @@ namespace ActivelyApp.Controllers
                 if (players == null)
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new Response
-                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExistsError, IsSuccess = false });
+                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExists, IsSuccess = false });
                 }
             }
             catch (Exception e)
@@ -57,7 +57,7 @@ namespace ActivelyApp.Controllers
                 if (player == null)
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new Response
-                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExistsError });
+                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExists });
                 }
             }
             catch (Exception e)
@@ -106,7 +106,7 @@ namespace ActivelyApp.Controllers
             catch (NotFoundEntityException)
             {
                 return StatusCode(StatusCodes.Status404NotFound, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExistsError, IsSuccess = false });
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExists, IsSuccess = false });
             }
             catch (Exception e)
             {
@@ -127,7 +127,7 @@ namespace ActivelyApp.Controllers
             catch (NotFoundEntityException)
             {
                 return StatusCode(StatusCodes.Status404NotFound, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExistsError, IsSuccess = false });
+                { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExists, IsSuccess = false });
             }
             catch (Exception e)
             {

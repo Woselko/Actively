@@ -116,7 +116,7 @@ namespace ActivelyApp.Tests.ControllersTests
             _mockGameService.Setup(service => service.GetById(_game.Id))
                  .ReturnsAsync(new GameDto() {CreationDate = _game.CreationDate, Sport = _game.Sport });
             // Act
-            var result = await _controller.GetById(10) as ObjectResult;
+            var result = await _controller.GetGameById(10) as ObjectResult;
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
@@ -134,7 +134,7 @@ namespace ActivelyApp.Tests.ControllersTests
             var invalidGameId = 69;
 
             // Act
-            var result = await _controller.GetById(invalidGameId) as ObjectResult;
+            var result = await _controller.GetGameById(invalidGameId) as ObjectResult;
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
@@ -190,7 +190,7 @@ namespace ActivelyApp.Tests.ControllersTests
             }
 
             // Act
-            var result = await _controller.Delete(id) as ObjectResult;
+            var result = await _controller.DeleteGame(id) as ObjectResult;
 
             // Assert
             if (isValid)
@@ -301,7 +301,7 @@ namespace ActivelyApp.Tests.ControllersTests
             _mockGameService.Setup(service => service.Update(updateGameInfo, validGameId)).Verifiable();
 
             // Act
-            var result = await _controller.Update(updateGameInfo, validGameId) as ObjectResult;
+            var result = await _controller.UpdateGame(updateGameInfo, validGameId) as ObjectResult;
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
@@ -339,7 +339,7 @@ namespace ActivelyApp.Tests.ControllersTests
             }
 
             // Act
-            var result = await _controller.Update(_updatedGame, id) as ObjectResult;
+            var result = await _controller.UpdateGame(_updatedGame, id) as ObjectResult;
 
             // Assert
             if (isValid)

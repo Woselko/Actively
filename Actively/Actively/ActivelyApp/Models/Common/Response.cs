@@ -3,7 +3,7 @@
     public class Response
     {
         public bool IsSuccess { get; set; }
-        public object? Content { get; set; }
+        public object? Content { get; set; } = null;
         public string? Status { get; set; }
         public string? Message { get; set; }
         public ResponseType? Type { get; set; }

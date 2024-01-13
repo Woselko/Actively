@@ -144,12 +144,23 @@ namespace Resources {
         /// <summary>
         ///   Looks up a localized string similar to Game does not exist.
         /// </summary>
-        public static string GameNotExistsError {
+        public static string GameNotExists {
             get {
-                return ResourceManager.GetString("GameNotExistsError", resourceCulture);
+                return ResourceManager.GetString("GameNotExists", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to successfully created.
+        /// </summary>
+        public static string SuccessfullyCreated
+        {
+            get
+            {
+                return ResourceManager.GetString("SuccessfullyCreated", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid code.
         /// </summary>
@@ -216,7 +227,7 @@ namespace Resources {
         /// <summary>
         ///   Looks up a localized string similar to Player does not exist.
         /// </summary>
-        public static string PlayerNotExistsError {
+        public static string PlayerNotExists {
             get {
                 return ResourceManager.GetString("PlayerNotExistsError", resourceCulture);
             }

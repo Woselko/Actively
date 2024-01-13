@@ -66,7 +66,7 @@ namespace ActivelyApp.Services.EntityService
                     await _playerRepository.Save();
                 }
                 else
-                    throw new NotFoundEntityException(Common.PlayerNotExistsError);
+                    throw new NotFoundEntityException(Common.PlayerNotExists);
             }
             catch (NotFoundEntityException)
             {
@@ -91,7 +91,7 @@ namespace ActivelyApp.Services.EntityService
                     await _playerRepository.Save();
                 }
                 else
-                    throw new NotFoundEntityException(Common.PlayerNotExistsError);
+                    throw new NotFoundEntityException(Common.PlayerNotExists);
             }
             catch (NotFoundEntityException)
             {
