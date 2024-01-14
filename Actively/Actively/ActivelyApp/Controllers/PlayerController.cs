@@ -1,5 +1,4 @@
-﻿using ActivelyApp.CustomExceptions;
-using ActivelyApp.Models.Common;
+﻿using ActivelyApp.Models.Common;
 using ActivelyApp.Models.EntityDto;
 using ActivelyApp.Services.EntityService;
 using ActivelyDomain.Entities;
@@ -7,8 +6,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
-using System.Numerics;
-using System.Runtime.CompilerServices;
 
 namespace ActivelyApp.Controllers
 {
@@ -27,7 +24,7 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllPlayers()
         {
             var serviceResult = await _playerService.GetAllPlayers();
             if (serviceResult.IsSuccess == true)
@@ -73,7 +70,7 @@ namespace ActivelyApp.Controllers
             var serviceResult = await _playerService.CreatePlayer(entityNewPlayer);
             if (serviceResult.IsSuccess == true)
             {
-                return StatusCode(StatusCodes.Status200OK, new Response
+                return StatusCode(StatusCodes.Status201Created, new Response
                 { Type = ResponseType.Success, Status = Common.Success, Content = newPlayer, Message = serviceResult.Message, IsSuccess = true });
             }
             else

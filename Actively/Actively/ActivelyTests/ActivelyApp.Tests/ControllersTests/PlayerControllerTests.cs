@@ -1,9 +1,11 @@
 ﻿using ActivelyApp.Controllers;
-using ActivelyApp.CustomExceptions;
+using ActivelyApp.Mappings;
 using ActivelyApp.Models.Common;
 using ActivelyApp.Models.EntityDto;
+using ActivelyApp.Models.ServiceModels;
 using ActivelyApp.Services.EntityService;
 using ActivelyDomain.Entities;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -14,188 +16,234 @@ namespace ActivelyApp.Tests.ControllersTests
 {
     public class PlayerControllerTests
     {
-        private  Mock<IPlayerService> _mockPlayerService;
+        private Mock<IPlayerService> _mockPlayerService;
+        private IMapper _mapper;
         private PlayerController _controller;
-        private Player _player;
-        private CreatePlayerInfoDto _newPlayer;
-        private UpdatePlayerInfoDto _updatedPlayer;
-
+        private Player _validPlayer01;
+        private Player _validPlayer02;
 
         public PlayerControllerTests()
         {
-            _mockPlayerService= new Mock<IPlayerService>();
-            _controller = new PlayerController(_mockPlayerService.Object);
-            _mockPlayerService.Setup(service => service.GetAll())
-                 .ReturnsAsync(new List<PlayerDto>()
-                 {
-                    new PlayerDto(),
-                    new PlayerDto()
-                 });
+            var mapperConfiguration = new MapperConfiguration(
+               cfg => cfg.AddProfile<PlayerMappingProfile>());
+            _mapper = new Mapper(mapperConfiguration);
 
-            _player = new Player()
+            _mockPlayerService = new Mock<IPlayerService>();
+
+            _controller = new PlayerController(_mockPlayerService.Object, _mapper);
+
+            _validPlayer01 = new Player()
             {
                 Id = 10,
-                FirstName = "TestName",
-                NickName = "TestNick"
-            };
+                FirstName = "FTest01",
+                LastName = "LTest01",
+                Games = new List<Game>(),
+                NickName = "Test01"
 
-            _newPlayer = new CreatePlayerInfoDto { FirstName = "firstName", LastName = "lastName", NickName = "nick" };
-            _updatedPlayer = new UpdatePlayerInfoDto { LastName = "lastName", NickName = "nick" };
+            };
+            _validPlayer02 = new Player()
+            {
+                Id = 20,
+                FirstName = "FTest02",
+                LastName = "LTest02",
+                Games = new List<Game>(),
+                NickName = "Test01"
+            };
         }
 
         [Fact]
-        public async Task GetAll_ReturnsObjectResultSuccessfulWithData()
+        public async Task GetAll_ReturnsOkObjectResultSuccessfulWithData()
         {
             //Arrange
-            _mockPlayerService.Setup(service => service.GetAll())
-                 .ReturnsAsync(new List<PlayerDto>()
+            _mockPlayerService.Setup(service => service.GetAllPlayers())
+                 .ReturnsAsync(new ServiceResult<IEnumerable<Player>>()
                  {
-                    new PlayerDto(),
-                    new PlayerDto()
+                     IsSuccess = true,
+                     Data = new List<Player>() { _validPlayer01, _validPlayer02 },
+                     Message = Common.Success
                  });
             // Act
-            var result = await _controller.GetAll() as ObjectResult;
+            var result = await _controller.GetAllPlayers() as ObjectResult;
 
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
             Assert.Equal(ResponseType.Success, response.Type);
-            Assert.Equal(Common.Success, response.Status);
             Assert.True(response.IsSuccess == true);
+            Assert.Equal(Common.Success, response.Status);
+            Assert.NotNull(response.Content);
         }
 
+
         [Fact]
-        public async Task GetAll_ReturnsNotFoundResultWhenNoData()
+        public async Task GetAll_ReturnsOkObjectResultSuccessfulWithNoData()
         {
             //Arrange
-            List<PlayerDto> players = null;
-            _mockPlayerService.Setup(service => service.GetAll())
-                 .ReturnsAsync(players);
+            _mockPlayerService.Setup(service => service.GetAllPlayers())
+                 .ReturnsAsync(new ServiceResult<IEnumerable<Player>>()
+                 {
+                     IsSuccess = true,
+                     Data = new List<Player>(),
+                     Message = Common.Success
+                 });
             // Act
-            var result = await _controller.GetAll() as ObjectResult;
+            var result = await _controller.GetAllPlayers() as ObjectResult;
+
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
-            Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
-            Assert.Equal(ResponseType.Error, response.Type);
-            Assert.Equal(Common.Error, response.Status);
-            Assert.True(response.IsSuccess == false);
+            Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
+            Assert.Equal(ResponseType.Success, response.Type);
+            Assert.True(response.IsSuccess == true);
+            Assert.Equal(Common.Success, response.Status);
+            Assert.Empty(response.Content as IEnumerable<PlayerDto>);
         }
 
         [Fact]
         public async Task GetAll_ReturnsBadRequestResultOnError()
         {
             // Arrange
-            string errorMessage = "test error message";
-            _mockPlayerService.Setup(service => service.GetAll())
-                 .ThrowsAsync(new Exception("test error message"));
+            _mockPlayerService.Setup(service => service.GetAllPlayers())
+                 .ReturnsAsync(new ServiceResult<IEnumerable<Player>>()
+                 {
+                     IsSuccess = false,
+                     Data = null,
+                     Message = Common.SomethingWentWrong
+                 });
 
             // Act
 
-            var result = await _controller.GetAll() as ObjectResult;
+            var result = await _controller.GetAllPlayers() as ObjectResult;
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
             Assert.Equal(ResponseType.Error, response.Type);
-            Assert.Equal(errorMessage, response.Message);
             Assert.Equal(Common.Error, response.Status);
-            Assert.Null(response.Content);
+            Assert.Equal(Common.SomethingWentWrong, response.Message);
             Assert.True(response.IsSuccess == false);
+            Assert.Null(response.Content);
         }
 
         [Fact]
         public async Task GetById_ValidId_ReturnsOkResultWithData()
         {
             //Arrange
-            _mockPlayerService.Setup(service => service.GetById(_player.Id))
-                 .ReturnsAsync(
-                new PlayerDto()
-                {
-                    FirstName = _player.FirstName
-                });
+
+            _mockPlayerService.Setup(service => service.GetPlayerById(_validPlayer01.Id))
+                 .ReturnsAsync(new ServiceResult<Player>()
+                 {
+                     IsSuccess = true,
+                     Data = _validPlayer01,
+                     Message = Common.Success
+                 });
             // Act
-            var result = await _controller.GetById(10) as ObjectResult;
+            var result = await _controller.GetPlayerById(_validPlayer01.Id) as ObjectResult;
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
             Assert.Equal(ResponseType.Success, response.Type);
+            Assert.True(response.IsSuccess == true);
             Assert.Equal(Common.Success, response.Status);
             Assert.NotNull(response.Content);
-            Assert.True(response.IsSuccess == true);
+            Assert.True(((PlayerDto)response.Content).NickName == _validPlayer01.NickName);
         }
 
         [Fact]
         public async Task GetById_InvalidId_ShouldReturnNotFoundWithNoData()
         {
-            //Arrange
-            var invalidPlayerId = 69;
-            _mockPlayerService.Setup(service => service.GetById(_player.Id))
-                 .ReturnsAsync(
-                new PlayerDto()
-                {
-                    FirstName = _player.FirstName
-                });
-            //Act
-            var result = await _controller.GetById(invalidPlayerId) as ObjectResult;
+            // Arrange
+            var notExistingPlayerId = 25;
+            _mockPlayerService.Setup(service => service.GetPlayerById(notExistingPlayerId))
+                 .ReturnsAsync(new ServiceResult<Player>()
+                 {
+                     IsSuccess = false,
+                     Data = null,
+                     Message = Common.PlayerNotExists
+                 });
+
+            // Act
+            var result = await _controller.GetPlayerById(notExistingPlayerId) as ObjectResult;
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(Common.Error, response.Status);
+            Assert.Equal(Common.PlayerNotExists, response.Message);
             Assert.True(response.IsSuccess == false);
+            Assert.Null(response.Content);
         }
 
         [Fact]
         public async Task GetById_ReturnsBadRequestResultOnErrorWithNoData()
         {
             // Arrange
-            string errorMessage = "test error message";
-            _mockPlayerService.Setup(service => service.GetAll())
-                 .ThrowsAsync(new Exception("test error message"));
+            _mockPlayerService.Setup(service => service.GetPlayerById(_validPlayer01.Id))
+                 .ReturnsAsync(new ServiceResult<Player>()
+                 {
+                     IsSuccess = false,
+                     Data = null,
+                     Message = Common.Error
+                 });
 
             // Act
-
-            var result = await _controller.GetAll() as ObjectResult;
+            var result = await _controller.GetPlayerById(_validPlayer01.Id) as ObjectResult;
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
             Assert.Equal(ResponseType.Error, response.Type);
-            Assert.Equal(errorMessage, response.Message);
             Assert.Equal(Common.Error, response.Status);
-            Assert.Null(response.Content);
+            Assert.Equal(Common.Error, response.Message);
             Assert.True(response.IsSuccess == false);
+            Assert.Null(response.Content);
         }
 
         [Theory]
         [InlineData(10, true)] // Valid ID
         [InlineData(69, false)] // Invalid ID - Not Found Entity
         [InlineData(-1, false)] // Invalid ID - Bad Request
-        public async Task Delete_ValidAndInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
+        public async Task Delete_WithValidAndInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
         {
             // Arrange
             if (isValid)
-            {       
-                _mockPlayerService.Setup(service => service.Delete(id)).Verifiable();
+            {
+                _mockPlayerService.Setup(service => service.DeletePlayer(id))
+                    .ReturnsAsync(new ServiceResult<Player>()
+                    {
+                        IsSuccess = true,
+                        Data = null,
+                        Message = Common.SuccessfullyDeleted
+                    });
             }
             else
             {
                 if (id == 69)
                 {
-                    _mockPlayerService.Setup(service => service.Delete(id)).Throws(new NotFoundEntityException(Common.PlayerNotExistsError));
+                    _mockPlayerService.Setup(service => service.DeletePlayer(id))
+                        .ReturnsAsync(new ServiceResult<Player>()
+                        {
+                            IsSuccess = false,
+                            Data = null,
+                            Message = Common.PlayerNotExists
+                        });
                 }
                 else
                 {
-                    _mockPlayerService.Setup(service => service.Delete(id)).Throws(new Exception(Common.SomethingWentWrong));
+                    _mockPlayerService.Setup(service => service.DeletePlayer(id)).ReturnsAsync(new ServiceResult<Player>()
+                    {
+                        IsSuccess = false,
+                        Data = null,
+                        Message = Common.SomethingWentWrong
+                    });
                 }
             }
 
             // Act
-            var result = await _controller.Delete(id) as ObjectResult;
+            var result = await _controller.DeletePlayer(id) as ObjectResult;
 
             // Assert
             if (isValid)
@@ -205,9 +253,9 @@ namespace ActivelyApp.Tests.ControllersTests
                 Assert.Equal(ResponseType.Success, response.Type);
                 Assert.Equal(Common.SuccessfullyDeleted, response.Message);
                 Assert.Equal(Common.Success, response.Status);
-                Assert.Null(response.Content);
                 Assert.True(response.IsSuccess == true);
-                _mockPlayerService.Verify(service => service.Delete(10), Times.Once);
+                Assert.Null(response.Content);
+                _mockPlayerService.Verify(service => service.DeletePlayer(id), Times.Once);
             }
             else
             {
@@ -216,10 +264,10 @@ namespace ActivelyApp.Tests.ControllersTests
                     var response = Assert.IsType<Response>(result.Value);
                     Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
                     Assert.Equal(ResponseType.Error, response.Type);
-                    Assert.Equal(Common.PlayerNotExistsError, response.Message);
+                    Assert.Equal(Common.PlayerNotExists, response.Message);
                     Assert.Equal(Common.Error, response.Status);
-                    Assert.Null(response.Content);
                     Assert.True(response.IsSuccess == false);
+                    Assert.Null(response.Content);
                 }
                 else
                 {
@@ -228,163 +276,162 @@ namespace ActivelyApp.Tests.ControllersTests
                     Assert.Equal(ResponseType.Error, response.Type);
                     Assert.Equal(Common.SomethingWentWrong, response.Message);
                     Assert.Equal(Common.Error, response.Status);
-                    Assert.Null(response.Content);
                     Assert.True(response.IsSuccess == false);
+                    Assert.Null(response.Content);
 
                 }
             }
         }
 
         [Fact]
-        public async Task Create_WithValidData_ReturnsObjectResultWithSuccessWithNoData()
+        public async Task Create_WithValidData_ReturnsObjectResultWithSuccessWithData()
         {
-            //Arrange
-            _mockPlayerService.Setup(service => service.Create(_newPlayer)).Verifiable();
+            // Arrange
+            var newPlayerDto = new CreatePlayerInfoDto { FirstName = "Test01", LastName = "Test01", NickName = "Test01" };
+            var player = _mapper.Map<CreatePlayerInfoDto, Player>(newPlayerDto);
+
+            var expectedServiceResult = new ServiceResult<Player>
+            {
+                IsSuccess = true,
+                Data = null,
+                Message = Common.SuccessfullyCreated
+            };
+
+            _mockPlayerService.Setup(service => service.CreatePlayer(It.IsAny<Player>())).ReturnsAsync(expectedServiceResult);
 
             // Act
-            var result = await _controller.Create(_newPlayer) as ObjectResult;
+            var result = await _controller.CreatePlayer(newPlayerDto) as ObjectResult;
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
+
             Assert.Equal(StatusCodes.Status201Created, result.StatusCode);
             Assert.Equal(ResponseType.Success, response.Type);
-            Assert.Equal(Common.Success, response.Message);
+            Assert.Equal(Common.SuccessfullyCreated, response.Message);
             Assert.Equal(Common.Success, response.Status);
-            Assert.Null(response.Content);
-            Assert.True(response.IsSuccess == true);
-            _mockPlayerService.Verify(service => service.Create(_newPlayer), Times.Once);
+            Assert.True(response.IsSuccess);
+            Assert.NotNull(response.Content);
+
+            _mockPlayerService.Verify(service => service.CreatePlayer(It.IsAny<Player>()), Times.Once);
         }
 
         [Fact]
         public async Task Create_ValidData_ReturnsBadRequestResultOnErrorWithNoData()
         {
             // Arrange
-            
-            _mockPlayerService.Setup(service => service.Create(_newPlayer)).Throws(new NotFoundEntityException(Common.SomethingWentWrong));
+            var newPlayer = new CreatePlayerInfoDto { FirstName = "Test01", LastName = "Test01", NickName = "Test01" };
+            var expectedServiceResult = new ServiceResult<Player>
+            {
+                IsSuccess = false,
+                Data = null,
+                Message = Common.SomethingWentWrong
+            };
+
+            _mockPlayerService.Setup(service => service.CreatePlayer(It.IsAny<Player>())).ReturnsAsync(expectedServiceResult);
 
             // Act
-            var result = await _controller.Create(_newPlayer) as ObjectResult;
+            var result = await _controller.CreatePlayer(newPlayer) as ObjectResult;
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
+
             Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(Common.SomethingWentWrong, response.Message);
             Assert.Equal(Common.Error, response.Status);
+            Assert.True(!response.IsSuccess);
             Assert.Null(response.Content);
-            Assert.True(response.IsSuccess == false);
-            _mockPlayerService.Verify(service => service.Create(_newPlayer), Times.Once);
+
+            _mockPlayerService.Verify(service => service.CreatePlayer(It.IsAny<Player>()), Times.Once);
         }
 
         [Fact]
-        public async Task Create_NullData_ReturnsBadRequestResultWithNoData()
+        public async Task UpdatePlayer_ValidId_Returns200Ok()
         {
             // Arrange
-            CreatePlayerInfoDto newPlayerInfo = null;
-            _mockPlayerService.Setup(service => service.Create(_newPlayer)).Verifiable();
+            var updatePlayerInfo = new UpdatePlayerInfoDto();
+            var id = 10;
+
+            var serviceResult = new ServiceResult<Player>
+            {
+                IsSuccess = true,
+                Message = Common.Success
+            };
+
+            _mockPlayerService.Setup(service => service.UpdatePlayer(It.IsAny<Player>(), id)).ReturnsAsync(serviceResult);
 
             // Act
-            var result = await _controller.Create(newPlayerInfo) as ObjectResult;
+            var result = await _controller.UpdatePlayer(updatePlayerInfo, id);
 
             // Assert
-            var response = Assert.IsType<Response>(result.Value);
-            Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
-            Assert.Equal(ResponseType.Error, response.Type);
-            Assert.Equal(Common.SomethingWentWrong, response.Message);
-            Assert.Equal(Common.Error, response.Status);
-            Assert.Null(response.Content);
-            Assert.True(response.IsSuccess == false);
-            _mockPlayerService.Verify(service => service.Create(_newPlayer), Times.Never);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
+
+            var response = Assert.IsType<Response>(objectResult.Value);
+            Assert.Equal(ResponseType.Success, response.Type);
+            Assert.Equal(Common.Success, response.Status);
+            Assert.Equal(updatePlayerInfo, response.Content);
+            Assert.Equal(serviceResult.Message, response.Message);
+            Assert.True(response.IsSuccess);
         }
 
         [Fact]
-        public async Task Update_NullData_ReturnsBadRequestResult()
+        public async Task UpdatePlayer_PlayerNotExists_Returns404NotFound()
         {
-            int validPlayerId = 10;
             // Arrange
-            UpdatePlayerInfoDto updatePlayerInfo = null;
+            var updatePlayerInfo = new UpdatePlayerInfoDto();
+            var id = 10;
+            var serviceResult = new ServiceResult<Player>
+            {
+                IsSuccess = false,
+                Message = Common.PlayerNotExists
+            };
+
+            _mockPlayerService.Setup(service => service.UpdatePlayer(It.IsAny<Player>(), id)).ReturnsAsync(serviceResult);
 
             // Act
-            var result = await _controller.Update(updatePlayerInfo, validPlayerId) as ObjectResult;
+            var result = await _controller.UpdatePlayer(updatePlayerInfo, id);
 
             // Assert
-            var response = Assert.IsType<Response>(result.Value);
-            Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
+
+            var response = Assert.IsType<Response>(objectResult.Value);
             Assert.Equal(ResponseType.Error, response.Type);
-            Assert.Equal(Common.SomethingWentWrong, response.Message);
             Assert.Equal(Common.Error, response.Status);
             Assert.Null(response.Content);
-            Assert.True(response.IsSuccess == false);
-            _mockPlayerService.Verify(service => service.Update(updatePlayerInfo, validPlayerId), Times.Never);
+            Assert.Equal(serviceResult.Message, response.Message);
+            Assert.False(response.IsSuccess);
         }
 
-        [Theory]
-        [InlineData(10, true)] // Valid ID
-        [InlineData(69, false)] // Invalid ID - Not Found Entity
-        [InlineData(-1, false)] // Invalid ID - Bad Request
-        public async Task Update_ValidOrInvalidId_ReturnsCorrectActionResult(int id, bool isValid)
+        [Fact]
+        public async Task UpdatePlayer_BadRequest_Returns400BadRequest()
         {
-
             // Arrange
-            if (isValid)
+            var updatePlayerInfo = new UpdatePlayerInfoDto();
+            var id = 10;
+
+            var serviceResult = new ServiceResult<Player>
             {
-                _mockPlayerService.Setup(service => service.Delete(id)).Verifiable();
-            }
-            else
-            {
-                if (id == 69)
-                {
-                    _mockPlayerService.Setup(service => service.Update(_updatedPlayer, id)).Throws(new NotFoundEntityException(Common.PlayerNotExistsError));
-                }
-                else
-                {
-                    _mockPlayerService.Setup(service => service.Update(_updatedPlayer, id)).Throws(new Exception(Common.SomethingWentWrong));
-                }
-            }
+                IsSuccess = false,
+                Message = "Some other error"
+            };
+
+            _mockPlayerService.Setup(service => service.UpdatePlayer(It.IsAny<Player>(), id)).ReturnsAsync(serviceResult);
 
             // Act
-            var result = await _controller.Update(_updatedPlayer, id) as ObjectResult;
+            var result = await _controller.UpdatePlayer(updatePlayerInfo, id);
 
             // Assert
-            if (isValid)
-            {
-                var response = Assert.IsType<Response>(result.Value);
-                Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
-                Assert.Equal(ResponseType.Success, response.Type);
-                Assert.Equal(Common.SuccessfullyUpdated, response.Message);
-                Assert.Equal(Common.Success, response.Status);
-                Assert.Null(response.Content);
-                Assert.True(response.IsSuccess == true);
-                _mockPlayerService.Verify(service => service.Update(_updatedPlayer, id), Times.Once);
-            }
-            else
-            {
-                if (id == 69)
-                {
-                    var response = Assert.IsType<Response>(result.Value);
-                    Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
-                    Assert.Equal(ResponseType.Error, response.Type);
-                    Assert.Equal(Common.PlayerNotExistsError, response.Message);
-                    Assert.Equal(Common.Error, response.Status);
-                    Assert.Null(response.Content);
-                    Assert.True(response.IsSuccess == false);
-                    _mockPlayerService.Verify(service => service.Update(_updatedPlayer, id), Times.Once);
-                }
-                else
-                {
-                    var response = Assert.IsType<Response>(result.Value);
-                    Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
-                    Assert.Equal(ResponseType.Error, response.Type);
-                    Assert.Equal(Common.SomethingWentWrong, response.Message);
-                    Assert.Equal(Common.Error, response.Status);
-                    Assert.Null(response.Content);
-                    Assert.True(response.IsSuccess == false);
-                    _mockPlayerService.Verify(service => service.Update(_updatedPlayer, id), Times.Once);
-                }
-            }
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
+
+            var response = Assert.IsType<Response>(objectResult.Value);
+            Assert.Equal(ResponseType.Error, response.Type);
+            Assert.Equal(Common.Error, response.Status);
+            Assert.Null(response.Content);
+            Assert.Equal(serviceResult.Message, response.Message);
+            Assert.False(response.IsSuccess);
         }
-
-
-
     }
 }

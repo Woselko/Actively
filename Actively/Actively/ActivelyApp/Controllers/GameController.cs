@@ -24,7 +24,7 @@ namespace ActivelyApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllGames()
         {
             var serviceResult = await _gameService.GetAllGames();
             if (serviceResult.IsSuccess == true)
@@ -70,7 +70,7 @@ namespace ActivelyApp.Controllers
             var serviceResult = await _gameService.CreateGame(entityNewGame);
             if (serviceResult.IsSuccess == true)
             {
-                return StatusCode(StatusCodes.Status200OK, new Response
+                return StatusCode(StatusCodes.Status201Created, new Response
                 { Type = ResponseType.Success, Status = Common.Success, Content = newGame, Message = serviceResult.Message, IsSuccess = true });
             }
             else
