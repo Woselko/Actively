@@ -1,14 +1,15 @@
 ﻿using ActivelyApp.Models.EntityDto;
+using ActivelyApp.Models.ServiceModels;
 using ActivelyDomain.Entities;
 
 namespace ActivelyApp.Services.EntityService
 {
     public interface IPlayerService
     {
-        Task Create(CreatePlayerInfoDto newPlayer);
-        Task Delete(int id);
-        Task<IEnumerable<PlayerDto>> GetAll();
-        Task<PlayerDto> GetById(int id);
-        Task Update(UpdatePlayerInfoDto player, int id);
+        public Task<ServiceResult<IEnumerable<Player>>> GetAllPlayers();
+        public Task<ServiceResult<Player>> GetPlayerById(int id);
+        public Task<ServiceResult<Player>> DeletePlayer(int id);
+        public Task<ServiceResult<Player>> UpdatePlayer(Player player, int id);
+        public Task<ServiceResult<Player>> CreatePlayer(Player newPlayer);
     }
 }

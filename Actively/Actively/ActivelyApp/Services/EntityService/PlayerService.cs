@@ -1,8 +1,6 @@
-﻿using ActivelyApp.CustomExceptions;
-using ActivelyApp.Models.EntityDto;
+﻿using ActivelyApp.Models.ServiceModels;
 using ActivelyDomain.Entities;
 using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
-using AutoMapper;
 using Resources;
 
 namespace ActivelyApp.Services.EntityService
@@ -10,114 +8,114 @@ namespace ActivelyApp.Services.EntityService
     public class PlayerService : IPlayerService
     {
         private readonly IPlayerRepository _playerRepository;
-        private readonly IMapper _mapper;
 
-        public PlayerService(IPlayerRepository playerRepository, IMapper mapper)
+        public PlayerService(IPlayerRepository playerRepository)
         {
             _playerRepository = playerRepository;
-            _mapper = mapper;
         }
-        public async Task<IEnumerable<PlayerDto>> GetAll()
+        public async Task<ServiceResult<IEnumerable<Player>>> GetAllPlayers()
         {
-            IEnumerable<Player> players = null;
             try
             {
-                players = await _playerRepository.GetAll() ?? new List<Player>();
+                var players = await _playerRepository.GetAll() ?? Enumerable.Empty<Player>();
+
+                if (!players.Any())
+                {
+                    return ServiceResult<IEnumerable<Player>>.Success(Common.PlayerNotExists, players);
+                }
+
+                return ServiceResult<IEnumerable<Player>>.Success(Common.Success, players);
             }
             catch (Exception)
             {
                 //log
+                return ServiceResult<IEnumerable<Player>>.Failure(Common.SomethingWentWrong);
             }
 
-            var playersDto = _mapper.Map<IEnumerable<PlayerDto>>(players);
-            return playersDto;
         }
 
-        public async Task<PlayerDto> GetById(int id)
+        public async Task<ServiceResult<Player>> GetPlayerById(int id)
         {
-            Player player = null;
             try
             {
-                player = await _playerRepository.GetById(id);
+                var player = await _playerRepository.GetById(id);
+                if (player == null)
+                    return ServiceResult<Player>.Failure(Common.PlayerNotExists);
+                return ServiceResult<Player>.Success(Common.Success, player);
             }
             catch (Exception)
             {
-               // log
+                //log
+                return ServiceResult<Player>.Failure(Common.SomethingWentWrong);
             }
 
-            if (player == null)
-            {
-                return null;
-            }
-
-            var playerDto = _mapper.Map<PlayerDto>(player);
-            return playerDto;
         }
 
-        public async Task Delete(int id)
+        public async Task<ServiceResult<Player>> DeletePlayer(int id)
         {
-            Player playerToDelete = null;
             try
             {
-                playerToDelete = await _playerRepository.GetById(id);
-                if (playerToDelete != null)
+                var playerToDelete = await _playerRepository.GetById(id);
+                if (playerToDelete is not null)
                 {
                     await _playerRepository.Delete(playerToDelete);
                     await _playerRepository.Save();
+                    return ServiceResult<Player>.Success(Common.SuccessfullyDeleted);
                 }
                 else
-                    throw new NotFoundEntityException(Common.PlayerNotExists);
+                {
+                    return ServiceResult<Player>.Failure(Common.PlayerNotExists);
+                }
+
             }
-            catch (NotFoundEntityException)
-            {
-                //log
-            }
+
             catch (Exception)
             {
-                // log
+                //log
+                return ServiceResult<Player>.Failure(Common.SomethingWentWrong);
             }
         }
-        public async Task Update(UpdatePlayerInfoDto updatePlayerInfo, int id)
+        public async Task<ServiceResult<Player>> UpdatePlayer(Player player, int id)
         {
-            Player playerToUpdate = null;
             try
             {
-                playerToUpdate = await _playerRepository.GetById(id);
-                if (playerToUpdate != null)
+                var playerToUpdate = await _playerRepository.GetById(id);
+                if (playerToUpdate is not null)
                 {
-                    playerToUpdate.LastName = updatePlayerInfo.LastName;
-                    playerToUpdate.NickName = updatePlayerInfo.NickName;
+                    playerToUpdate.LastName = player.LastName;
                     await _playerRepository.Update(playerToUpdate);
                     await _playerRepository.Save();
+                    return ServiceResult<Player>.Success(Common.SuccessfullyUpdated);
                 }
                 else
-                    throw new NotFoundEntityException(Common.PlayerNotExists);
-            }
-            catch (NotFoundEntityException)
-            {
-                //log
-               
-            }
-            catch(Exception) 
-            {
-                //log
-            }
-        }
-        public async Task Create(CreatePlayerInfoDto newPlayerInfo)
-        {
-            try
-            {
-                if (newPlayerInfo != null)
                 {
-                    var newPlayer = _mapper.Map<Player>(newPlayerInfo);
-                    await _playerRepository.Create(newPlayer);
-                    await _playerRepository.Save();
-                }               
+                    return ServiceResult<Player>.Failure(Common.PlayerNotExists);
+                }
+
             }
             catch (Exception)
             {
                 //log
-            }           
+                return ServiceResult<Player>.Failure(Common.SomethingWentWrong);
+            }
         }
+
+        public async Task<ServiceResult<Player>> CreatePlayer(Player newPlayer)
+        {
+            try
+            {
+                await _playerRepository.Create(newPlayer);
+                await _playerRepository.Save();
+                return ServiceResult<Player>.Success(Common.SuccessfullyCreated);
+            }
+            catch (Exception)
+            {
+                //log
+                return ServiceResult<Player>.Failure(Common.SomethingWentWrong);
+            }
+        }
+    
     }
 }
+
+

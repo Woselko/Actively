@@ -3,6 +3,7 @@ using ActivelyApp.Models.Common;
 using ActivelyApp.Models.EntityDto;
 using ActivelyApp.Services.EntityService;
 using ActivelyDomain.Entities;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
@@ -17,126 +18,114 @@ namespace ActivelyApp.Controllers
     public class PlayerController : Controller
     {
         private readonly IPlayerService _playerService;
+        private readonly IMapper _mapper;
 
-        public PlayerController(IPlayerService playerService)
+        public PlayerController(IPlayerService playerService, IMapper mapper)
         {
             _playerService = playerService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            IEnumerable<PlayerDto> players = null;
-
-            try
+            var serviceResult = await _playerService.GetAllPlayers();
+            if (serviceResult.IsSuccess == true)
             {
-                players = await _playerService.GetAll();
-                if (players == null)
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, new Response
-                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExists, IsSuccess = false });
-                }
+                var players = _mapper.Map<IEnumerable<PlayerDto>>(serviceResult.Data);
+                return StatusCode(StatusCodes.Status200OK, new Response
+                { Type = ResponseType.Success, Status = Common.Success, Content = players, Message = serviceResult.Message, IsSuccess = true });
             }
-            catch (Exception e)
-            {           
-                return StatusCode(StatusCodes.Status400BadRequest, new Response 
-                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message, IsSuccess = false });
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                { Type = ResponseType.Error, Status = Common.Error, Message = serviceResult.Message, IsSuccess = false });
             }
-
-            return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Success, Status = Common.Success, Content = players, IsSuccess = true });           
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetPlayerById(int id)
         {
-            PlayerDto player = null;
-            try
+            var serviceResult = await _playerService.GetPlayerById(id);
+
+            if (serviceResult.IsSuccess == true)
             {
-                player = await _playerService.GetById(id);
-                if (player == null)
+                var player = _mapper.Map<PlayerDto>(serviceResult.Data);
+                return StatusCode(StatusCodes.Status200OK, new Response
+                { Type = ResponseType.Success, Status = Common.Success, Content = player, Message = serviceResult.Message, IsSuccess = true });
+            }
+            else
+            {
+                if (serviceResult.Message == Common.PlayerNotExists)
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new Response
-                    { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExists });
+                    { Type = ResponseType.Error, Status = Common.Error, Message = serviceResult.Message, IsSuccess = false });
                 }
-            }
-            catch (Exception e)
-            {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message, IsSuccess = false });
+                { Type = ResponseType.Error, Status = Common.Error, Message = serviceResult.Message, IsSuccess = false });
             }
-             
-            return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Success, Status = Common.Success, Content = player, IsSuccess = true });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreatePlayerInfoDto newPlayer)
-        {          
-            if (newPlayer == null)
+        public async Task<IActionResult> CreatePlayer([FromBody] CreatePlayerInfoDto newPlayer)
+        {
+            var entityNewPlayer = _mapper.Map<Player>(newPlayer);
+            var serviceResult = await _playerService.CreatePlayer(entityNewPlayer);
+            if (serviceResult.IsSuccess == true)
+            {
+                return StatusCode(StatusCodes.Status200OK, new Response
+                { Type = ResponseType.Success, Status = Common.Success, Content = newPlayer, Message = serviceResult.Message, IsSuccess = true });
+            }
+            else
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.SomethingWentWrong, IsSuccess = false });
+                { Type = ResponseType.Error, Status = Common.Error, Message = serviceResult.Message, IsSuccess = false });
             }
-            try
-            {
-                await _playerService.Create(newPlayer);
-            }            
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message, IsSuccess = false });
-            }
-            
-
-            return StatusCode(StatusCodes.Status201Created, new Response 
-            { Type = ResponseType.Success, Status = Common.Success, Message = Common.Success, IsSuccess = true });
         }
 
         [HttpPatch]
-        public async Task<IActionResult> Update([FromBody] UpdatePlayerInfoDto updatePlayerInfo, int id)
-        {        
-            if (updatePlayerInfo == null)
+        public async Task<IActionResult> UpdatePlayer([FromBody] UpdatePlayerInfoDto updatePlayerInfo, int id)
+        {
+            var entityUpdatePlayer = _mapper.Map<Player>(updatePlayerInfo);
+            var serviceResult = await _playerService.UpdatePlayer(entityUpdatePlayer, id);
+            if (serviceResult.IsSuccess == true)
+            {
+                return StatusCode(StatusCodes.Status200OK, new Response
+                { Type = ResponseType.Success, Status = Common.Success, Content = updatePlayerInfo, Message = serviceResult.Message, IsSuccess = true });
+            }
+            else
+            {
+                if (serviceResult.Message == Common.PlayerNotExists)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, new Response
+                    { Type = ResponseType.Error, Status = Common.Error, Message = serviceResult.Message, IsSuccess = false });
+                }
+
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.SomethingWentWrong, IsSuccess = false });
-            try
-            {
-                await _playerService.Update(updatePlayerInfo, id);
+                { Type = ResponseType.Error, Status = Common.Error, Message = serviceResult.Message, IsSuccess = false });
             }
-            catch (NotFoundEntityException)
-            {
-                return StatusCode(StatusCodes.Status404NotFound, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExists, IsSuccess = false });
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message });
-            }
-            return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Success, Status = Common.Success, Message = Common.SuccessfullyUpdated, IsSuccess = true });
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
-        {            
-            try
+        public async Task<IActionResult> DeletePlayer(int id)
+        {
+            var serviceResult = await _playerService.DeletePlayer(id);
+            if (serviceResult.IsSuccess == true)
             {
-                await _playerService.Delete(id);
+                return StatusCode(StatusCodes.Status200OK, new Response
+                { Type = ResponseType.Success, Status = Common.Success, Message = serviceResult.Message, IsSuccess = true });
             }
-            catch (NotFoundEntityException)
+            else
             {
-                return StatusCode(StatusCodes.Status404NotFound, new Response
-                { Type = ResponseType.Error, Status = Common.Error, Message = Common.PlayerNotExists, IsSuccess = false });
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response 
-                { Type = ResponseType.Error, Status = Common.Error, Message = e.Message, IsSuccess = false });
-            }
+                if (serviceResult.Message == Common.PlayerNotExists)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, new Response
+                    { Type = ResponseType.Error, Status = Common.Error, Message = serviceResult.Message, IsSuccess = false });
+                }
 
-            return StatusCode(StatusCodes.Status200OK, new Response
-            { Type = ResponseType.Success, Status = Common.Success, Message = Common.SuccessfullyDeleted, IsSuccess = true });
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                { Type = ResponseType.Error, Status = Common.Error, Message = serviceResult.Message, IsSuccess = false });
+            }
         }
     }
 }
