@@ -1,7 +1,4 @@
-﻿using ActivelyApp.CustomExceptions;
-using ActivelyApp.Mappings;
-using ActivelyApp.Models.EntityDto;
-using ActivelyApp.Services.EntityService;
+﻿using ActivelyApp.Services.EntityService;
 using ActivelyDomain.Entities;
 using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
 using AutoMapper;
@@ -17,59 +14,80 @@ namespace ActivelyApp.Tests.ServicesTests
         private Mock<IPlayerRepository> _playerRepository;
         private IPlayerService _playerService;
         private List<Player> _players;
-        private Player _player;
+        private Player _player01;
+        private Player _player02;
 
         public PlayerServiceTest()
         {
-            var mapperConfiguration = new MapperConfiguration(
-               cfg => cfg.AddProfile<PlayerMappingProfile>());
-            _mapper = new Mapper(mapperConfiguration);
             _playerRepository = new Mock<IPlayerRepository>();
-            _playerService = new PlayerService(_playerRepository.Object, _mapper);
+            _playerService = new PlayerService(_playerRepository.Object);
             _players = new List<Player>()
             {
                 new Player{
 
                     Id = 999,
-                    FirstName= "TestFirstName999",
-                    LastName = "TesLastName999",
-                    NickName = "TestNick999"
-
-                    
+                    FirstName= "Test1",
+                    LastName= "Test1",
+                    NickName= "Test1",
 
                 },
                 new Player{
 
                     Id = 666,
-                    FirstName= "TestFirstName666",
-                    LastName = "TesLastName666",
-                    NickName = "TestNick666"
+                    FirstName= "Test1",
+                    LastName= "Test1",
+                    NickName= "Test1",
                 },
 
             };
 
-            _player = new Player
+            _player01 = new Player
             {
 
                 Id = 10,
-                FirstName = "TestFirstName10",
-                LastName = "TesLastName10",
-                NickName = "TestNick10"
+                FirstName = "Test1",
+                LastName = "Test1",
+                NickName = "Test1",
+            };
+
+            _player02 = new Player
+            {
+
+                Id = 20,
+                FirstName = "Test2",
+                LastName = "Test2",
+                NickName = "Test2",
             };
         }
 
         [Fact]
-        public async Task GetAll_ValidData_ReturnsNotNullCollectionAndCorrectPlayersCount()
+        public async Task GetAll_ValidData_ReturnsPlayersCollectionSuccessfully()
         {
             //arrange
-            _playerRepository.Setup(p => p.GetAll()).ReturnsAsync(_players);
+            _playerRepository.Setup(g => g.GetAll()).ReturnsAsync(_players);
 
             //act
-            var result = await _playerService.GetAll();
+            var result = await _playerService.GetAllPlayers();
 
             //Assert
-            Assert.NotNull(result);
-            Assert.Equal(2, _players.Count);
+            Assert.Equal(2, result.Data.Count());
+            Assert.Equal(Common.Success, result.Message);
+            Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
+        public async Task GetAll_ValidData_ReturnsEmptyCollectionSuccessfully()
+        {
+            //arrange
+            _playerRepository.Setup(g => g.GetAll()).ReturnsAsync(new List<Player>());
+
+            //act
+            var result = await _playerService.GetAllPlayers();
+
+            //Assert
+            Assert.Empty(result.Data);
+            Assert.Equal(Common.PlayerNotExists, result.Message);
+            Assert.True(result.IsSuccess);
         }
 
         [Theory]
@@ -77,145 +95,194 @@ namespace ActivelyApp.Tests.ServicesTests
         [InlineData(69, false)]
         public async Task GetById_ValidAndInvalidData_ReturnsExpectedResult(int id, bool isValid)
         {
-
             //Arrange
             if (isValid)
             {
-                _playerRepository.Setup(r => r.GetById(id)).ReturnsAsync(_player);
+                _playerRepository.Setup(r => r.GetById(id)).ReturnsAsync(_player01);
             }
             else
             {
                 if (id == 69)
                 {
-
                     _playerRepository.Setup(repo => repo.GetById(id)).ReturnsAsync((Player)null);
                 }
 
             }
             //Act
-            var result = await _playerService.GetById(id);
+            var result = await _playerService.GetPlayerById(id);
 
             //Assert
             if (isValid)
             {
-                Assert.NotNull(result);
-                Assert.IsType<PlayerDto>(result);
+                Assert.NotNull(result.Data);
+                Assert.Equal(Common.Success, result.Message);
+                Assert.True(result.IsSuccess);
             }
-            else
+            else if (!isValid && id == 69)
             {
-                Assert.Null(result);
+                Assert.Equal(Common.PlayerNotExists, result.Message);
+                Assert.False(result.IsSuccess);
             }
+        }
 
+        [Fact]
+        public async Task GetPlayerById_ExceptionOccurs_ReturnsFailure()
+        {
+            // Arrange
+            var playerId = 1;
+
+            _playerRepository.Setup(repo => repo.GetById(playerId)).ThrowsAsync(new Exception("Some error"));
+
+            // Act
+            var result = await _playerService.GetPlayerById(playerId);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(Common.SomethingWentWrong, result.Message);
         }
 
         [Theory]
         [InlineData(10, true)]
         [InlineData(69, false)]
-        public async Task Delete_ValidAndInvalidId_ReturnsExpectedResult(int id, bool isValid)
+        public async Task Delete_ValidAndInvalidPlayer_ReturnsExpectedResult(int id, bool isValid)
         {
             _playerRepository.Setup(repo => repo.GetById(id))
-            .ReturnsAsync(isValid ? _player : null);
+            .ReturnsAsync(isValid ? _player01 : null);
             //Arrange
             if (isValid)
             {
-                _playerRepository.Setup(r => r.Delete(_player));
+                _playerRepository.Setup(r => r.Delete(_player01));
             }
             else
             {
-                _playerRepository.Setup(r => r.Delete(It.IsAny<Player>())).ThrowsAsync(new NotFoundEntityException(Common.GameNotExistsError));
+                _playerRepository.Setup(repo => repo.GetById(id)).ReturnsAsync((Player)null);
             }
             //Act
-            await _playerService.Delete(id);
+            var result = await _playerService.DeletePlayer(id);
 
             //Assert
             if (isValid)
             {
-                _playerRepository.Verify(repo => repo.Delete(_player), Times.Once);
+                _playerRepository.Verify(repo => repo.Delete(_player01), Times.Once);
                 _playerRepository.Verify(repo => repo.Save(), Times.Once);
+                Assert.Equal(Common.SuccessfullyDeleted, result.Message);
+                Assert.True(result.IsSuccess);
             }
             else
             {
                 _playerRepository.Verify(repo => repo.Delete(It.IsAny<Player>()), Times.Never);
                 _playerRepository.Verify(repo => repo.Save(), Times.Never);
+                Assert.Equal(Common.PlayerNotExists, result.Message);
+                Assert.False(result.IsSuccess);
             }
-
         }
 
         [Fact]
-        public async Task Update_ExistingPlayer_UpdatesPlayerTime()
+        public async Task DeletePlayer_ExceptionOccurs_ReturnsFailure()
         {
             // Arrange
-            var playerToUpdate = new UpdatePlayerInfoDto()
-            {
-               NickName = "newNickName"
-            };
+            var playerId = 1;
 
-
-            _playerRepository.Setup(r => r.GetById(_player.Id)).ReturnsAsync(_player);
-
+            _playerRepository.Setup(repo => repo.GetById(playerId)).ThrowsAsync(new Exception("Some error"));
 
             // Act
-            await _playerService.Update(playerToUpdate, _player.Id);
+            var result = await _playerService.DeletePlayer(playerId);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(Common.SomethingWentWrong, result.Message);
+            _playerRepository.Verify(repo => repo.Delete(It.IsAny<Player>()), Times.Never);
+            _playerRepository.Verify(repo => repo.Save(), Times.Never);
+        }
+
+
+        [Fact]
+        public async Task Update_ExistingPlayer_ReturnCorrectResultandUpdatesTime()
+        {
+            // Arrange
+            var updatePlayerInfo = new Player()
+            {
+                FirstName = "Test",
+                LastName = "Test",
+                NickName = "Test",
+            };
+
+            _playerRepository.Setup(r => r.GetById(_player01.Id)).ReturnsAsync(_player01);
+
+            // Act
+            var result = await _playerService.UpdatePlayer(updatePlayerInfo, _player01.Id);
 
             // Assert
 
-            Assert.Equal(playerToUpdate.NickName, _player.NickName);
-            _playerRepository.Verify(repo => repo.Update(_player), Times.Once);
+            Assert.Equal(Common.SuccessfullyUpdated, result.Message);
+            Assert.True(result.IsSuccess);
+            Assert.Equal(_player01.LastName, _player01.LastName);
+            _playerRepository.Verify(repo => repo.Update(_player01), Times.Once);
             _playerRepository.Verify(repo => repo.Save(), Times.Once);
         }
 
         [Fact]
-        public async Task Update_NonExistingPlayer_ThrowsNotFoundEntityException()
+        public async Task Update_NonExistingPlayer_ReturnCorrectResultandDoNotUpdatesTime()
         {
             // Arrange
-            var playerToUpdate = new UpdatePlayerInfoDto()
-            {
-                NickName = "newNickName"
-            };
 
-            _playerRepository.Setup(r => r.GetById(69)).ThrowsAsync(new NotFoundEntityException(Common.GameNotExistsError));
-
+            _playerRepository.Setup(repo => repo.GetById(_player01.Id)).ReturnsAsync((Player)null);
 
             // Act
-            await _playerService.Update(playerToUpdate, 69);
+            var result = await _playerService.UpdatePlayer(_player01, _player01.Id);
 
             // Assert
-
+            Assert.Equal(Common.PlayerNotExists, result.Message);
+            Assert.False(result.IsSuccess);
             _playerRepository.Verify(repo => repo.Update(It.IsAny<Player>()), Times.Never);
             _playerRepository.Verify(repo => repo.Save(), Times.Never);
         }
 
         [Fact]
-        public async Task Create_NullPlayerInfo_DoesNotCreateOrSavePlayer()
+        public async Task UpdatePlayer_ExceptionOccurs_ReturnsFailure()
         {
             // Arrange
-            CreatePlayerInfoDto newPlayerInfo = null;
+
+            _playerRepository.Setup(repo => repo.GetById(_player01.Id)).ThrowsAsync(new Exception("Some error"));
 
             // Act
-            await _playerService.Create(newPlayerInfo);
+            var result = await _playerService.UpdatePlayer(_player02, _player01.Id);
 
             // Assert
-            _playerRepository.Verify(repo => repo.Create(It.IsAny<Player>()), Times.Never);
+            Assert.False(result.IsSuccess);
+            Assert.Equal(Common.SomethingWentWrong, result.Message);
+            _playerRepository.Verify(repo => repo.Delete(It.IsAny<Player>()), Times.Never);
             _playerRepository.Verify(repo => repo.Save(), Times.Never);
         }
 
         [Fact]
-        public async Task Create_ValidPlayerInfo_CreatesAndSavesPlayer()
+        public async Task CreatePlayer_ValidInput_CreatesAndReturnsSuccess()
         {
             // Arrange
-            CreatePlayerInfoDto newPlayerInfo = new CreatePlayerInfoDto()
-            {
-                NickName = "TestNewNickName",
-                LastName = "TestNewLastName",
-                FirstName = "TestNewName"
-            };
 
             // Act
-            await _playerService.Create(newPlayerInfo);
+            var result = await _playerService.CreatePlayer(_player01);
 
             // Assert
-            _playerRepository.Verify(repo => repo.Create(It.IsAny<Player>()), Times.Once);
+            Assert.True(result.IsSuccess);
+            Assert.Equal(Common.SuccessfullyCreated, result.Message);
+
+            _playerRepository.Verify(repo => repo.Create(_player01), Times.Once);
             _playerRepository.Verify(repo => repo.Save(), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreatePlayer_ExceptionOccurs_ReturnsFailure()
+        {
+            _playerRepository.Setup(repo => repo.Create(_player01)).ThrowsAsync(new Exception("Some error"));
+            // Act
+            var result = await _playerService.CreatePlayer(_player01);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(Common.SomethingWentWrong, result.Message);
+
+            _playerRepository.Verify(repo => repo.Save(), Times.Never);
         }
     }
 }

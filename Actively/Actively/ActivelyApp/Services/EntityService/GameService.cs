@@ -48,8 +48,7 @@ namespace ActivelyApp.Services.EntityService
             {
                 //log
                 return ServiceResult<Game>.Failure(Common.SomethingWentWrong);
-            }
-            
+            } 
         }
 
         public async Task<ServiceResult<Game>> DeleteGame(int id)
@@ -67,7 +66,6 @@ namespace ActivelyApp.Services.EntityService
                 {
                     return ServiceResult<Game>.Failure(Common.GameNotExists);
                 }
-
             }
 
             catch (Exception)
