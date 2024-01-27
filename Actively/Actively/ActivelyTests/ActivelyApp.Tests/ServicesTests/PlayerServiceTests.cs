@@ -2,6 +2,7 @@
 using ActivelyDomain.Entities;
 using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Resources;
 using Xunit;
@@ -12,6 +13,7 @@ namespace ActivelyApp.Tests.ServicesTests
     {
         private IMapper _mapper;
         private Mock<IPlayerRepository> _playerRepository;
+        private Mock<ILogger<PlayerService>> _logger;
         private IPlayerService _playerService;
         private List<Player> _players;
         private Player _player01;
@@ -20,7 +22,8 @@ namespace ActivelyApp.Tests.ServicesTests
         public PlayerServiceTest()
         {
             _playerRepository = new Mock<IPlayerRepository>();
-            _playerService = new PlayerService(_playerRepository.Object);
+            _logger = new Mock<ILogger<PlayerService>>();
+            _playerService = new PlayerService(_playerRepository.Object, _logger.Object);
             _players = new List<Player>()
             {
                 new Player{

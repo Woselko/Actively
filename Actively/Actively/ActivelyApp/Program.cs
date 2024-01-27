@@ -1,17 +1,19 @@
-using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 using ActivelyApp.Services.ServiceRegistration;
 using ActivelyInfrastructure;
+using Microsoft.AspNetCore.Localization;
+using NLog.Web;
 using System.Globalization;
-using System.Reflection;
-using Microsoft.Extensions.Options;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.RegisterServices(builder);
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+{
+    builder.Logging.ClearProviders();
+    builder.Host.UseNLog();
+    builder.Logging.AddConsole();
+}
 var app = builder.Build();
 
 app.Services.CreateScope().ServiceProvider.GetRequiredService<ActivelyDbSeeder>().Seed();

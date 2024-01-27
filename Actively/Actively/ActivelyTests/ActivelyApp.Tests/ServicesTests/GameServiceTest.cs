@@ -12,6 +12,7 @@ namespace ActivelyApp.Tests.ServicesTests
     public class GameServiceTest
     {
         private Mock<IGameRepository> _gameRepository;
+        private Mock<ILogger<GameService>> _logger;
         private IGameService _gameService;
         private List<Game> _games;
         private Game _game;
@@ -19,7 +20,8 @@ namespace ActivelyApp.Tests.ServicesTests
         public GameServiceTest()
         {
             _gameRepository = new Mock<IGameRepository>();
-            _gameService = new GameService(_gameRepository.Object);
+            _logger = new Mock<ILogger<GameService>>();
+            _gameService = new GameService(_gameRepository.Object, _logger.Object);
             _games = new List<Game>()
             {
                 new Game{
