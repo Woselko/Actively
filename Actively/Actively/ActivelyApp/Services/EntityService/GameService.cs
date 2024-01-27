@@ -9,10 +9,12 @@ namespace ActivelyApp.Services.EntityService
     public class GameService : IGameService
     {
         private readonly IGameRepository _gameRepository;
+        private readonly ILogger<GameService> _logger;
 
-        public GameService(IGameRepository gameRepository)
+        public GameService(IGameRepository gameRepository, ILogger<GameService> logger)
         {
             _gameRepository = gameRepository;
+            _logger = logger;
         }
         public async Task<ServiceResult<IEnumerable<Game>>> GetAllGames()
         {
@@ -27,9 +29,9 @@ namespace ActivelyApp.Services.EntityService
 
                 return ServiceResult<IEnumerable<Game>>.Success(Common.Success, games);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //log
+                _logger.LogError(e.Message);
                 return ServiceResult<IEnumerable<Game>>.Failure(Common.SomethingWentWrong);
             }
 
@@ -44,9 +46,9 @@ namespace ActivelyApp.Services.EntityService
                     return ServiceResult<Game>.Failure(Common.GameNotExists);
                 return ServiceResult<Game>.Success(Common.Success, game);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //log
+                _logger.LogError(e.Message);
                 return ServiceResult<Game>.Failure(Common.SomethingWentWrong);
             } 
         }
@@ -68,9 +70,9 @@ namespace ActivelyApp.Services.EntityService
                 }
             }
 
-            catch (Exception)
+            catch (Exception e)
             {
-                //log
+                _logger.LogError(e.Message);
                 return ServiceResult<Game>.Failure(Common.SomethingWentWrong);
             }
         }
@@ -92,9 +94,9 @@ namespace ActivelyApp.Services.EntityService
                 }
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //log
+                _logger.LogError(e.Message);
                 return ServiceResult<Game>.Failure(Common.SomethingWentWrong);
             }
         }
@@ -107,9 +109,9 @@ namespace ActivelyApp.Services.EntityService
                     await _gameRepository.Save();
                 return ServiceResult<Game>.Success(Common.SuccessfullyCreated);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //log
+                _logger.LogError(e.Message);
                 return ServiceResult<Game>.Failure(Common.SomethingWentWrong);
             }
         }
