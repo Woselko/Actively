@@ -21,17 +21,13 @@ namespace ActivelyApp.Tests.ControllersTests
         private PlayerController _controller;
         private Player _validPlayer01;
         private Player _validPlayer02;
-
         public PlayerControllerTests()
         {
             var mapperConfiguration = new MapperConfiguration(
                cfg => cfg.AddProfile<PlayerMappingProfile>());
             _mapper = new Mapper(mapperConfiguration);
-
             _mockPlayerService = new Mock<IPlayerService>();
-
             _controller = new PlayerController(_mockPlayerService.Object, _mapper);
-
             _validPlayer01 = new Player()
             {
                 Id = 10,
@@ -65,7 +61,6 @@ namespace ActivelyApp.Tests.ControllersTests
             // Act
             var result = await _controller.GetAllPlayers() as ObjectResult;
 
-
             // Assert
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
@@ -90,7 +85,6 @@ namespace ActivelyApp.Tests.ControllersTests
             // Act
             var result = await _controller.GetAllPlayers() as ObjectResult;
 
-
             // Assert
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
@@ -113,7 +107,6 @@ namespace ActivelyApp.Tests.ControllersTests
                  });
 
             // Act
-
             var result = await _controller.GetAllPlayers() as ObjectResult;
 
             // Assert
@@ -130,7 +123,6 @@ namespace ActivelyApp.Tests.ControllersTests
         public async Task GetById_ValidId_ReturnsOkResultWithData()
         {
             //Arrange
-
             _mockPlayerService.Setup(service => service.GetPlayerById(_validPlayer01.Id))
                  .ReturnsAsync(new ServiceResult<Player>()
                  {
@@ -304,14 +296,12 @@ namespace ActivelyApp.Tests.ControllersTests
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
-
             Assert.Equal(StatusCodes.Status201Created, result.StatusCode);
             Assert.Equal(ResponseType.Success, response.Type);
             Assert.Equal(Common.SuccessfullyCreated, response.Message);
             Assert.Equal(Common.Success, response.Status);
             Assert.True(response.IsSuccess);
             Assert.NotNull(response.Content);
-
             _mockPlayerService.Verify(service => service.CreatePlayer(It.IsAny<Player>()), Times.Once);
         }
 
@@ -334,14 +324,12 @@ namespace ActivelyApp.Tests.ControllersTests
 
             // Assert
             var response = Assert.IsType<Response>(result.Value);
-
             Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
             Assert.Equal(ResponseType.Error, response.Type);
             Assert.Equal(Common.SomethingWentWrong, response.Message);
             Assert.Equal(Common.Error, response.Status);
             Assert.True(!response.IsSuccess);
             Assert.Null(response.Content);
-
             _mockPlayerService.Verify(service => service.CreatePlayer(It.IsAny<Player>()), Times.Once);
         }
 
@@ -351,7 +339,6 @@ namespace ActivelyApp.Tests.ControllersTests
             // Arrange
             var updatePlayerInfo = new UpdatePlayerInfoDto();
             var id = 10;
-
             var serviceResult = new ServiceResult<Player>
             {
                 IsSuccess = true,
@@ -410,7 +397,6 @@ namespace ActivelyApp.Tests.ControllersTests
             // Arrange
             var updatePlayerInfo = new UpdatePlayerInfoDto();
             var id = 10;
-
             var serviceResult = new ServiceResult<Player>
             {
                 IsSuccess = false,

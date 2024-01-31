@@ -12,7 +12,6 @@ namespace ActivelyApp.Tests.RepositoriesTests
         private PlayerRepository _repository;
         private Player _player;
         private List<Player> _players;
-
         public PlayerRepositoryTests()
         {
             var options = new DbContextOptionsBuilder<ActivelyDbContext>()
@@ -22,7 +21,6 @@ namespace ActivelyApp.Tests.RepositoriesTests
             _dbContext = new ActivelyDbContext(options);
             _dbContext.Database.EnsureCreated();
             _repository = new PlayerRepository(_dbContext);
-
             _player = new Player()
             {
                 Id = 999,
@@ -30,7 +28,6 @@ namespace ActivelyApp.Tests.RepositoriesTests
                 LastName = "TestLastName",
                 NickName = "TestNick"
             };
-
             _players = new List<Player>() {
 
                 _player,
@@ -42,13 +39,11 @@ namespace ActivelyApp.Tests.RepositoriesTests
                 NickName = "TestNick2"
                 }
             };
-
         }
 
         [Fact]
         public async Task Add_ValidPlayer_ShouldAddPlayerToDatabase()
         {
-
             // Act
             await _repository.Create(_player);
             await _repository.Save();
@@ -66,13 +61,11 @@ namespace ActivelyApp.Tests.RepositoriesTests
             await _repository.Create(_player);
             await _repository.Save();
 
-
             // Act
             await _repository.Delete(_player);
             await _repository.Save();
 
             // Assert
-
             var result = await _dbContext.Player.SingleOrDefaultAsync(p => p.Id == _player.Id);
             Assert.Null(result);
         }
@@ -93,14 +86,12 @@ namespace ActivelyApp.Tests.RepositoriesTests
             Assert.Equal(2, result.Count());
         }
 
-
         [Fact]
         public async Task Update_ValidPlayer_ShouldUpdatePlayerInDatabase()
         {
             // Arrange
             await _dbContext.AddAsync(_player);
             await _dbContext.SaveChangesAsync();
-
             _player.FirstName = "TestUpdate";
 
             // Act
@@ -110,7 +101,6 @@ namespace ActivelyApp.Tests.RepositoriesTests
             var result = await _dbContext.Player.FirstOrDefaultAsync(p => p.Id == _player.Id);
             Assert.NotNull(result);
             Assert.Equal(_player.FirstName, result.FirstName);
-
         }
 
         [Fact]

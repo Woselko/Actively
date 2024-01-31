@@ -16,7 +16,6 @@ namespace ActivelyApp.Tests.ServicesTests
         private List<Player> _players;
         private Player _player01;
         private Player _player02;
-
         public PlayerServiceTest()
         {
             _playerRepository = new Mock<IPlayerRepository>();
@@ -24,23 +23,18 @@ namespace ActivelyApp.Tests.ServicesTests
             _players = new List<Player>()
             {
                 new Player{
-
                     Id = 999,
                     FirstName= "Test1",
                     LastName= "Test1",
                     NickName= "Test1",
-
                 },
                 new Player{
-
                     Id = 666,
                     FirstName= "Test1",
                     LastName= "Test1",
                     NickName= "Test1",
                 },
-
             };
-
             _player01 = new Player
             {
 
@@ -49,7 +43,6 @@ namespace ActivelyApp.Tests.ServicesTests
                 LastName = "Test1",
                 NickName = "Test1",
             };
-
             _player02 = new Player
             {
 
@@ -106,7 +99,6 @@ namespace ActivelyApp.Tests.ServicesTests
                 {
                     _playerRepository.Setup(repo => repo.GetById(id)).ReturnsAsync((Player)null);
                 }
-
             }
             //Act
             var result = await _playerService.GetPlayerById(id);
@@ -130,7 +122,6 @@ namespace ActivelyApp.Tests.ServicesTests
         {
             // Arrange
             var playerId = 1;
-
             _playerRepository.Setup(repo => repo.GetById(playerId)).ThrowsAsync(new Exception("Some error"));
 
             // Act
@@ -213,7 +204,6 @@ namespace ActivelyApp.Tests.ServicesTests
             var result = await _playerService.UpdatePlayer(updatePlayerInfo, _player01.Id);
 
             // Assert
-
             Assert.Equal(Common.SuccessfullyUpdated, result.Message);
             Assert.True(result.IsSuccess);
             Assert.Equal(_player01.LastName, _player01.LastName);
@@ -225,7 +215,6 @@ namespace ActivelyApp.Tests.ServicesTests
         public async Task Update_NonExistingPlayer_ReturnCorrectResultandDoNotUpdatesTime()
         {
             // Arrange
-
             _playerRepository.Setup(repo => repo.GetById(_player01.Id)).ReturnsAsync((Player)null);
 
             // Act
@@ -242,7 +231,6 @@ namespace ActivelyApp.Tests.ServicesTests
         public async Task UpdatePlayer_ExceptionOccurs_ReturnsFailure()
         {
             // Arrange
-
             _playerRepository.Setup(repo => repo.GetById(_player01.Id)).ThrowsAsync(new Exception("Some error"));
 
             // Act
@@ -258,8 +246,6 @@ namespace ActivelyApp.Tests.ServicesTests
         [Fact]
         public async Task CreatePlayer_ValidInput_CreatesAndReturnsSuccess()
         {
-            // Arrange
-
             // Act
             var result = await _playerService.CreatePlayer(_player01);
 

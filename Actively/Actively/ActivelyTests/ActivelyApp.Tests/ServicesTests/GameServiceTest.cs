@@ -15,7 +15,6 @@ namespace ActivelyApp.Tests.ServicesTests
         private IGameService _gameService;
         private List<Game> _games;
         private Game _game;
-
         public GameServiceTest()
         {
             _gameRepository = new Mock<IGameRepository>();
@@ -29,7 +28,6 @@ namespace ActivelyApp.Tests.ServicesTests
                     CreationDate = DateTime.Now,
                     GameTime= DateTime.Now,
                     Sport = SportType.Football
-
                 },
                 new Game{
 
@@ -39,12 +37,10 @@ namespace ActivelyApp.Tests.ServicesTests
                     GameTime= DateTime.Now,
                     Sport = SportType.Football
                 },
-
             };
 
             _game = new Game
             {
-
                 Id = 10,
                 Players = new List<Player>(),
                 CreationDate = DateTime.Now.AddDays(55),
@@ -99,7 +95,6 @@ namespace ActivelyApp.Tests.ServicesTests
                 {
                     _gameRepository.Setup(repo => repo.GetById(id)).ReturnsAsync((Game)null);
                 }
-
             }
             //Act
             var result = await _gameService.GetGameById(id);
@@ -123,7 +118,6 @@ namespace ActivelyApp.Tests.ServicesTests
         {
             // Arrange
             var gameId = 1;
-
             _gameRepository.Setup(repo => repo.GetById(gameId)).ThrowsAsync(new Exception("Some error"));
 
             // Act
@@ -139,10 +133,10 @@ namespace ActivelyApp.Tests.ServicesTests
         [InlineData(69, false)]
         public async Task Delete_ValidAndInvalidGame_ReturnsExpectedResult(int id, bool isValid)
         {
-            _gameRepository.Setup(repo => repo.GetById(id))
+			//Arrange
+			_gameRepository.Setup(repo => repo.GetById(id))
             .ReturnsAsync(isValid ? _game : null);
-            //Arrange
-            if (isValid)
+			if (isValid)
             {
                 _gameRepository.Setup(r => r.Delete(_game));
             }
@@ -175,7 +169,6 @@ namespace ActivelyApp.Tests.ServicesTests
         {
             // Arrange
             var gameId = 1;
-
             _gameRepository.Setup(repo => repo.GetById(gameId)).ThrowsAsync(new Exception("Some error"));
 
             // Act
@@ -197,16 +190,12 @@ namespace ActivelyApp.Tests.ServicesTests
             {
                 GameTime = DateTime.Now.AddDays(25)
             };
-
-
             _gameRepository.Setup(r => r.GetById(_game.Id)).ReturnsAsync(_game);
-
 
             // Act
             var result = await _gameService.UpdateGame(gameToUpdate, _game.Id);
 
             // Assert
-
             Assert.Equal(Common.SuccessfullyUpdated, result.Message);
             Assert.True(result.IsSuccess);
             Assert.Equal(gameToUpdate.GameTime, _game.GameTime);

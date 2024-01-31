@@ -8,12 +8,11 @@ namespace ActivelyApp.Tests.RepositoriesTests
 {
 
     public class GameRepositoryTests : IDisposable
-        {
+    {
             private readonly ActivelyDbContext _dbContext;
             private GameRepository _repository;
             private Game _game;
             private List<Game> _games;
-
             public GameRepositoryTests()
             {
                 var options = new DbContextOptionsBuilder<ActivelyDbContext>()
@@ -34,24 +33,19 @@ namespace ActivelyApp.Tests.RepositoriesTests
                 };
 
                 _games = new List<Game>() {
-
                 _game,
-
                 new Game()
                 {
                     Id = 666,
                     CreationDate = DateTime.Now,
                     GameTime = DateTime.Now,
                     Sport = SportType.Volleyball,
-                }
-            };
-
+                }};
             }
 
             [Fact]
             public async Task Add_ValidGame_ShouldAddGameToDbContext()
             {
-
                 // Act
                 await _repository.Create(_game);
                 await _repository.Save();
@@ -69,13 +63,11 @@ namespace ActivelyApp.Tests.RepositoriesTests
                 await _repository.Create(_game);
                 await _repository.Save();
 
-
                 // Act
                 await _repository.Delete(_game);
                 await _repository.Save();
 
                 // Assert
-
                 var result = await _dbContext.Game.SingleOrDefaultAsync(p => p.Id == _game.Id);
                 Assert.Null(result);
             }
@@ -149,5 +141,5 @@ namespace ActivelyApp.Tests.RepositoriesTests
             {
                 _dbContext.Dispose();
             }
-        }
+    }
 }

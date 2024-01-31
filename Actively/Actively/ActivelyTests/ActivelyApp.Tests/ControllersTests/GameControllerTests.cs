@@ -39,7 +39,6 @@ namespace ActivelyApp.Tests.ControllersTests
                 CreationDate = DateTime.Now,
                 GameTime = DateTime.Now,
                 Players = new List<Player>()
-
             };
             _validGame02 = new Game()
             {
@@ -65,7 +64,6 @@ namespace ActivelyApp.Tests.ControllersTests
             // Act
             var result = await _controller.GetAllGames() as ObjectResult;
 
-
             // Assert
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
@@ -90,7 +88,6 @@ namespace ActivelyApp.Tests.ControllersTests
             // Act
             var result = await _controller.GetAllGames() as ObjectResult;
 
-
             // Assert
             var response = Assert.IsType<Response>(result.Value);
             Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
@@ -113,7 +110,6 @@ namespace ActivelyApp.Tests.ControllersTests
                  });
 
             // Act
-
             var result = await _controller.GetAllGames() as ObjectResult;
 
             // Assert
@@ -130,7 +126,6 @@ namespace ActivelyApp.Tests.ControllersTests
         public async Task GetById_ValidId_ReturnsOkResultWithData()
         {
             //Arrange
-
             _mockGameService.Setup(service => service.GetGameById(_validGame01.Id))
                  .ReturnsAsync(new ServiceResult<Game>()
                  {
@@ -278,7 +273,6 @@ namespace ActivelyApp.Tests.ControllersTests
                     Assert.Equal(Common.Error, response.Status);
                     Assert.True(response.IsSuccess == false);
                     Assert.Null(response.Content);
-
                 }
             }
         }
@@ -410,7 +404,6 @@ namespace ActivelyApp.Tests.ControllersTests
             // Arrange
             var updateGameInfo = new UpdateGameInfoDto();
             var id = 10;
-
             var serviceResult = new ServiceResult<Game>
             {
                 IsSuccess = false,
