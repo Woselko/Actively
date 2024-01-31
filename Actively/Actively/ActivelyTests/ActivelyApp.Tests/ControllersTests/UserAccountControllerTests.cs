@@ -1,5 +1,4 @@
 ﻿using ActivelyApp.Controllers;
-using ActivelyApp.Controllers.Authentication;
 using ActivelyApp.Models.Authentication.Password;
 using ActivelyApp.Services.UserServices.EmailService;
 using ActivelyDomain.Entities;
@@ -8,12 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace ActivelyApp.Tests.ControllersTests

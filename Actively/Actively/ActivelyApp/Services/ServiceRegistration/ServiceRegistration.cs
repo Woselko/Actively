@@ -5,11 +5,16 @@ using ActivelyInfrastructure;
 using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using ActivelyApp.Models.Authentication.Email;
 using ActivelyApp.Services.UserServices.EmailService;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using ActivelyApp.Mappings;
+using System.Text.Json.Serialization;
+using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
+using ActivelyApp.Services.EntityService;
+using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
+using ActivelyApp.Models.AuthenticationDto.Email;
 using ActivelyApp.Models.Common;
 using ActivelyDomain.Entities;
 
@@ -21,12 +26,23 @@ namespace ActivelyApp.Services.ServiceRegistration
         {
             //Database
             services.AddDbContext<ActivelyDbContext>(options => options.UseSqlServer(
-                builder.Configuration.GetConnectionString("WoselkoConnectionStringDev_ActivelyDb")));
+                builder.Configuration.GetConnectionString("BulczoConnectionStringDev_ActivelyDb")));
             services.AddScoped<ActivelyDbSeeder>();
+            services.AddScoped<IPlayerRepository, PlayerRepository>();
+            services.AddScoped<IGameRepository, GameRepository>();
+            //Business logic services
+            services.AddScoped<IPlayerService, PlayerService>();
+            services.AddScoped<IGameService, GameService>();
+            //mapper
+            services.AddAutoMapper(typeof(Program));
             //Authentication
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ActivelyDbContext>()
                 .AddDefaultTokenProviders();
+            //json
+            services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
             //Required Email confirmation
             builder.Services.Configure<IdentityOptions>(
                 opts => opts.SignIn.RequireConfirmedEmail = true);

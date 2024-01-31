@@ -1,8 +1,11 @@
 ﻿namespace ActivelyDomain.Entities
 {
-    public class SportType
+    public enum SportType
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
+      Football,
+      Volleyball,
+      BasketBall,
+      HandBall
     }
 }
+ 
