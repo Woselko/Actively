@@ -252,7 +252,6 @@ namespace ActivelyApp.Tests.ServicesTests
             // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(Common.SuccessfullyCreated, result.Message);
-
             _playerRepository.Verify(repo => repo.Create(_player01), Times.Once);
             _playerRepository.Verify(repo => repo.Save(), Times.Once);
         }
@@ -267,7 +266,6 @@ namespace ActivelyApp.Tests.ServicesTests
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(Common.SomethingWentWrong, result.Message);
-
             _playerRepository.Verify(repo => repo.Save(), Times.Never);
         }
     }
