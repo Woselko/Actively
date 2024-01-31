@@ -22,7 +22,6 @@ namespace ActivelyApp.Tests.ServicesTests
             _games = new List<Game>()
             {
                 new Game{
-
                     Id = 999,
                     Players = new List<Player>(),
                     CreationDate = DateTime.Now,
@@ -30,7 +29,6 @@ namespace ActivelyApp.Tests.ServicesTests
                     Sport = SportType.Football
                 },
                 new Game{
-
                     Id = 666,
                     Players = new List<Player>(),
                     CreationDate = DateTime.Now,
@@ -38,7 +36,6 @@ namespace ActivelyApp.Tests.ServicesTests
                     Sport = SportType.Football
                 },
             };
-
             _game = new Game
             {
                 Id = 10,

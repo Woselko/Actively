@@ -27,11 +27,8 @@ namespace ActivelyApp.Tests.ControllersTests
             var mapperConfiguration = new MapperConfiguration(
                cfg => cfg.AddProfile<GameMappingProfile>());
             _mapper = new Mapper(mapperConfiguration);
-
             _mockGameService = new Mock<IGameService>();
-
             _controller = new GameController(_mockGameService.Object, _mapper);
-
             _validGame01 = new Game()
             {
                 Id = 10,

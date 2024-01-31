@@ -29,7 +29,6 @@ namespace ActivelyApp.Tests.RepositoriesTests
                 NickName = "TestNick"
             };
             _players = new List<Player>() {
-
                 _player,
                 new Player()
                 {

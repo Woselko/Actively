@@ -37,7 +37,6 @@ namespace ActivelyApp.Tests.ServicesTests
             };
             _player01 = new Player
             {
-
                 Id = 10,
                 FirstName = "Test1",
                 LastName = "Test1",
@@ -45,7 +44,6 @@ namespace ActivelyApp.Tests.ServicesTests
             };
             _player02 = new Player
             {
-
                 Id = 20,
                 FirstName = "Test2",
                 LastName = "Test2",
