@@ -144,6 +144,12 @@
   <data name="Error" xml:space="preserve">
     <value>Error!</value>
   </data>
+  <data name="SuccessfullyCreated" xml:space="preserve">
+    <value>Successfully created</value>
+  </data>
+  <data name="GameNotExists" xml:space="preserve">
+    <value>Game does not exist</value>
+  </data>
   <data name="InvalidCode" xml:space="preserve">
     <value>Invalid code</value>
   </data>
@@ -165,6 +171,9 @@
   <data name="PasswordResetRequest" xml:space="preserve">
     <value>A link with the option to change the password has been sent to the e-mail address provided, open it and follow the instructions: </value>
   </data>
+  <data name="PlayerNotExists" xml:space="preserve">
+    <value>Player does not exist</value>
+  </data>
   <data name="Privacy" xml:space="preserve">
     <value>This is privacy ..</value>
   </data>
@@ -176,6 +185,12 @@
   </data>
   <data name="Success" xml:space="preserve">
     <value>Success!</value>
+  </data>
+  <data name="SuccessfullyDeleted" xml:space="preserve">
+    <value>Successfully Deleted</value>
+  </data>
+  <data name="SuccessfullyUpdated" xml:space="preserve">
+    <value>Successfully Updated</value>
   </data>
   <data name="TwoFactorAuthIsOff" xml:space="preserve">
     <value>Two-factor email authorization is set off!</value>

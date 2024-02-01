@@ -33,18 +33,13 @@ namespace ActivelyInfrastructure.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("date");
 
-                    b.Property<DateTime?>("GameDate")
-                        .HasColumnType("date");
-
                     b.Property<DateTime?>("GameTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("SportId")
+                    b.Property<int>("Sport")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SportId");
 
                     b.ToTable("Game");
                 });
@@ -75,24 +70,6 @@ namespace ActivelyInfrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Player");
-                });
-
-            modelBuilder.Entity("ActivelyDomain.Entities.SportType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SportType");
                 });
 
             modelBuilder.Entity("ActivelyDomain.Entities.User", b =>
@@ -224,49 +201,49 @@ namespace ActivelyInfrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c4e3a9e6-544a-4db7-80a9-d8169d3561df",
+                            Id = "2307251d-aa6e-436a-b7b3-ca3e1fbfefbb",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "ca888d36-f4fb-4402-8650-6c9a09079a79",
+                            Id = "b90ccf54-4f85-47d3-8426-e2206fe1d792",
                             ConcurrencyStamp = "2",
                             Name = "Developer",
                             NormalizedName = "Developer"
                         },
                         new
                         {
-                            Id = "ef16d7d6-a024-4486-a33b-a093a4dbf636",
+                            Id = "20453e97-0f66-47fd-8128-f0f4d58e173c",
                             ConcurrencyStamp = "3",
                             Name = "Moderator",
                             NormalizedName = "Moderator"
                         },
                         new
                         {
-                            Id = "bd188919-d376-4698-aee0-ea5643d07ed6",
+                            Id = "27bc79d7-478f-4494-9932-725b220bfeaa",
                             ConcurrencyStamp = "4",
                             Name = "PremiumUser",
                             NormalizedName = "PremiumUser"
                         },
                         new
                         {
-                            Id = "3cdf2f72-efeb-4250-8ed8-4c5a3029f210",
+                            Id = "cfa7484a-062d-418f-babd-87b5544609c5",
                             ConcurrencyStamp = "5",
                             Name = "GameOwner",
                             NormalizedName = "GameOwner"
                         },
                         new
                         {
-                            Id = "2eefbb56-73ca-4ef6-a9c7-4a897e784cac",
+                            Id = "7c7e1020-8276-4353-9f45-a8da5ad1e8b0",
                             ConcurrencyStamp = "6",
                             Name = "VerifiedUser",
                             NormalizedName = "VerifiedUser"
                         },
                         new
                         {
-                            Id = "8c11250c-fdfd-4ec3-8dc1-0a86912a859c",
+                            Id = "627d6c14-19b6-4d01-b533-0fb4bec69bc5",
                             ConcurrencyStamp = "7",
                             Name = "User",
                             NormalizedName = "User"
@@ -377,17 +354,6 @@ namespace ActivelyInfrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("ActivelyDomain.Entities.Game", b =>
-                {
-                    b.HasOne("ActivelyDomain.Entities.SportType", "Sport")
-                        .WithMany()
-                        .HasForeignKey("SportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sport");
                 });
 
             modelBuilder.Entity("GamePlayer", b =>

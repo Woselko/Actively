@@ -10,12 +10,12 @@ namespace ActivelyInfrastructure
     {
         public DbSet<Game>? Game { get; set; }
         public DbSet<Player>? Player { get; set; }
-        public DbSet<SportType>? SportType { get; set; }
 
         public ActivelyDbContext() { }
         //public ActivelyDbContext(DbContextOptions<ActivelyDbContext> options) : base(options){}
-        public ActivelyDbContext(DbContextOptions options): base(options)
+        public ActivelyDbContext(DbContextOptions<ActivelyDbContext> options): base(options)
         {
+
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -23,7 +23,6 @@ namespace ActivelyInfrastructure
             base.OnModelCreating(builder);      
 
             new GameConfiguration().Configure(builder.Entity<Game>());
-            new SportTypeConfiguration().Configure(builder.Entity<SportType>());
             new PlayerConfiguration().Configure(builder.Entity<Player>());
             new IdentityRoleConfiguration().Configure(builder.Entity<IdentityRole>());
         }

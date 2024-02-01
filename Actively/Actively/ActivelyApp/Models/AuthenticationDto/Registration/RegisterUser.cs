@@ -1,7 +1,7 @@
 ﻿using ActivelyDomain.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ActivelyApp.Models.Authentication.Registration
+namespace ActivelyApp.Models.AuthenticationDto.Registration
 {
     public class RegisterUser
     {

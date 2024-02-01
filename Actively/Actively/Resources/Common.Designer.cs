@@ -142,6 +142,26 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Game does not exist.
+        /// </summary>
+        public static string GameNotExists {
+            get {
+                return ResourceManager.GetString("GameNotExists", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to successfully created.
+        /// </summary>
+        public static string SuccessfullyCreated
+        {
+            get
+            {
+                return ResourceManager.GetString("SuccessfullyCreated", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Invalid code.
         /// </summary>
         public static string InvalidCode {
@@ -205,6 +225,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Player does not exist.
+        /// </summary>
+        public static string PlayerNotExists {
+            get {
+                return ResourceManager.GetString("PlayerNotExistsError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Privacy law default.
         /// </summary>
         public static string Privacy {
@@ -237,6 +266,24 @@ namespace Resources {
         public static string Success {
             get {
                 return ResourceManager.GetString("Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successfully Deleted.
+        /// </summary>
+        public static string SuccessfullyDeleted {
+            get {
+                return ResourceManager.GetString("SuccessfullyDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successfully Updated.
+        /// </summary>
+        public static string SuccessfullyUpdated {
+            get {
+                return ResourceManager.GetString("SuccessfullyUpdated", resourceCulture);
             }
         }
         

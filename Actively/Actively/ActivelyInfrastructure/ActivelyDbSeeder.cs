@@ -1,4 +1,5 @@
 ﻿using ActivelyDomain.Entities;
+using System;
 
 namespace ActivelyInfrastructure
 {
@@ -14,14 +15,7 @@ namespace ActivelyInfrastructure
         public void Seed()
         {
             if (_dbContext.Database.CanConnect())
-            {
-                if (!_dbContext.SportType.Any())
-                {
-                    var types = CreateSportTypes();
-                    _dbContext.SportType.AddRange(types);
-                    _dbContext.SaveChanges();
-                }
-
+            {     
                 if (!_dbContext.Game.Any())
                 {
                     var games = CreateGames();
@@ -31,25 +25,14 @@ namespace ActivelyInfrastructure
             }
         }
 
-        private List<SportType> CreateSportTypes()
-        {
-            var types = new List<SportType>()
-            {
-                new SportType() { Name = "football" },
-                new SportType() { Name = "basketball" },
-                new SportType() { Name = "volleyball" },
-            };
-            return types;
-        }
-
         private List<Game> CreateGames()
         {
             var games = new List<Game>()
             {
                new Game()
                {
-                GameDate = DateTime.Now,
-                 SportId = 1,
+                 GameTime = DateTime.Now,
+                 Sport = SportType.Football,
                  Players = new List<Player>()
                  {
                         new Player()
@@ -75,8 +58,8 @@ namespace ActivelyInfrastructure
 
                new Game()
                {
-                 GameDate = DateTime.Now,
-                 SportId = 1,
+                 GameTime = DateTime.Now,
+                 Sport = SportType.Football,
                  Players = new List<Player>()
                  {
                      new Player()

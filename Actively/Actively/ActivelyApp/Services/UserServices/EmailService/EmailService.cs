@@ -1,7 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
 using ActivelyApp.Controllers;
-using ActivelyApp.Models.Authentication.Email;
+using ActivelyApp.Models.AuthenticationDto.Email;
 
 namespace ActivelyApp.Services.UserServices.EmailService
 {

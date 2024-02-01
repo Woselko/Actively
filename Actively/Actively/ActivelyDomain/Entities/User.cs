@@ -13,7 +13,6 @@ namespace ActivelyDomain.Entities
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public Gender Gender { get; set; }
-
         public string? Address { get; set; }
         public string? RefreshToken { get; set; }
         public string? UserAvatar { get; set; }
