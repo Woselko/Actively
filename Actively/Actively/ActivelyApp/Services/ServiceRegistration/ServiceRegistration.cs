@@ -17,6 +17,7 @@ using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
 using ActivelyApp.Models.AuthenticationDto.Email;
 using ActivelyApp.Models.Common;
 using ActivelyDomain.Entities;
+using ActivelyApp.Middleware;
 
 namespace ActivelyApp.Services.ServiceRegistration
 {
@@ -86,8 +87,11 @@ namespace ActivelyApp.Services.ServiceRegistration
                 options.DataAnnotationLocalizerProvider = (t, f) => localizer;
             });
 
-            //Other
-            if (builder.Environment.IsDevelopment()) { mvcBuilder.AddRazorRuntimeCompilation(); }
+			//Middleware
+			services.AddScoped<ErrorHandlingMiddleware>();
+
+			//Other
+			if (builder.Environment.IsDevelopment()) { mvcBuilder.AddRazorRuntimeCompilation(); }
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(option =>

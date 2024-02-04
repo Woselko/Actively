@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
+using ActivelyApp.Middleware;
 using ActivelyApp.Services.ServiceRegistration;
 using ActivelyInfrastructure;
+using Microsoft.AspNetCore.Localization;
 using System.Globalization;
-using System.Reflection;
-using Microsoft.Extensions.Options;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +26,8 @@ else
         options.RoutePrefix = "swagger";
     });
 }
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 var languageSettings = builder.Configuration.GetSection("LanguageSettings:SupportedLanguages").Get<List<string>>();
 var supportedCultures = new List<CultureInfo>();
