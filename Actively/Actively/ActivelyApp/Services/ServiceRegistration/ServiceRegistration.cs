@@ -1,26 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Localization;
-using ActivelyInfrastructure;
-using System.Reflection;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using ActivelyApp.Services.UserServices.EmailService;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.OpenApi.Models;
-using ActivelyApp.Mappings;
-using System.Text.Json.Serialization;
-using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
-using ActivelyApp.Services.EntityService;
-using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
-using ActivelyApp.Models.AuthenticationDto.Email;
+﻿using ActivelyApp.Models.AuthenticationDto.Email;
 using ActivelyApp.Models.Common;
+using ActivelyApp.Services.EntityService;
+using ActivelyApp.Services.UserServices.EmailService;
 using ActivelyDomain.Entities;
+using ActivelyInfrastructure;
+using ActivelyInfrastructure.Repositories.EntityRepositories.GameRepository;
+using ActivelyInfrastructure.Repositories.EntityRepositories.PlayerRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.Text;
+using System.Text.Json.Serialization;
 
 namespace ActivelyApp.Services.ServiceRegistration
 {
-    public static class ServiceRegistration
+	public static class ServiceRegistration
     {
         public static void RegisterServices(this IServiceCollection services, WebApplicationBuilder builder)
         {
@@ -28,10 +26,11 @@ namespace ActivelyApp.Services.ServiceRegistration
             services.AddDbContext<ActivelyDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("BulczoConnectionStringDev_ActivelyDb")));
             services.AddScoped<ActivelyDbSeeder>();
+            //Repositories
             services.AddScoped<IPlayerRepository, PlayerRepository>();
             services.AddScoped<IGameRepository, GameRepository>();
-            //Business logic services
-            services.AddScoped<IPlayerService, PlayerService>();
+			//Business logic services
+			services.AddScoped<IPlayerService, PlayerService>();
             services.AddScoped<IGameService, GameService>();
             //mapper
             services.AddAutoMapper(typeof(Program));
@@ -117,7 +116,6 @@ namespace ActivelyApp.Services.ServiceRegistration
                     }
                 });
             });
-
         }
     }
 }

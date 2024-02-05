@@ -8,9 +8,9 @@ namespace ActivelyApp.Services.EntityService
     public class PlayerService : IPlayerService
     {
         private readonly IPlayerRepository _playerRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<PlayerService> _logger;
 
-        public PlayerService(IPlayerRepository playerRepository, ILogger logger)
+        public PlayerService(IPlayerRepository playerRepository, ILogger<PlayerService> logger)
         {
             _playerRepository = playerRepository;
             _logger = logger;
@@ -20,7 +20,7 @@ namespace ActivelyApp.Services.EntityService
             try
             {
                 var players = await _playerRepository.GetAll() ?? Enumerable.Empty<Player>();
-
+                throw new Exception("jestem bohaterem");
                 if (!players.Any())
                 {
                     return ServiceResult<IEnumerable<Player>>.Success(Common.PlayerNotExists, players);

@@ -1,19 +1,28 @@
 using ActivelyApp.Services.ServiceRegistration;
 using ActivelyInfrastructure;
 using Microsoft.AspNetCore.Localization;
+using NLog.Extensions.Logging;
 using NLog.Web;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.RegisterServices(builder);
+
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
 {
-    builder.Logging.ClearProviders();
-    builder.Host.UseNLog();
-    builder.Logging.AddConsole();
+	builder.Services.AddLogging(loggingBuilder =>
+	{
+		loggingBuilder.ClearProviders();
+		loggingBuilder.AddNLog();
+	});
 }
+else
+{
+	builder.Services.AddLogging();
+}
+
+// Add services to the container.
+builder.Services.RegisterServices(builder);
 var app = builder.Build();
 
 app.Services.CreateScope().ServiceProvider.GetRequiredService<ActivelyDbSeeder>().Seed();
